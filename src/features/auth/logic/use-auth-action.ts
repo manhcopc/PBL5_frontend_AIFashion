@@ -1,4 +1,3 @@
-// src/features/auth/logic/use-auth-actions.ts
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Dùng react-router-dom
 import { authService } from '../api/auth.service';
@@ -24,10 +23,10 @@ export function useAuthActions() {
             if (!response || !response.token || !response.user) {
                 throw new Error('Invalid response from server');
             }
-
+            console.log('Setting auth state with user:', response.user); // Debug: Kiểm tra dữ liệu user trước khi setAuth
             // 1. Cập nhật Global State (Zustand)
             setAuth(response.user, response.token);
-            
+            console.log('Auth state after setAuth:', useAuthStore.getState()); // Debug: Kiểm tra dữ liệu user sau khi setAuth
             // 2. Điều hướng về trang chủ hoặc dashboard
             navigate('/workspace'); // Điều hướng tới trang workspace sau khi đăng nhập thành công
             return true;
