@@ -1,8 +1,8 @@
 import { ArrowLeft, Zap, Loader2, Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useGenerationFlow } from "../../hooks/useGenerationFlow";
-import { TrendCard } from "../../components/ui/TrendCard";
-import { StyleTag } from "../../components/ui/StyleTag";
+import { TrendCard } from "../../components/user/TrendCard";
+import { StyleTag } from "../../components/user/StyleTag";
 import {
   mockTrends,
   categoriesList,

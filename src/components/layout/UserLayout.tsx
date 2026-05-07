@@ -1,5 +1,5 @@
 // import type { ReactNode } from "react";
-import { Sidebar } from "../ui/Sidebar";
+import { Sidebar } from "../user/Sidebar";
 import { Outlet } from "react-router-dom";
 
 export default function UserLayout() {

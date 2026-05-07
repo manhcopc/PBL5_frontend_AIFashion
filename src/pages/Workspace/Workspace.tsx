@@ -1,14 +1,14 @@
 import { useState } from "react";
 
 // import { Badge } from "../../components/ui/Badge";
-import { Card } from "../../components/ui/Card";
+import { Card } from "../../components/user/Card";
 import { mockProjects } from "../../constants/projects";
 import { useCredits } from "../../hooks/useCredits";
 import { handleNewProject } from "../../utils/projectActions";
 import { Plus } from "lucide-react";
-import { CreateProjectModal } from "../../components/ui/CreateProjectModal";
+import { CreateProjectModal } from "../../components/user/CreateProjectModal";
 import type { Project } from "../../types";
-import Header from "../../components/ui/Header";
+import Header from "../../components/user/Header";
 
 export default function Workspace() {
   const { credits, consumeCredits } = useCredits(150);
