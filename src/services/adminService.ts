@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { AdminUserResponse, AdminStats, TopUpRequest, PlanChangeRequest } from '@/features/admin/types/admin.types';
+import type { AdminUserResponse, AdminStats, TopUpRequest, PlanChangeRequest, CreditLogResponse, CreditLogFilters } from '@/features/admin/types/admin.types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
@@ -62,10 +62,15 @@ export const adminService = {
     return response.data;
   },
 
-  // Get credit logs
-  getCreditLogs: async (page: number = 1, limit: number = 20) => {
-    const response = await apiClient.get('/credit-logs', {
-      params: { page, limit },
+  // Get credit logs with filters, search, and pagination
+  getCreditLogs: async (filters?: CreditLogFilters) => {
+    const response = await apiClient.get<CreditLogResponse>('/credit-logs', {
+      params: {
+        page: filters?.page || 1,
+        limit: filters?.limit || 20,
+        ...(filters?.search && { search: filters.search }),
+        ...(filters?.type && { type: filters.type }),
+      },
     });
     return response.data;
   },

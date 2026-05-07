@@ -1,29 +1,20 @@
-import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
-import { AlertCircle } from "lucide-react";
+import { useState } from "react";
+
+import { AdminSidebar } from "../admin/AdminSidebar";
+import { Outlet } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/state/use-auth-store";
 
-interface AdminLayoutProps {
-  children: ReactNode;
-}
+// interface AdminLayoutProps {
+//   children: ReactNode;
+// }
 
-export const AdminLayout = ({ children }: AdminLayoutProps) => {
-  const user = useAuthStore((state) => state.user);
-  // const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const [isHydrated, setIsHydrated] = useState(false);
+export const AdminLayout = () => {
+  const { isLoading } = useAuthStore();
+  // const { stats, loading, error, fetchStats, fetchUsers } = useAdminActions();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Wait for Zustand to hydrate from localStorage
-  useEffect(() => {
-    // Mark as hydrated after first render to ensure localStorage is read
-    const timer = setTimeout(() => {
-      setIsHydrated(true);
-    }, 0);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Show loading while hydrating
-  if (!isHydrated) {
+  // Show loading while checking auth
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-black">
         <div className="text-center">
@@ -34,22 +25,18 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
     );
   }
 
-  if (user?.role !== "Admin") {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-black">
-        <div className="text-center">
-          <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-white mb-2">Access Denied</h1>
-          <p className="text-zinc-400 mb-4">
-            You do not have permission to access the admin panel.
-          </p>
-          <p className="text-xs text-zinc-500">
-            User: {user?.email || "Not logged in"} | Role: {user?.role || "N/A"}
-          </p>
-        </div>
+  // NOTE: ProtectedRoute already validates auth and role
+  // This component just renders the admin layout wrapper
+  // return <>{children}</>;
+  return (
+    <>
+      <div className="flex h-screen bg-black text-white overflow-hidden">
+        <AdminSidebar
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
+        <Outlet />
       </div>
-    );
-  }
-
-  return <>{children}</>;
+    </>
+  );
 };

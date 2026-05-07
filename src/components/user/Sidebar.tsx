@@ -5,10 +5,12 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const Sidebar: React.FC = () => {
   const navigate = useNavigate();
+  const [activePath, setActivePath] = useState("/workspace");
 
   const navItems = [
     {
@@ -64,9 +66,12 @@ export const Sidebar: React.FC = () => {
           {navItems.map((item, index) => (
             <button
               key={index}
-              onClick={() => navigate(item.path)} // Điều hướng tới đường dẫn
+              onClick={() => {
+                navigate(item.path);
+                setActivePath(item.path);
+              }} // Điều hướng tới đường dẫn
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                item.active
+                activePath === item.path
                   ? "bg-purple-600 text-white shadow-sm"
                   : "text-zinc-400 hover:bg-zinc-900 hover:text-white"
               }`}

@@ -1,5 +1,5 @@
 import { Bell, User, Zap } from "lucide-react";
-import { Badge } from "../../components/ui/Badge";
+import { Badge } from "../../components/user/Badge";
 import { useCredits } from "../../hooks/useCredits";
 // import type { Project } from "../../types";
 // // import { handleNewProject } from "../../utils/projectActions";
