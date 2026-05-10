@@ -1,33 +1,54 @@
-// import type { User } from '../user.types';
-import apiClient from "../../../services/ApiClient";
-import type { TrendInsightRequest, TrendInsightResponse } from "../trend.types";
+import type { TrendInsightResponse } from "../trend.types";
+import { apiClient } from "../../../services/ApiClient";
 
-// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-export const TrendService = {
-  // Trend Insights V2 [cite: 8]
-  createTrendInsight: async (
-    data: TrendInsightRequest
-  ): Promise<TrendInsightResponse> => {
-    const response = await apiClient.post("/trend_insights/", data);
-    return response.data;
+/**
+ * Real Trend Service
+ * Makes actual API calls to the backend
+ */
+const trendService = {
+  /**
+   * Get all available trends
+   * GET /api/v2/trends/
+   */
+  getTrends: async (): Promise<TrendInsightResponse[]> => {
+    return apiClient.get("/api/v2/trends/");
   },
-  getListInsightsByRequest: async (
-    reqId: string
-  ): Promise<TrendInsightResponse[]> => {
-    const response = await apiClient.get(`/trend_insights/request/${reqId}`);
-    return response.data;
-  },
-  getInsightDetails: async (id: string): Promise<TrendInsightResponse> => {
-    const response = await apiClient.get(`/trend_insights/${id}`);
-    return response.data;
-  },
-  deleteInsight: async (id: string) =>
-    apiClient.delete(`/trend_insights/${id}`),
 
-  // Trend Result duplicate for now, will be refactored later
-  getResultsByRequest: async (reqId: string) =>
-    apiClient.get(`/trend-results/request/${reqId}`),
+  /**
+   * Get single trend by ID
+   * GET /api/v2/trends/{id}
+   */
+  getTrendById: async (
+    trendId: string
+  ): Promise<TrendInsightResponse | null> => {
+    return apiClient.get(`/api/v2/trends/${trendId}/`);
+  },
 
-  createResult: async (data) => apiClient.post("/trend-results/", data),
+  /**
+   * Get all categories
+   * GET /api/v2/categories/
+   */
+  getCategories: async (): Promise<string[]> => {
+    return apiClient.get("/api/v2/categories/");
+  },
+
+  /**
+   * Get all style tags
+   * GET /api/v2/style-tags/
+   */
+  getStyleTags: async (): Promise<string[]> => {
+    return apiClient.get("/api/v2/style-tags/");
+  },
+
+  /**
+   * Search trends by keyword
+   * GET /api/v2/trends/search?q=keyword
+   */
+  searchTrends: async (keyword: string): Promise<TrendInsightResponse[]> => {
+    return apiClient.get("/api/v2/trends/search", {
+      params: { q: keyword },
+    });
+  },
 };
+
+export default trendService;

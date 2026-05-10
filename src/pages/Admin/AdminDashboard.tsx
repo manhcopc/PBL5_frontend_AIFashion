@@ -2,7 +2,11 @@ import { useEffect, useState, useCallback } from "react";
 import { Menu, X, AlertCircle } from "lucide-react";
 import { useAdminActions } from "@/hooks/useAdminActions";
 import { StatsGrid } from "@/components/admin/StatsGrid";
-
+import {
+  mockAdminUsers,
+  mockAdminStats,
+  mockCreditLogs,
+} from "@/constants/mockAdmin";
 export const AdminDashboard = () => {
   const { stats, loading, error, fetchStats, fetchUsers } = useAdminActions();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -42,7 +46,7 @@ export const AdminDashboard = () => {
       </div>
 
       <div className="flex-1 overflow-auto p-8">
-        {error && (
+        {/* {error && (
           <div className="mb-6 p-4 bg-red-900/20 border border-red-700/50 rounded-lg flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
             <div>
@@ -50,9 +54,10 @@ export const AdminDashboard = () => {
               <p className="text-sm text-red-200">{error}</p>
             </div>
           </div>
-        )}
+        )} */}
 
-        <StatsGrid stats={stats} isLoading={loading} />
+        {/* <StatsGrid stats={stats} isLoading={loading} /> */}
+        <StatsGrid stats={mockAdminStats} isLoading={loading} />
 
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">

@@ -4,14 +4,17 @@ import type {
   CreateAnalysisRequest,
 } from "../analysis.types";
 
+// Dịch vụ phân tích
 export const AnalysisService = {
-  create: async (
+  // Tạo yêu cầu phân tích mới
+  createAnalysis: async (
     data: CreateAnalysisRequest
   ): Promise<AnalysisRequestResponse> => {
     const response = await apiClient.post("/analysis_requests/", data);
     return response.data;
   },
 
+  // Lấy danh sách yêu cầu phân tích theo dự án
   getListAnalysisByProject: async (
     projectId: string
   ): Promise<AnalysisRequestResponse[]> => {
@@ -21,17 +24,21 @@ export const AnalysisService = {
     return response.data;
   },
 
+  // Lấy chi tiết yêu cầu phân tích theo ID
   getAnalysisReq: async (
     projectId: string
   ): Promise<AnalysisRequestResponse> => {
     const response = await apiClient.get(`/analysis_requests/${projectId}`);
     return response.data;
   },
+
+  // Xóa yêu cầu phân tích theo ID
   deleteAnalysis: async (projectId: string) => {
     const response = await apiClient.delete(`/analysis_requests/${projectId}`);
     return response.data;
   },
 
+  // Cập nhật trạng thái yêu cầu phân tích
   updateStatus: async (reqId: string): Promise<AnalysisRequestResponse> => {
     const response = await apiClient.patch(
       `/analysis_requests/${reqId}/status`

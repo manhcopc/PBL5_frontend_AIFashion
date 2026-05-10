@@ -4,10 +4,15 @@ import { useAdminActions } from "@/hooks/useAdminActions";
 import { UserTable } from "@/components/admin/UserTable";
 import { ManageUserModal } from "@/components/admin/ManageUserModal";
 import type { AdminUser } from "@/features/admin/types/admin.types";
+import {
+  mockAdminUsers,
+  // mockAdminStats,
+  // mockCreditLogs,
+} from "@/constants/mockAdmin";
 
 export const UserManagement = () => {
   const {
-    users,
+    // users,
     loading,
     error,
     pagination,
@@ -83,7 +88,7 @@ export const UserManagement = () => {
 
       <div className="flex-1 overflow-auto p-8">
         <div className="space-y-6">
-          {error && (
+          {/* {error && (
             <div className="p-4 bg-red-900/20 border border-red-700/50 rounded-lg flex items-center gap-3">
               <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
               <div>
@@ -91,7 +96,7 @@ export const UserManagement = () => {
                 <p className="text-sm text-red-200">{error}</p>
               </div>
             </div>
-          )}
+          )} */}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="relative">
@@ -125,7 +130,8 @@ export const UserManagement = () => {
           </div>
 
           <UserTable
-            users={users}
+            // users={users}
+            users={mockAdminUsers}
             isLoading={loading}
             onManage={handleManageClick}
             onDelete={handleDeleteClick}
@@ -135,7 +141,7 @@ export const UserManagement = () => {
             <div className="flex items-center justify-between">
               <p className="text-sm text-zinc-400">
                 Showing{" "}
-                {users.length > 0
+                {mockAdminUsers.length > 0
                   ? (pagination.page - 1) * pagination.limit + 1
                   : 0}
                 -
