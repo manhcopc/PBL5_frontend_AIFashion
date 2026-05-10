@@ -25,5 +25,14 @@ export interface AnalysisRequestResponse extends CreateAnalysisRequest {
     }[];
     error: string;
   };
-  result_images?: string[]; // Mảng URL ảnh kết quả, có thể có hoặc không tùy vào API response
+  result_images?: string[];
+}
+
+export interface GenerateDesignRequest {
+  base_image_url?: string;
+  target_season: string;
+  target_audience: string;
+  target_weather: string;
+  num_images: number;
+  seed: number;
 }

@@ -2,15 +2,15 @@ import { ArrowLeft, Zap, Loader2, Sparkles } from "lucide-react";
 // ✅ 1. Import useLocation thay cho useParams
 import { Link, Navigate, useLocation } from "react-router-dom";
 import { useGenerationFlow } from "../../hooks/useGenerationFlow";
-import { TrendCard } from "../../components/user/TrendCard";
 import {
-  mockTrends,
+  // mockTrends,
   audiencesList,
   weathersList,
   seasonsList,
 } from "../../constants/trends";
 import { useUserStore } from "../../store/UserContext";
 import { transformToProxyUrl } from "../../utils/util";
+// import { useState } from "react";
 // import { ResultsGrid } from "../../components/design/ResultsGrid";
 
 export default function CreateDesign() {
@@ -37,7 +37,11 @@ export default function CreateDesign() {
     hasEnoughCredits,
     startGeneration,
     designs,
-  } = useGenerationFlow(projectId); // Truyền projectId vào thay cho requestId
+  } = useGenerationFlow(projectId, {
+    base_image_url: initialImages[0]?.url,
+    num_images: 4,
+    seed: 42,
+  }); // Truyền projectId vào thay cho requestId
 
   // ✅ 3. Nếu không có projectId trong state thì đẩy về trang studio
   if (!projectId) {
@@ -103,25 +107,47 @@ export default function CreateDesign() {
 
           {displayDesigns.length > 0 && (
             <section className="p-6 bg-zinc-900/50 border border-purple-500/30 rounded-2xl">
-              <h2 className="text-2xl font-semibold text-purple-400 mb-5 flex items-center gap-2">
+              {/* <h2 className="text-2xl font-semibold text-purple-400 mb-5 flex items-center gap-2">
                 <Sparkles className="w-6 h-6" />
                 Kết quả thiết kế
-              </h2>
+              </h2> */}
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-2xl font-semibold text-zinc-100">
+                  1. Select Trend Source
+                </h2>
+                <span className="text-sm font-medium text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                  Live Data
+                </span>
+              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="flex gap-5 overflow-x-auto pb-6 hidden-scrollbar snap-x">
                 {displayDesigns.map((item, index) => {
                   // Đảm bảo lấy đúng link ảnh dù item là string hay object
                   const imageUrl =
                     typeof item === "string" ? item : item.imageUrl || item.url;
                   const generatedId = `design-${index}`;
-                  console.log(`Displaying design ${index + 1}:`, imageUrl);
+                  // console.log(`Displaying design ${index + 1}:`, imageUrl);
 
                   return (
                     <div
                       key={generatedId}
-                      className="bg-zinc-900 border border-zinc-700 rounded-xl overflow-hidden group flex flex-col"
+                      className={`relative min-w-[240px] h-[320px] rounded-xl overflow-hidden cursor-pointer transition-all duration-300 border-2 ${
+                        selectedTrend === imageUrl
+                          ? "border-purple-500 shadow-lg shadow-purple-500/20"
+                          : "border-transparent hover:border-zinc-700"
+                      }`}
                     >
-                      <div className="relative aspect-[3/4] overflow-hidden bg-zinc-800">
+                      <div
+                        className={`relative aspect-[3/4] overflow-hidden bg-zinc-800 ${
+                          selectedTrend === imageUrl
+                            ? "border-purple-500 shadow-lg shadow-purple-500/20"
+                            : "border-transparent hover:border-zinc-700"
+                        }`}
+                        onClick={() => {
+                          setSelectedTrend(imageUrl);
+                          console.log(`Design image clicked: ${imageUrl}`);
+                        }}
+                      >
                         <img
                           src={transformToProxyUrl(imageUrl)}
                           alt={`Thiết kế mẫu ${index + 1}`}
@@ -132,54 +158,20 @@ export default function CreateDesign() {
                           }}
                         />
 
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
-                          {/* <a
-                            href={imageUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-sm font-medium transition-colors"
-                          >
-                            Mở ảnh lớn
-                          </a> */}
-                        </div>
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4"></div>
                       </div>
 
-                      <div className="p-4 bg-zinc-950">
+                      {/* <div className="p-4 bg-zinc-950">
                         <p className="text-sm font-medium text-zinc-300 truncate">
                           Mẫu thiết kế {index + 1}
                         </p>
-                      </div>
+                      </div> */}
                     </div>
                   );
                 })}
               </div>
             </section>
           )}
-
-          {/* Khu vực chọn Trend ban đầu */}
-          <section>
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-2xl font-semibold text-zinc-100">
-                1. Select Trend Source
-              </h2>
-              <span className="text-sm font-medium text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                Live Data
-              </span>
-            </div>
-
-            {/* Horizontal Scroll Area */}
-            <div className="flex gap-5 overflow-x-auto pb-6 hidden-scrollbar snap-x">
-              {mockTrends.map((trend) => (
-                <div key={trend.id} className="snap-start">
-                  <TrendCard
-                    {...trend}
-                    isSelected={selectedTrend === trend.id}
-                    onClick={setSelectedTrend}
-                  />
-                </div>
-              ))}
-            </div>
-          </section>
         </div>
 
         {/* Sidebar Configuration Panel */}

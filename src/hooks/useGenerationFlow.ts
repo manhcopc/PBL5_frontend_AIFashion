@@ -2,9 +2,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import analysisApi from "@/features/analysis/api";
 import { transformDesignResults } from "@/features/analysis/mappers/analysisMapper";
 import { useUserStore } from "@/store/UserContext";
-import { trendApi } from "@/features/trend/api";
-import { styleApi } from "@/features/style/api";
-import type { StylePresetResponse } from "@/features/style/style.types";
+import type { GenerateDesignRequest } from "@/features/analysis/analysis.types";
 
 /**
  * Hook: useGenerationFlow
@@ -15,7 +13,14 @@ import type { StylePresetResponse } from "@/features/style/style.types";
  * 3. Polls for status with progressive messages
  * 4. Returns results when generation completes
  */
-export function useGenerationFlow(requestId: string) {
+type InitialGenerationData = Omit<
+  GenerateDesignRequest,
+  "target_season" | "target_audience" | "target_weather"
+>;
+export function useGenerationFlow(
+  requestId: string,
+  data: InitialGenerationData
+) {
   const { credits, consumeCredits } = useUserStore();
 
   const [selectedTrend, setSelectedTrend] = useState<string | null>(null);
@@ -26,8 +31,6 @@ export function useGenerationFlow(requestId: string) {
   const [audience, setAudience] = useState<string>("");
 
   // Validate available categories and styles
-  const [validCategories, setValidCategories] = useState<string[]>([]);
-  const [validStyles, setValidStyles] = useState<StylePresetResponse[]>([]);
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
@@ -38,18 +41,6 @@ export function useGenerationFlow(requestId: string) {
   // Polling control
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pollAttemptRef = useRef(0);
-
-  // Fetch valid categories and styles on mount
-
-  // const toggleStyle = (style: string) => {
-  //   setSelectedStyles((prev) =>
-  //     prev.includes(style) ? prev.filter((s) => s !== style) : [...prev, style]
-  //   );
-  // };
-
-  /**
-   * Poll for analysis status and update loading message
-   */
   const pollAnalysisStatus = useCallback(async (requestId: string) => {
     try {
       const attempt = pollAttemptRef.current;
@@ -129,9 +120,18 @@ export function useGenerationFlow(requestId: string) {
         setAnalysisError("Insufficient credits for design generation");
         return;
       }
-
+      const requestPayload: GenerateDesignRequest = {
+        ...data,
+        target_season: season,
+        target_audience: audience,
+        target_weather: weather,
+      };
       // Create analysis request
-      const analysisRequest = await analysisApi.triggerGeneration(requestId);
+      const analysisRequest = await analysisApi.triggerGeneration(
+        requestId,
+        requestPayload
+      );
+      console.log("Analysis request created:", analysisRequest);
 
       // Start polling for status (every 1 second)
       pollIntervalRef.current = setInterval(() => {
@@ -205,7 +205,7 @@ export function useGenerationFlow(requestId: string) {
     designs,
     analysisError,
     clearError,
-    validCategories,
-    validStyles,
+    // validCategories,
+    // validStyles,
   };
 }

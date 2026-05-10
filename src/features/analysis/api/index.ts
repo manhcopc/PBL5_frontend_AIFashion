@@ -1,6 +1,9 @@
 import { AnalysisService } from "./analysis.service";
 import { analysisMockService } from "./analysis.mock";
-import type { AnalysisRequestResponse } from "../analysis.types";
+import type {
+  AnalysisRequestResponse,
+  GenerateDesignRequest,
+} from "../analysis.types";
 import type { DesignResult } from "../mappers/analysisMapper";
 
 /**
@@ -71,12 +74,20 @@ export const analysisApi = {
    * @returns Promise of updated AnalysisRequestResponse
    */
   triggerGeneration: async (
-    requestId: string
+    requestId: string,
+    data: GenerateDesignRequest
   ): Promise<AnalysisRequestResponse> => {
     if (USE_MOCK_DATA) {
-      return analysisMockService.triggerGeneration(requestId);
+      return analysisMockService.triggerGeneration(requestId, data);
     } else {
-      return AnalysisService.triggerGenerate(requestId, {});
+      return AnalysisService.triggerGenerate(requestId, {
+        base_image_url: data.base_image_url,
+        target_season: data.target_season,
+        target_audience: data.target_audience,
+        target_weather: data.target_weather,
+        num_images: data.num_images,
+        seed: data.seed,
+      });
     }
   },
 

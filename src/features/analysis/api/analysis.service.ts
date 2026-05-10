@@ -2,6 +2,7 @@ import apiClient from "../../../services/ApiClient";
 import type {
   AnalysisRequestResponse,
   CreateAnalysisRequest,
+  GenerateDesignRequest,
 } from "../analysis.types";
 
 // Dịch vụ phân tích
@@ -61,8 +62,7 @@ export const AnalysisService = {
     return response.data;
   },
 
-  triggerGenerate: async (reqId: string, data) => {
-    // Du lieu api chua hoan chinh
+  triggerGenerate: async (reqId: string, data: GenerateDesignRequest) => {
     const response = await apiClient.post(
       `/analysis_requests/${reqId}/generate`,
       data

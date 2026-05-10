@@ -10,20 +10,19 @@ interface TrendCardProps {
 export function TrendCard({
   id,
   imageUrl,
-}: // isSelected,
-// onClick,
-TrendCardProps) {
+  isSelected,
+  onClick,
+}: TrendCardProps) {
   return (
     <div
-      // onClick={() => {
-      //   onClick(id);
-      //   console.log(`TrendCard clicked in trendcard: ${imageUrl}`);
-      // }}
+      onClick={() => {
+        onClick(id);
+        console.log(`TrendCard clicked in trendcard: ${imageUrl}`);
+      }}
       className={`relative min-w-[240px] h-[320px] rounded-xl overflow-hidden cursor-pointer transition-all duration-300 border-2 ${
-        // isSelected
-        // ?
-        "border-purple-500 shadow-lg shadow-purple-500/20"
-        // : "border-transparent hover:border-zinc-700"
+        isSelected
+          ? "border-purple-500 shadow-lg shadow-purple-500/20"
+          : "border-transparent hover:border-zinc-700"
       }`}
     >
       <img

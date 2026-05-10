@@ -5,6 +5,7 @@ import type {
   LoginRequest,
   RegisterRequest,
   AuthResponse,
+  User,
 } from "../types/auth.types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -22,6 +23,12 @@ export const authService = {
       `${API_BASE_URL}/auth/register`,
       data
     );
+    return response.data;
+  },
+  getCurrentUser: async (): Promise<User> => {
+    // Lưu ý: Hỏi lại Backend xem endpoint để lấy thông tin user là gì.
+    // Thường là /auth/me, /users/me hoặc /profile
+    const response = await apiClient.get(`${API_BASE_URL}/auth/me`);
     return response.data;
   },
 };

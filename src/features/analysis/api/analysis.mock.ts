@@ -1,4 +1,7 @@
-import type { AnalysisRequestResponse } from "../analysis.types";
+import type {
+  AnalysisRequestResponse,
+  GenerateDesignRequest,
+} from "../analysis.types";
 
 /**
  * Mock Design Generation Data Layer
@@ -132,7 +135,8 @@ export const analysisMockService = {
    * @returns Promise of updated AnalysisRequestResponse
    */
   triggerGeneration: async (
-    requestId: string
+    requestId: string,
+    data: GenerateDesignRequest
   ): Promise<AnalysisRequestResponse> => {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 800));

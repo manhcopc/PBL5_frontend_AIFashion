@@ -12,18 +12,11 @@ import {
 import Header from "../../components/user/Header";
 import { useState } from "react";
 import { ProjectRequestModal } from "@/components/user/ProjectRequestModal";
-import { transformToProxyUrl } from "@/utils/util";
+// import { transformToProxyUrl } from "@/utils/util";
 // import { Sidebar } from "../../components/ui/Sidebar";
 
 export default function DesignStudio() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const image_url =
-  //   "https://agreeably-saxophone-showpiece.ngrok-free.dev/outputs/design_381041f4.png";
-
-  // const navigate = useNavigate();
-  // const { status, generateDesigns, resetStudio } = useDesignGeneration();
-  const imageurl =
-    "https://agreeably-saxophone-showpiece.ngrok-free.dev/outputs/design_13bfaa6e.png";
   return (
     <>
       <div className="flex h-screen bg-black text-white font-sans overflow-hidden">
