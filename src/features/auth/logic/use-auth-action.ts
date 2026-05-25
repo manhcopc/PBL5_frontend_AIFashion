@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { authService } from '../api/auth.service';
-import { useAuthStore } from '../state/use-auth-store';
-import type { LoginRequest, RegisterRequest } from '../types/auth.types';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { authService } from "../api/auth.service";
+import { useAuthStore } from "../state/use-auth-store";
+import type { LoginRequest, RegisterRequest } from "../types/auth.types";
 
 export function useAuthActions() {
   const navigate = useNavigate();
@@ -16,12 +16,12 @@ export function useAuthActions() {
     setError(null);
     try {
       const response = await authService.login(credentials);
-      console.log('Login response from service:', response);
-      console.log('User data:', response.user);
-      console.log('User token:', response.token);
+      console.log("Login response from service:", response);
+      console.log("User data:", response.user);
+      console.log("User token:", response.token);
 
       if (!response || !response.token || !response.user) {
-        throw new Error('Invalid response from server');
+        throw new Error("Invalid response from server");
       }
 
       // Normalize role to lowercase to ensure consistent comparison
@@ -32,21 +32,27 @@ export function useAuthActions() {
 
       // Store auth state (token + user)
       setAuth(normalizedUser, response.token);
-      console.log('Auth state after setAuth:', useAuthStore.getState());
+      console.log("Auth state after setAuth:", useAuthStore.getState());
 
       // Redirect based on user role
-      if (normalizedUser.role === 'admin') {
-        navigate('/admin', { replace: true });
+      if (normalizedUser.role === "admin") {
+        navigate("/admin", { replace: true });
       } else {
-        navigate('/workspace', { replace: true });
+        navigate("/workspace", {
+          replace: true,
+          state: {
+            userId: response.user.id,
+          },
+        });
       }
       return true;
     } catch (err) {
-      const errorMessage = err instanceof Error 
-        ? err.message 
-        : (err).response?.data?.message || 'Login failed';
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : err.response?.data?.message || "Login failed";
       setError(errorMessage);
-      console.error('Login error from action:', err);
+      console.error("Login error from action:", err);
       return false;
     } finally {
       setIsLoading(false);
@@ -60,7 +66,7 @@ export function useAuthActions() {
       const response = await authService.register(data);
 
       if (!response || !response.token || !response.user) {
-        throw new Error('Invalid response from server');
+        throw new Error("Invalid response from server");
       }
 
       // Normalize role to lowercase to ensure consistent comparison
@@ -73,18 +79,19 @@ export function useAuthActions() {
       setAuth(normalizedUser, response.token);
 
       // Redirect based on user role
-      if (normalizedUser.role === 'admin') {
-        navigate('/admin', { replace: true });
+      if (normalizedUser.role === "admin") {
+        navigate("/admin", { replace: true });
       } else {
-        navigate('/workspace', { replace: true });
+        navigate("/workspace", { replace: true });
       }
       return true;
     } catch (err) {
-      const errorMessage = err instanceof Error 
-        ? err.message 
-        : (err).response?.data?.message || 'Register failed';
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : err.response?.data?.message || "Register failed";
       setError(errorMessage);
-      console.error('Register error from action:', err);
+      console.error("Register error from action:", err);
       return false;
     } finally {
       setIsLoading(false);

@@ -15,7 +15,8 @@ export default defineConfig({
     proxy: {
       // Bất cứ request nào bắt đầu bằng /ngrok-proxy sẽ được Vite xử lý
       "/ngrok-proxy": {
-        target: "https://agreeably-saxophone-showpiece.ngrok-free.dev", // Tên miền Ngrok của Backend
+        target: "https://agreeably-saxophone-showpiece.ngrok-free.dev/", // dichoimave
+        // target: "https://reoccur-plutonium-evidence.ngrok-free.dev/", // buiducmanh
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/ngrok-proxy/, ""), // Xóa chữ /ngrok-proxy đi trước khi gửi lên Backend
         headers: {

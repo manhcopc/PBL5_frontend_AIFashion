@@ -5,13 +5,16 @@ import {
   isTokenExpired,
   getToken,
   setToken,
+  setUserId,
+  getUserId,
   removeToken,
 } from "@/services/auth";
 import type { User } from "../types/auth.types";
-import { authService } from "../api/auth.service";
+// import { authService } from "../api/auth.service";
 
 interface AuthState {
   user: User | null;
+  userId: string | null; // 🆕 Thêm trường này
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -27,22 +30,25 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
+      userId: getUserId(), // 🆕 Lấy giá trị khởi tạo từ localStorage qua Utils
       isAuthenticated: false,
       isLoading: true,
       error: null,
 
       setAuth: (user, token) => {
         setToken(token); // ✅ Dùng hàm của Utils thay vì tự gọi localStorage
-        set({ user, isAuthenticated: true, error: null });
+        const uid = user.id;
+        setUserId(uid);
+        set({ user, userId: uid, isAuthenticated: true, error: null });
       },
 
       clearAuth: () => {
         removeToken(); // ✅ Dùng hàm của Utils
-        set({ user: null, isAuthenticated: false, error: null });
+        set({ user: null, userId: null, isAuthenticated: false, error: null });
       },
       logout: () => {
         removeToken(); // ✅ Dùng hàm của Utils
-        set({ user: null, isAuthenticated: false, error: null });
+        set({ user: null, userId: null, isAuthenticated: false, error: null });
       },
 
       setError: (error) => {
@@ -108,6 +114,7 @@ export const useAuthStore = create<AuthState>()(
       name: "auth-store",
       partialize: (state) => ({
         user: state.user,
+        userId: state.userId,
         isAuthenticated: state.isAuthenticated,
       }),
     }

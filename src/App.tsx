@@ -11,8 +11,8 @@ import { RootPage } from "@/pages/RootPage";
 import Workspace from "@/pages/Workspace/Workspace";
 import DesignStudio from "@/pages/DesignStudio/DesignStudio";
 import CreateDesign from "@/pages/Design/CreateDesign";
-
-// Admin Pages
+import Billing from "@/pages/Billing/Billing";
+import ProjectDetail from "@/pages/Workspace/ProjectDetail";// Admin Pages
 import { AdminDashboard } from "@/pages/Admin/AdminDashboard";
 import { UserManagement } from "@/pages/Admin/UserManagement";
 import { CreditLogs } from "@/pages/Admin/CreditLogs";
@@ -62,7 +62,8 @@ function App() {
             <Route path="/workspace" element={<Workspace />} />
             <Route path="/design-studio" element={<DesignStudio />} />
             <Route path="/create-design" element={<CreateDesign />} />
-          </Route>
+            <Route path="/billing" element={<Billing />} />{" "}
+            <Route path="/workspace/:projectId" element={<ProjectDetail />} />          </Route>
 
           {/* Admin routes - protected, requires admin role only */}
           <Route

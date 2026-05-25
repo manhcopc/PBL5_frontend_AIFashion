@@ -36,3 +36,14 @@ export interface GenerateDesignRequest {
   num_images: number;
   seed: number;
 }
+
+// src/features/analysis/analysis.types.ts
+
+// Kiểu dữ liệu thô từ API
+export interface DesignResultResponse {
+  _id: string;
+  request_id: string;
+  design_image_url: string[]; // Lưu ý đây là mảng
+  user_rating: number;
+  created_at: string;
+}

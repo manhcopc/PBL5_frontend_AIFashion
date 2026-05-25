@@ -70,6 +70,13 @@ export const AnalysisService = {
     return response.data;
   },
 
+  getTriggerStatus: async (reqId: string) => {
+    // Du lieu api chua hoan chinh
+    // const response = await apiClient.get(`/analysis_requests/request/${reqId}`);
+    const response = await apiClient.get(`/generated_designs/request/${reqId}`);
+    return response.data;
+  },
+
   getAnalysisResults: async (
     // Du lieu api chua hoan chinh
     reqId: string

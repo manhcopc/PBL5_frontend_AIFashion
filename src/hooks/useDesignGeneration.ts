@@ -42,6 +42,9 @@ export function useDesignGeneration() {
       const response = await analysisApi.getAnalysisStatus(requestId, attempt);
 
       if (response.status === "COMPLETED") {
+        console.log(
+          `project id: ${response.project_id}\nrequest id: ${response._id}\nai_job_id: ${response.ai_job_id} `
+        );
         // KIỂM TRA: Đã COMPLETED nhưng đã trả về mảng ảnh chưa?
         if (response.result_images && response.result_images.length > 0) {
           console.log(
@@ -131,6 +134,7 @@ export function useDesignGeneration() {
         if (!requestId)
           throw new Error("Không nhận được Request ID từ máy chủ.");
 
+        console.log(`Khởi tạo thành công, request ID: ${requestId}`);
         setCurrentRequestId(requestId);
 
         // 3. Thiết lập Polling

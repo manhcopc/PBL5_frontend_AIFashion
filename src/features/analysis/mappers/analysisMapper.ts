@@ -1,4 +1,7 @@
-import type { AnalysisRequestResponse } from "../analysis.types";
+import type {
+  AnalysisRequestResponse,
+  DesignResultResponse,
+} from "../analysis.types";
 
 /**
  * Design Result UI Type
@@ -6,6 +9,7 @@ import type { AnalysisRequestResponse } from "../analysis.types";
  */
 export interface DesignResult {
   id: string;
+  requestId: string;
   imageUrl: string;
   title: string;
   description?: string;
@@ -154,13 +158,13 @@ export function transformDesignResults(
   }
 
   // 3. Nếu lỡ truyền thẳng mảng {url, seed} vào
-  if (Array.isArray(responseOrDesigns)) {
-    return responseOrDesigns.map((item: any, index: number) => ({
-      id: item.id || (item.seed ? String(item.seed) : `design-${index}`),
-      imageUrl: item.imageUrl || item.url, // Hỗ trợ cả 2 chuẩn key
-      title: item.title || `Thiết kế ${index + 1}`,
-    }));
-  }
+  // if (Array.isArray(responseOrDesigns)) {
+  //   return responseOrDesigns.map((item: any, index: number) => ({
+  //     id: item.id || (item.seed ? String(item.seed) : `design-${index}`),
+  //     imageUrl: item.imageUrl || item.url, // Hỗ trợ cả 2 chuẩn key
+  //     title: item.title || `Thiết kế ${index + 1}`,
+  //   }));
+  // }
 
   // Nếu không rơi vào trường hợp nào, trả về mảng rỗng để không bị crash map()
   console.warn(
@@ -184,3 +188,15 @@ export function getStatusDisplayText(status: string): string {
   };
   return statusMap[status] || status;
 }
+
+// export const transformDesignResponse = (
+//   res: DesignResultResponse
+// ): DesignResult => {
+//   return {
+//     id: res._id,
+//     requestId: res.request_id,
+//     // Lấy ảnh đầu tiên làm ảnh chính, nếu mảng rỗng thì dùng placeholder
+//     rating: res.user_rating,
+//     date: new Date(res.created_at).toLocaleDateString("vi-VN"), // Format ngày tiếng Việt
+//   };
+// };

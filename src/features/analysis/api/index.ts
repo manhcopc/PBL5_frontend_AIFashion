@@ -39,18 +39,18 @@ export const analysisApi = {
 
   /**
    * Poll for analysis status with simulated progressive updates
-   * @param requestId - Analysis request ID to check status
+   * @param projectId - Analysis request ID to check status
    * @param attempt - Attempt number for status progression simulation
    * @returns Promise of updated AnalysisRequestResponse
    */
   getAnalysisStatus: async (
-    requestId: string,
+    projectId: string,
     attempt: number = 0
   ): Promise<AnalysisRequestResponse> => {
     if (USE_MOCK_DATA) {
-      return analysisMockService.getAnalysisStatus(requestId, attempt);
+      return analysisMockService.getAnalysisStatus(projectId, attempt);
     } else {
-      return AnalysisService.getAnalysisReq(requestId);
+      return AnalysisService.getAnalysisReq(projectId);
     }
   },
 
@@ -89,6 +89,19 @@ export const analysisApi = {
         seed: data.seed,
       });
     }
+  },
+
+  /**
+   * Get the status of a triggered generation
+   * @param requestId - Analysis request ID
+   * @returns Promise of generation status
+   */
+  getTriggerStatus: async (requestId: string): Promise<any> => {
+    // if (USE_MOCK_DATA) {
+    //   return analysisMockService.getTriggerStatus(requestId);
+    // } else {
+    return AnalysisService.getTriggerStatus(requestId);
+    // }
   },
 
   /**

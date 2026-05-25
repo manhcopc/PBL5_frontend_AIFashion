@@ -40,52 +40,67 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-64 bg-zinc-950 border-r border-zinc-900 h-screen flex flex-col justify-between hidden md:flex">
+    <aside className="w-64 bg-white border-r border-zinc-200 h-screen flex flex-col justify-between hidden md:flex shadow-sm">
       <div>
-        <div className="p-6 flex items-center gap-2">
-          <span className="bg-gradient-to-r from-purple-500 to-indigo-500 rounded-lg p-1.5 text-white">
+        {/* Logo Section */}
+        <div className="p-6 flex items-center gap-3">
+          <span className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-2 text-white shadow-md shadow-indigo-100">
             <svg
               width="20"
               height="20"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
               <path d="M12 2v20 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
             </svg>
           </span>
-          <h1 className="text-xl font-bold tracking-tight text-white">
+          <h1 className="text-xl font-extrabold tracking-tight text-zinc-900">
             StyleAI
           </h1>
         </div>
 
-        <nav className="px-4 space-y-1">
-          {navItems.map((item, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                navigate(item.path);
-                setActivePath(item.path);
-              }} // Điều hướng tới đường dẫn
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                activePath === item.path
-                  ? "bg-purple-600 text-white shadow-sm"
-                  : "text-zinc-400 hover:bg-zinc-900 hover:text-white"
-              }`}
-            >
-              {item.icon}
-              {item.label}
-            </button>
-          ))}
+        {/* Navigation */}
+        <nav className="px-4 space-y-1.5 mt-2">
+          {navItems.map((item, index) => {
+            const isActive = activePath === item.path;
+            return (
+              <button
+                key={index}
+                onClick={() => {
+                  navigate(item.path);
+                  setActivePath(item.path);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                  isActive
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
+                    : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
+                }`}
+              >
+                {/* Clone icon để tùy chỉnh màu nếu cần, hoặc giữ nguyên nếu icon đã có màu nội bộ */}
+                <span
+                  className={
+                    isActive
+                      ? "text-white"
+                      : "text-zinc-400 group-hover:text-zinc-900"
+                  }
+                >
+                  {item.icon}
+                </span>
+                {item.label}
+              </button>
+            );
+          })}
         </nav>
       </div>
 
-      <div className="p-4 border-t border-zinc-900">
+      {/* Footer Section */}
+      <div className="p-4 border-t border-zinc-100">
         <button
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-zinc-500 hover:bg-rose-50 hover:text-rose-600 transition-all duration-200"
           onClick={() => navigate("/login")}
         >
           <LogOut className="w-5 h-5" />

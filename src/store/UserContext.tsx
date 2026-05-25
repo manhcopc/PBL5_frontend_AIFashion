@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, } from 'react';
-import type {ReactNode} from 'react';
+import { createContext, useContext, useState } from "react";
+import type { ReactNode } from "react";
 
 interface UserContextType {
   credits: number;
@@ -35,7 +35,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 export function useUserStore() {
   const context = useContext(UserContext);
   if (context === undefined) {
-    throw new Error('useUserStore must be used within a UserProvider');
+    throw new Error("useUserStore must be used within a UserProvider");
   }
   return context;
 }

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import projectApi from "@/features/project/api";
 import { transformProjectsResponseToUI } from "@/features/project/mappers/projectMapper";
 import type { Project } from "@/types";
+import { useAuthStore } from "@/features/auth/state/use-auth-store";
 
 /**
  * Error State Interface
@@ -26,11 +27,12 @@ interface UseProjectsError {
  * @param autoFetch - Whether to automatically fetch projects on mount (default: true)
  * @returns Object with projects, loading state, error state, and action methods
  */
-export function useProjects(userId: string, autoFetch: boolean = true) {
+export function useProjects(autoFetch: boolean = true) {
   // State Management
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<UseProjectsError | null>(null);
+  const userId = useAuthStore((state) => state.userId);
 
   /**
    * Fetch and transform projects
@@ -42,6 +44,7 @@ export function useProjects(userId: string, autoFetch: boolean = true) {
 
     try {
       // Fetch raw API response
+      console.log(`Fetching projects for userId from useProjects: ${userId}`);
       const rawProjects = await projectApi.getUserProjects(userId);
       console.log("Raw projects fetched:", rawProjects);
       // Transform to UI format
