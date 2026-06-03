@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   Plus,
@@ -7,23 +7,26 @@ import {
   Clock,
   AlertCircle,
   Eye,
+  Image as ImageIcon,
+  XCircle,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-import { mockDesignRequests } from "../../constants/mockDesignRequests";
-import type { DesignRequest } from "../../types";
+import { useProjects } from "@/hooks/useProjects";
+import type { ProjectRequestSummary } from "@/features/project/project.types";
 
 type TabType = "requests" | "gallery";
 
 interface RequestCardProps {
-  request: DesignRequest & { design_image_url?: string[] };
+  request: ProjectRequestSummary;
   loadingMessage?: string;
 }
 
 // ==================== COMPLETED REQUEST CARD ====================
 function CompletedRequestCard({ request }: RequestCardProps) {
   const imageUrl =
-    request.design_image_url?.[0] ||
-    "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&auto=format&fit=crop&q=60";
+    request.result_thumbnail_url && request.result_thumbnail_url.length > 0
+      ? request.result_thumbnail_url[0]
+      : "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&auto=format&fit=crop&q=60";
 
   return (
     <div className="bg-white border border-zinc-200 rounded-2xl overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 flex flex-col h-full">
@@ -31,7 +34,7 @@ function CompletedRequestCard({ request }: RequestCardProps) {
       <div className="relative aspect-[3/4] bg-zinc-100 overflow-hidden">
         <img
           src={imageUrl}
-          alt={`${request.id}`}
+          alt={request.request_id}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-zinc-900/0 group-hover:bg-zinc-900/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 backdrop-blur-[1px]">
@@ -51,11 +54,11 @@ function CompletedRequestCard({ request }: RequestCardProps) {
       <div className="p-4 flex flex-col flex-1 gap-3">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="text-xs text-zinc-400 font-mono uppercase tracking-wider">
-              {request.id}
+            <p className="text-[10px] text-zinc-400 font-mono uppercase tracking-wider truncate max-w-[120px]">
+              ID: {request.request_id}
             </p>
             <p className="text-xs text-zinc-500 mt-0.5 font-medium">
-              {request.date}
+              {new Date(request.created_at).toLocaleDateString("vi-VN")}
             </p>
           </div>
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-full text-xs font-bold">
@@ -70,14 +73,14 @@ function CompletedRequestCard({ request }: RequestCardProps) {
               Category
             </span>
             <span className="text-zinc-900 font-medium">
-              {request.category}
+              {request.category_name}
             </span>
             <br />
             <span className="font-bold text-zinc-400 uppercase text-[10px] tracking-wider block mt-1.5 mb-0.5">
               Style
             </span>
             <span className="text-zinc-900 font-medium">
-              {request.targetStyle}
+              {request.style_name}
             </span>
           </p>
         </div>
@@ -88,10 +91,16 @@ function CompletedRequestCard({ request }: RequestCardProps) {
             <Eye className="w-3.5 h-3.5 text-zinc-500" />
             View
           </button>
-          <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-bold transition-all active:scale-95 border border-indigo-100">
+          <a
+            href={imageUrl}
+            download
+            target="_blank"
+            rel="noreferrer"
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-bold transition-all active:scale-95 border border-indigo-100"
+          >
             <Download className="w-3.5 h-3.5" />
             Export
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -119,11 +128,11 @@ function GeneratingRequestCard({ request, loadingMessage }: RequestCardProps) {
       <div className="p-4 flex flex-col flex-1 gap-3">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="text-xs text-zinc-400 font-mono uppercase tracking-wider">
-              {request.id}
+            <p className="text-[10px] text-zinc-400 font-mono uppercase tracking-wider truncate max-w-[120px]">
+              ID: {request.request_id}
             </p>
             <p className="text-xs text-zinc-500 mt-0.5 font-medium">
-              {request.date}
+              {new Date(request.created_at).toLocaleDateString("vi-VN")}
             </p>
           </div>
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-100 rounded-full text-xs font-bold">
@@ -138,14 +147,14 @@ function GeneratingRequestCard({ request, loadingMessage }: RequestCardProps) {
               Category
             </span>
             <span className="text-zinc-900 font-medium">
-              {request.category}
+              {request.category_name}
             </span>
             <br />
             <span className="font-bold text-zinc-400 uppercase text-[10px] tracking-wider block mt-1.5 mb-0.5">
               Style
             </span>
             <span className="text-zinc-900 font-medium">
-              {request.targetStyle}
+              {request.style_name}
             </span>
           </p>
         </div>
@@ -171,9 +180,7 @@ function PendingRequestCard({ request }: RequestCardProps) {
     <div className="bg-white border-2 border-dashed border-amber-200 rounded-2xl overflow-hidden flex flex-col h-full shadow-sm">
       {/* Waiting Area */}
       <div className="relative aspect-[3/4] bg-amber-50/30 flex flex-col items-center justify-center gap-4 border-b border-zinc-100">
-        <div className="relative">
-          <Clock className="w-10 h-10 text-amber-600 animate-pulse" />
-        </div>
+        <Clock className="w-10 h-10 text-amber-600 animate-pulse" />
         <div className="text-center px-4">
           <p className="text-amber-700 font-extrabold text-sm tracking-wider uppercase">
             ⏳ In Queue
@@ -188,11 +195,11 @@ function PendingRequestCard({ request }: RequestCardProps) {
       <div className="p-4 flex flex-col flex-1 gap-3">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="text-xs text-zinc-400 font-mono uppercase tracking-wider">
-              {request.id}
+            <p className="text-[10px] text-zinc-400 font-mono uppercase tracking-wider truncate max-w-[120px]">
+              ID: {request.request_id}
             </p>
             <p className="text-xs text-zinc-500 mt-0.5 font-medium">
-              {request.date}
+              {new Date(request.created_at).toLocaleDateString("vi-VN")}
             </p>
           </div>
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-100 rounded-full text-xs font-bold">
@@ -207,14 +214,14 @@ function PendingRequestCard({ request }: RequestCardProps) {
               Category
             </span>
             <span className="text-zinc-900 font-medium">
-              {request.category}
+              {request.category_name}
             </span>
             <br />
             <span className="font-bold text-zinc-400 uppercase text-[10px] tracking-wider block mt-1.5 mb-0.5">
               Style
             </span>
             <span className="text-zinc-900 font-medium">
-              {request.targetStyle}
+              {request.style_name}
             </span>
           </p>
         </div>
@@ -234,34 +241,153 @@ function PendingRequestCard({ request }: RequestCardProps) {
   );
 }
 
+// ==================== FAILED REQUEST CARD ====================
+function FailedRequestCard({ request }: RequestCardProps) {
+  return (
+    <div className="bg-white border border-rose-200 rounded-2xl overflow-hidden flex flex-col h-full shadow-sm">
+      {/* Error Area */}
+      <div className="relative aspect-[3/4] bg-rose-50/50 flex flex-col items-center justify-center gap-3 border-b border-rose-100">
+        <XCircle className="w-10 h-10 text-rose-500" />
+        <div className="text-center px-4">
+          <p className="text-rose-700 font-extrabold text-sm tracking-wider uppercase">
+            ❌ Generation Failed
+          </p>
+          <p className="text-rose-600/80 text-xs mt-1.5 font-medium px-4">
+            System timeout or invalid prompt guide.
+          </p>
+        </div>
+      </div>
+
+      {/* Card Content */}
+      <div className="p-4 flex flex-col flex-1 gap-3">
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <p className="text-[10px] text-zinc-400 font-mono uppercase tracking-wider truncate max-w-[120px]">
+              ID: {request.request_id}
+            </p>
+            <p className="text-xs text-zinc-500 mt-0.5 font-medium">
+              {new Date(request.created_at).toLocaleDateString("vi-VN")}
+            </p>
+          </div>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-rose-50 text-rose-700 border border-rose-100 rounded-full text-xs font-bold">
+            <span className="w-1.5 h-1.5 bg-rose-500 rounded-full" />
+            Failed
+          </span>
+        </div>
+
+        <div className="flex-1">
+          <p className="text-xs text-zinc-600 leading-relaxed">
+            <span className="font-bold text-zinc-400 uppercase text-[10px] tracking-wider block mb-0.5">
+              Category
+            </span>
+            <span className="text-zinc-900 font-medium">
+              {request.category_name}
+            </span>
+            <br />
+            <span className="font-bold text-zinc-400 uppercase text-[10px] tracking-wider block mt-1.5 mb-0.5">
+              Style
+            </span>
+            <span className="text-zinc-900 font-medium">
+              {request.style_name}
+            </span>
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-2 pt-3 border-t border-zinc-100">
+          <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-zinc-50 hover:bg-zinc-100 text-zinc-700 rounded-lg text-xs font-bold transition-all active:scale-95 border border-zinc-200">
+            Dismiss
+          </button>
+          <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition-all active:scale-95">
+            Retry
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ==================== REQUEST CARD ROUTER ====================
 function RequestCard({ request, loadingMessage }: RequestCardProps) {
   switch (request.status) {
-    case "Completed":
+    case "COMPLETED":
       return <CompletedRequestCard request={request} />;
-    case "Generating":
+    case "GENERATING_IMAGES":
       return (
         <GeneratingRequestCard
           request={request}
           loadingMessage={loadingMessage}
         />
       );
-    case "Pending":
+    case "PENDING":
       return <PendingRequestCard request={request} />;
+    case "FAILED":
+      return <FailedRequestCard request={request} />;
+    default:
+      return null;
   }
 }
 
 // ==================== MAIN COMPONENT ====================
 export default function ProjectDetail() {
-  const { projectId: _ } = useParams<{ projectId: string }>();
+  const { projectId } = useParams<{ projectId: string }>();
   const [activeTab, setActiveTab] = useState<TabType>("requests");
-  const [requests] =
-    useState<(DesignRequest & { design_image_url?: string[] })[]>(
-      mockDesignRequests
-    );
+  const {
+    detailSummary,
+    fetchProjectDetails,
+    projectDetails,
+    isLoading,
+    error,
+  } = useProjects();
+
+  useEffect(() => {
+    if (projectId) {
+      fetchProjectDetails(projectId);
+    }
+  }, [fetchProjectDetails, projectId]);
+
   const [loadingMessage] = useState(
     "Status: ANALYZING_AI - Scoring styles with PhoBERT..."
   );
+
+  // Lấy ra toàn bộ danh sách ảnh đã được tạo thành công để đổ vào tab Gallery thực tế
+  const galleryImages = (detailSummary || [])
+    .filter((req) => req.status === "COMPLETED" && req.result_thumbnail_url)
+    .flatMap((req) => req.result_thumbnail_url || []);
+
+  // KHÔI PHỤC LOGIC LOADING: Mang lại trải nghiệm UX mượt mà tránh giật lag layout dữ liệu cũ
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center gap-3">
+        <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
+        <p className="text-zinc-500 font-medium text-sm animate-pulse">
+          Loading project details...
+        </p>
+      </div>
+    );
+  }
+
+  // GIAO DIỆN KHI CÓ LỖI XẢY RA TỪ HOOK
+  if (error) {
+    return (
+      <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center gap-4 px-6 text-center">
+        <AlertCircle className="w-12 h-12 text-rose-500" />
+        <div>
+          <p className="text-xl font-bold text-zinc-900">
+            Failed to load project
+          </p>
+          <p className="text-sm text-zinc-500 mt-1 max-w-sm">{error.message}</p>
+        </div>
+        <Link
+          to="/workspace"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-md transition-all"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Workspace
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 font-sans">
@@ -279,10 +405,11 @@ export default function ProjectDetail() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="flex-1">
               <h1 className="text-4xl font-extrabold text-zinc-900 mb-2 tracking-tight">
-                Summer Collection 2026
+                {projectDetails?.project_name || "Project Details"}
               </h1>
               <p className="text-zinc-500 text-lg">
-                View and manage your design requests and assets
+                {projectDetails?.description ||
+                  "Manage your design requests and assets"}
               </p>
             </div>
 
@@ -306,7 +433,7 @@ export default function ProjectDetail() {
                 : "text-zinc-400 hover:text-zinc-600"
             }`}
           >
-            Request History
+            Request History ({(detailSummary || []).length})
             {activeTab === "requests" && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 rounded-t" />
             )}
@@ -320,7 +447,7 @@ export default function ProjectDetail() {
                 : "text-zinc-400 hover:text-zinc-600"
             }`}
           >
-            Asset Gallery
+            Asset Gallery ({galleryImages.length})
             {activeTab === "gallery" && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 rounded-t" />
             )}
@@ -329,30 +456,82 @@ export default function ProjectDetail() {
 
         {/* Request History Tab - Visual Grid Layout */}
         {activeTab === "requests" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {requests.map((request) => (
-              <RequestCard
-                key={request.id}
-                request={request}
-                loadingMessage={loadingMessage}
-              />
-            ))}
-          </div>
+          <>
+            {!detailSummary || detailSummary.length === 0 ? (
+              <div className="bg-white border border-zinc-200 rounded-2xl p-12 text-center shadow-sm">
+                <ImageIcon className="w-12 h-12 text-zinc-300 mx-auto mb-3" />
+                <p className="text-base font-bold text-zinc-700">
+                  No requests found
+                </p>
+                <p className="text-xs text-zinc-400 mt-1">
+                  Create your first design request to see history data.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {detailSummary.map((request) => (
+                  <RequestCard
+                    key={request.request_id}
+                    request={request}
+                    loadingMessage={loadingMessage}
+                  />
+                ))}
+              </div>
+            )}
+          </>
         )}
 
         {/* Asset Gallery Tab */}
         {activeTab === "gallery" && (
-          <div className="bg-white border-2 border-dashed border-zinc-200 rounded-3xl p-16 text-center shadow-sm">
-            <div className="max-w-md mx-auto">
-              <p className="text-xl font-bold text-zinc-900 mb-2">
-                Gallery Coming Soon
-              </p>
-              <p className="text-sm text-zinc-500 leading-relaxed">
-                Your generated design assets will automatically appear inside
-                this clean space.
-              </p>
-            </div>
-          </div>
+          <>
+            {galleryImages.length === 0 ? (
+              <div className="bg-white border-2 border-dashed border-zinc-200 rounded-3xl p-16 text-center shadow-sm">
+                <div className="max-w-md mx-auto">
+                  <ImageIcon className="w-12 h-12 text-zinc-300 mx-auto mb-3" />
+                  <p className="text-xl font-bold text-zinc-900 mb-2">
+                    Gallery is Empty
+                  </p>
+                  <p className="text-sm text-zinc-500 leading-relaxed">
+                    Once your design requests status becomes "Completed", their
+                    generated assets will automatically appear inside this
+                    space.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {galleryImages.map((url, index) => (
+                  <div
+                    key={index}
+                    className="relative aspect-square rounded-xl overflow-hidden group border border-zinc-200 shadow-sm bg-white"
+                  >
+                    <img
+                      src={url}
+                      alt={`Asset ${index}`}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2">
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="p-2 bg-white rounded-lg text-zinc-900 hover:bg-zinc-100 transition-colors"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </a>
+                      <a
+                        href={url}
+                        download
+                        className="p-2 bg-indigo-600 rounded-lg text-white hover:bg-indigo-700 transition-colors"
+                      >
+                        <Download className="w-4 h-4" />
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>

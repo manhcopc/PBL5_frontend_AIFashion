@@ -1,6 +1,10 @@
 // import type { User } from '../user.types';
 import apiClient from "../../../services/ApiClient";
-import type { ProjectRequest, ProjectResponse } from "../project.types";
+import type {
+  ProjectDetailsResponse,
+  ProjectRequest,
+  ProjectResponse,
+} from "../project.types";
 
 // const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -18,8 +22,10 @@ export const ProjectService = {
     return response.data;
   },
 
-  getProjectDetail: async (id: string): Promise<ProjectResponse> => {
-    const response = await apiClient.get(`/projects/${id}`);
+  getProjectDetail: async (id: string): Promise<ProjectDetailsResponse> => {
+    console.log(`[Service] Fetching project details for projectId: ${id}`); // Debug log
+    const response = await apiClient.get(`/projects/${id}/requests`);
+    console.log("[Service] API Response for getProjectDetail:", response); // Debug log
     return response.data;
   },
 

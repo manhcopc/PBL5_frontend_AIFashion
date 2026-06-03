@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import type { Project } from "../../types";
 import { Calendar, X } from "lucide-react";
+// import useProjects from "@/hooks/useProjects";
 
 interface CardProps {
   project: Project;
@@ -83,6 +84,7 @@ const ProductTypeModal: React.FC<ProductTypeModalProps> = ({
 // ==================== PROJECT CARD COMPONENT ====================
 export const Card: React.FC<CardProps> = ({ project, onTap }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // const { fetchProjectDetails } = useProjects();
 
   const handleSelectProductType = (type: string) => {
     console.log(`[Card] Project ID: ${project.id} | Selected Type: ${type}`);

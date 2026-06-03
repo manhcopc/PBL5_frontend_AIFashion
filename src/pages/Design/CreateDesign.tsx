@@ -9,7 +9,7 @@ import {
   seasonsList,
 } from "../../constants/trends";
 import { useUserStore } from "../../store/UserContext";
-import { transformToProxyUrl } from "../../utils/util";
+// import { transformToProxyUrl } from "../../utils/util";
 import { useState } from "react";
 import { GeneratedResultsModal } from "@/components/user/GeneratedResultsModal";
 
@@ -151,7 +151,8 @@ export default function CreateDesign() {
                     >
                       <div className="w-full h-full bg-zinc-100">
                         <img
-                          src={transformToProxyUrl(imageUrl)}
+                          // src={transformToProxyUrl(imageUrl)}
+                          src={imageUrl}
                           alt={`Thiết kế mẫu ${index + 1}`}
                           className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                           onError={(e) => {

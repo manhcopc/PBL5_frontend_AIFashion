@@ -89,6 +89,7 @@ export default function Workspace() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSuccess={fetchProjects}
+        // onSuccess={fetchProjectDetails}
         // onSuccess={handleProjectSuccess}
       />
     </div>

@@ -1,6 +1,6 @@
 import { ProjectService } from "./project.service";
 import { projectMockService } from "./project.mock";
-import type { ProjectResponse } from "../project.types";
+import type { ProjectDetailsResponse, ProjectResponse } from "../project.types";
 
 /**
  * Environment-based API Service Switcher
@@ -28,6 +28,16 @@ export const projectApi = {
     return USE_MOCK_DATA
       ? projectMockService.getUserProjects(userId, 10, 10)
       : ProjectService.listProjectByUser(userId);
+  },
+
+  getProjectDetail: async (
+    projectId: string
+  ): Promise<ProjectDetailsResponse> => {
+    return;
+    // USE_MOCK_DATA
+    //   ? projectMockService.getProjectById(projectId)
+    //   :
+    ProjectService.getProjectDetail(projectId);
   },
 
   /**

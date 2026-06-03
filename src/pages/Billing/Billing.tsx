@@ -1,24 +1,24 @@
 import { useState } from "react";
-import {
-  Zap,
-  Bell,
-  //   Settings,
-  //   LogOut,
-  //   Grid3x3,
-  //   BarChart3,
-  //   CreditCard,
-} from "lucide-react";
+// import {
+//   Zap,
+//   Bell,
+//   //   Settings,
+//   //   LogOut,
+//   //   Grid3x3,
+//   //   BarChart3,
+//   //   CreditCard,
+// } from "lucide-react";
 // import { useNavigate } from "react-router-dom";
 // import { Sidebar } from "../../components/user/Sidebar";
 import { BillingToggle } from "../../components/billing/BillingToggle";
 import { PricingCard } from "../../components/billing/PricingCard";
 import { billingPlans } from "../../constants/billingPlans";
-import { useUserStore } from "../../store/UserContext";
+// import { useUserStore } from "../../store/UserContext";
 import Header from "@/components/user/Header";
 
 export default function Billing() {
   //   const navigate = useNavigate();
-  const { credits } = useUserStore();
+  //   const { credits } = useUserStore();
   const [isAnnual, setIsAnnual] = useState(false);
 
   return (

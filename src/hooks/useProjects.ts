@@ -3,6 +3,11 @@ import projectApi from "@/features/project/api";
 import { transformProjectsResponseToUI } from "@/features/project/mappers/projectMapper";
 import type { Project } from "@/types";
 import { useAuthStore } from "@/features/auth/state/use-auth-store";
+import { ProjectService } from "@/features/project/api/project.service";
+import type {
+  ProjectDetailsResponse,
+  ProjectRequestSummary,
+} from "@/features/project/project.types";
 
 /**
  * Error State Interface
@@ -30,6 +35,11 @@ interface UseProjectsError {
 export function useProjects(autoFetch: boolean = true) {
   // State Management
   const [projects, setProjects] = useState<Project[]>([]);
+  const [projectDetails, setProjectDetails] =
+    useState<ProjectDetailsResponse | null>(null);
+  const [detailSummary, setDetailSummary] = useState<ProjectRequestSummary[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<UseProjectsError | null>(null);
   const userId = useAuthStore((state) => state.userId);
@@ -65,6 +75,65 @@ export function useProjects(autoFetch: boolean = true) {
       setIsLoading(false);
     }
   }, [userId]);
+
+  /**
+   * Fetch detailed project information by ID
+   * @param projectId - Project ID to fetch details for
+   * @returns Detailed Project object or null on error
+   */
+  const fetchProjectDetails = useCallback(async (projectId: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      console.log(`Fetching project details for projectId: ${projectId}`);
+      const rawProject = await ProjectService.getProjectDetail(projectId);
+      // Debug log: Nên in rawProject ra thay vì in projectDetails
+      console.log(
+        `Raw project details for projectId ${projectId}:`,
+        rawProject
+      );
+      // 1. Cập nhật vào state để lưu trữ lâu dài cho component sử dụng
+      setProjectDetails(rawProject);
+
+      // Debug log: Nên in rawProject ra thay vì in projectDetails
+      console.log(
+        `Raw project details for projectId ${projectId}:`,
+        rawProject
+      );
+
+      // 2. SỬA TẠI ĐÂY: Sử dụng trực tiếp rawProject để trích xuất requests một cách an toàn
+      if (rawProject && rawProject.requests) {
+        setDetailSummary(rawProject.requests);
+      } else {
+        setDetailSummary([]); // Đề phòng trường hợp API trả về không có requests
+      }
+
+      // Nếu giao diện (ProjectDetail.tsx) của bạn đang chờ hàm này return về dữ liệu:
+      return rawProject;
+      // const rawProject = await ProjectService.getProjectDetail(projectId);
+      // setProjectDetails(rawProject);
+      // console.log(
+      //   `Raw project details for projectId ${projectId}:`,
+      //   projectDetails
+      // );
+      // setDetailSummary(projectDetails.requests);
+      // const transformedProject = await import(
+      //   "@/features/project/mappers/projectMapper"
+      // ).then((m) => m.transformProjectResponseToUI(rawProject));
+      // return transformedProject;
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch project details";
+      setError({
+        message: errorMessage,
+        code: err instanceof Error ? "FETCH_DETAIL_ERROR" : "UNKNOWN_ERROR",
+      });
+      console.error("useProjects fetchProjectDetails error:", err);
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   /**
    * Create a new project
@@ -167,9 +236,12 @@ export function useProjects(autoFetch: boolean = true) {
   }, [userId, autoFetch, fetchProjects]);
 
   return {
+    projectDetails,
+    detailSummary,
     projects,
     isLoading,
     error,
+    fetchProjectDetails,
     fetchProjects,
     createProject,
     deleteProject,
