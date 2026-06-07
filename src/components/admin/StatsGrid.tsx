@@ -27,7 +27,7 @@ export const StatsGrid = ({ stats, isLoading }: StatsGridProps) => {
   const statCards = [
     {
       title: "Total Users",
-      value: stats.totalUsers.toLocaleString(),
+      value: stats.totalUsers.toString(),
       change: `+${stats.userGrowth}% this month`,
       icon: Users,
       color: "text-blue-400",

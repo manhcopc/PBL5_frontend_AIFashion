@@ -194,7 +194,9 @@ export function useGenerationFlow(
     season,
     audience,
     consumeCredits,
+    data,
     pollAnalysisStatus,
+    requestId,
   ]);
 
   const resetFlow = () => {

@@ -21,12 +21,15 @@ import type {
 
 // src/features/billing/api/billing.service.ts
 export const BillingService = {
-  getPlans: async (): Promise<BillingPlanResponse> => {
+  getPlans: async (): Promise<BillingPlanResponse[]> => {
     const response = await apiClient.get("/billing/plans");
     return response.data;
   },
 
-  getHistory: async (userId: string, limit: number = 10) => {
+  getHistory: async (
+    userId: string,
+    limit: number = 10
+  ): Promise<TransactionResponse[]> => {
     //api chua hoan chinh
     const response = await apiClient.get(
       `/billing/history?user_id=${userId}&limit=${limit}`
@@ -41,7 +44,10 @@ export const BillingService = {
     return response.data;
   },
 
-  getTransactionHistory: async (userId: string, limit: number = 10) => {
+  getTransactionHistory: async (
+    userId: string,
+    limit: number = 10
+  ): Promise<TransactionResponse[]> => {
     const response = await apiClient.get(
       `/credit_transactions/user/${userId}?limit=${limit}`
     );
@@ -50,6 +56,16 @@ export const BillingService = {
 
   getTransactionDetail: async (txId: string): Promise<TransactionResponse> => {
     const response = await apiClient.get(`/credit_transactions/user/${txId}`);
+    return response.data;
+  },
+
+  getUsersTransactions: async (
+    userId: string,
+    limit: number = 50
+  ): Promise<TransactionResponse[]> => {
+    const response = await apiClient.get(
+      `/credit_transactions/user/${userId}?limit=${limit}`
+    );
     return response.data;
   },
 };

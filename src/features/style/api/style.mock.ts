@@ -109,6 +109,7 @@ export const styleMockService = {
   getStylesByCategory: async (
     category: string
   ): Promise<StylePresetResponse[]> => {
+    void category;
     await new Promise((resolve) => setTimeout(resolve, 250));
     // Mock filtering by category - in real API would filter by backend
     return mockStylePresets;

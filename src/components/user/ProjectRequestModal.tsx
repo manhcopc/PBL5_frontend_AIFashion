@@ -54,7 +54,16 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
 
       onClose();
     }
-  }, [status, navigate, selectedProjectId, text, onSelect, onClose, designs]);
+  }, [
+    status,
+    navigate,
+    selectedProjectId,
+    text,
+    onSelect,
+    onClose,
+    designs,
+    currentRequestId,
+  ]);
 
   // 3. ĐẶT LỆNH RETURN SỚM Ở DƯỚI CÙNG CỦA KHU VỰC KHAI BÁO HOOKS
   if (!isOpen) return null;

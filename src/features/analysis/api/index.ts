@@ -3,6 +3,7 @@ import { analysisMockService } from "./analysis.mock";
 import type {
   AnalysisRequestResponse,
   GenerateDesignRequest,
+  TriggerStatusResponse,
 } from "../analysis.types";
 import type { DesignResult } from "../mappers/analysisMapper";
 
@@ -14,7 +15,7 @@ import type { DesignResult } from "../mappers/analysisMapper";
  * When VITE_USE_MOCK_DATA=false: Uses real API calls to backend
  */
 
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === "false";
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === "true";
 
 /**
  * Unified Analysis/Design Generation API Interface
@@ -96,12 +97,10 @@ export const analysisApi = {
    * @param requestId - Analysis request ID
    * @returns Promise of generation status
    */
-  getTriggerStatus: async (requestId: string): Promise<any> => {
-    // if (USE_MOCK_DATA) {
-    //   return analysisMockService.getTriggerStatus(requestId);
-    // } else {
+  getTriggerStatus: async (
+    requestId: string
+  ): Promise<TriggerStatusResponse[]> => {
     return AnalysisService.getTriggerStatus(requestId);
-    // }
   },
 
   /**

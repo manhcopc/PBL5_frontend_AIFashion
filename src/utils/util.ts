@@ -8,7 +8,7 @@ export const transformToProxyUrl = (originalUrl: string): string => {
 
     // urlObj.pathname sẽ lấy ra đúng đoạn "/outputs/design_83660633.png"
     return `/ngrok-proxy${urlObj.pathname}`;
-  } catch (error) {
+  } catch {
     // Nếu dữ liệu bị lỗi không phải là dạng link URL, trả về nguyên bản
     return originalUrl;
   }

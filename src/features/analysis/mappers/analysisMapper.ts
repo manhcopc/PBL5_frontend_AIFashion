@@ -1,7 +1,4 @@
-import type {
-  AnalysisRequestResponse,
-  DesignResultResponse,
-} from "../analysis.types";
+import type { AnalysisRequestResponse } from "../analysis.types";
 
 /**
  * Design Result UI Type
@@ -25,6 +22,18 @@ export interface TransformedAnalysisResult {
   designs: DesignResult[];
   createdAt: string;
   updatedAt: string;
+}
+
+interface GeneratedDesignPayload {
+  url: string;
+  seed?: number;
+}
+
+interface AnalysisResultPayload {
+  ai_callback_raw?: {
+    generated_designs?: GeneratedDesignPayload[];
+  };
+  result_images?: string[];
 }
 
 /**
@@ -125,7 +134,7 @@ export function transformDesignResult(design: DesignResult): DesignResult {
  * @returns Transformed designs with guaranteed imageUrl for all
  */
 export function transformDesignResults(
-  responseOrDesigns: AnalysisRequestResponse | any
+  responseOrDesigns: AnalysisResultPayload | null | undefined
 ): DesignResult[] {
   // 1. Nếu truyền thẳng toàn bộ response từ API (Cách an toàn và khuyên dùng nhất)
   if (
@@ -134,8 +143,9 @@ export function transformDesignResults(
   ) {
     const rawDesigns = responseOrDesigns.ai_callback_raw.generated_designs;
 
-    return rawDesigns.map((item: any, index: number) => ({
+    return rawDesigns.map((item, index) => ({
       id: item.seed ? String(item.seed) : `design-${index}`,
+      requestId: "generated",
       imageUrl: item.url,
       title: `Thiết kế mẫu ${index + 1}`,
       description: `Mã Seed: ${item.seed}`,
@@ -151,6 +161,7 @@ export function transformDesignResults(
     return responseOrDesigns.result_images.map(
       (url: string, index: number) => ({
         id: `res-img-${index}`,
+        requestId: "result-images",
         imageUrl: url,
         title: `Kết quả ${index + 1}`,
       })

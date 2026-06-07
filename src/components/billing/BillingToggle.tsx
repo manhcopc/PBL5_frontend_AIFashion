@@ -1,5 +1,3 @@
-import React from "react";
-
 interface BillingToggleProps {
   isAnnual: boolean;
   onToggle: (isAnnual: boolean) => void;

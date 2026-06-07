@@ -3,8 +3,9 @@ import type { AxiosInstance, InternalAxiosRequestConfig, AxiosError } from 'axio
 import { getToken, removeToken, isTokenExpired } from './auth';
 
 export const apiClient: AxiosInstance = axios.create({
-  // baseURL: process.env.NEXT_PUBLIC_API_URL,
-  baseURL: "https://pbl5-apiver1.onrender.com/api/v2",
+  baseURL:
+    import.meta.env.VITE_API_BASE_URL ||
+    "https://pbl5-apiver1.onrender.com/api/v2",
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -42,7 +43,7 @@ apiClient.interceptors.response.use(
       window.dispatchEvent(new CustomEvent('auth:unauthorized'));
       
       if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-        window.location.href = '/auth?tab=login';
+        window.location.href = '/login';
       }
     }
     

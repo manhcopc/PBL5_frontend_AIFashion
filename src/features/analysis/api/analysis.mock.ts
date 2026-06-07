@@ -16,6 +16,18 @@ export const mockAnalysisRequestResponse: AnalysisRequestResponse = {
   status: "COMPLETED",
   created_at: "2026-05-08T10:00:00Z",
   updated_at: "2026-05-08T10:03:00Z",
+  ai_job_id: "mock-job-001",
+  ai_callback_raw: {
+    job_id: "mock-job-001",
+    request_id: "analysis-001",
+    status: "COMPLETED",
+    created_at: "2026-05-08T10:00:00Z",
+    updated_at: "2026-05-08T10:03:00Z",
+    started_at: "2026-05-08T10:00:30Z",
+    finished_at: "2026-05-08T10:03:00Z",
+    generated_designs: [],
+    error: "",
+  },
 };
 
 /**
@@ -25,6 +37,7 @@ export const mockAnalysisRequestResponse: AnalysisRequestResponse = {
 export const mockDesignResults = [
   {
     id: "design-001",
+    requestId: "analysis-001",
     imageUrl:
       "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&auto=format&fit=crop&q=60",
     title: "Avant-Garde Summer Flow",
@@ -33,6 +46,7 @@ export const mockDesignResults = [
   },
   {
     id: "design-002",
+    requestId: "analysis-001",
     imageUrl:
       "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=800&auto=format&fit=crop&q=60",
     title: "Urban Chic Evening Wear",
@@ -41,6 +55,7 @@ export const mockDesignResults = [
   },
   {
     id: "design-003",
+    requestId: "analysis-001",
     imageUrl:
       "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&auto=format&fit=crop&q=60",
     title: "Minimalist Eco-friendly Dress",
@@ -49,6 +64,7 @@ export const mockDesignResults = [
   },
   {
     id: "design-004",
+    requestId: "analysis-001",
     imageUrl:
       "https://images.unsplash.com/photo-1595777707802-41cefc7e7f45?w=800&auto=format&fit=crop&q=60",
     title: "Cottagecore Dream Collection",
@@ -81,6 +97,18 @@ export const analysisMockService = {
       status: "PENDING",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
+      ai_job_id: "mock-job-pending",
+      ai_callback_raw: {
+        job_id: "mock-job-pending",
+        request_id: data.project_id,
+        status: "PENDING",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        started_at: "",
+        finished_at: "",
+        generated_designs: [],
+        error: "",
+      },
     };
   },
 
@@ -126,6 +154,7 @@ export const analysisMockService = {
     return mockDesignResults.map((design, index) => ({
       ...design,
       id: `${requestId}-design-${index}`,
+      requestId,
     }));
   },
 
@@ -138,6 +167,7 @@ export const analysisMockService = {
     requestId: string,
     data: GenerateDesignRequest
   ): Promise<AnalysisRequestResponse> => {
+    void data;
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 800));
 

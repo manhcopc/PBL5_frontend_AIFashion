@@ -1,101 +1,48 @@
 import { useState, useCallback, useEffect } from "react";
 import type {
-  BillingInfo,
-  CreditPackage,
-  PurchaseRequest,
-  PurchaseResponse,
-  BillingHistory,
+  BillingPlan,
+  CreateTransactionRequest,
+  Transaction,
 } from "../features/billing/billing.types";
 import { BillingAPI } from "../features/billing/api";
 import { BillingMapper } from "../features/billing/mappers/billingMapper";
+import { updateUserSubscription } from "@/features/user/api/user.service";
 
 interface UseBillingState {
-  billingInfo: BillingInfo | null;
-  packages: CreditPackage[];
-  history: BillingHistory[];
+  plans: BillingPlan[];
+  history: Transaction[];
   loading: boolean;
   error: string | null;
 }
 
 export const useBilling = () => {
   const [state, setState] = useState<UseBillingState>({
-    billingInfo: null,
-    packages: [],
+    plans: [],
     history: [],
     loading: false,
     error: null,
   });
 
-  // Fetch billing information
-  const fetchBillingInfo = useCallback(async (userId: string) => {
+  const fetchPlans = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
-      const response = await BillingAPI.getBillingInfo(userId);
-      const billingInfo = BillingMapper.mapBillingInfo(response);
-      setState((prev) => ({ ...prev, billingInfo, loading: false }));
+      const response = await BillingAPI.getPlans();
+      const plans = BillingMapper.mapPlansResponseToModels(response);
+      setState((prev) => ({ ...prev, plans, loading: false }));
     } catch (error) {
       setState((prev) => ({
         ...prev,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to fetch billing info",
+        error: error instanceof Error ? error.message : "Failed to fetch plans",
         loading: false,
       }));
     }
   }, []);
 
-  // Fetch available credit packages
-  const fetchPackages = useCallback(async () => {
-    setState((prev) => ({ ...prev, loading: true, error: null }));
-    try {
-      const response = await BillingAPI.getAvailablePackages();
-      const packages = response.map((pkg) =>
-        BillingMapper.mapCreditPackage(pkg)
-      );
-      setState((prev) => ({ ...prev, packages, loading: false }));
-    } catch (error) {
-      setState((prev) => ({
-        ...prev,
-        error:
-          error instanceof Error ? error.message : "Failed to fetch packages",
-        loading: false,
-      }));
-    }
-  }, []);
-
-  // Purchase credits
-  const purchaseCredits = useCallback(
-    async (request: PurchaseRequest) => {
-      setState((prev) => ({ ...prev, loading: true, error: null }));
-      try {
-        const response = await BillingAPI.purchaseCredits(request);
-        const purchase = BillingMapper.mapPurchaseResponse(response);
-
-        // Refresh billing info after purchase
-        if (request.userId) {
-          await fetchBillingInfo(request.userId);
-        }
-
-        return purchase;
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to purchase credits";
-        setState((prev) => ({ ...prev, error: errorMessage, loading: false }));
-        throw error;
-      }
-    },
-    [fetchBillingInfo]
-  );
-
-  // Fetch billing history
   const fetchHistory = useCallback(async (userId: string) => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
-      const response = await BillingAPI.getBillingHistory(userId);
-      const history = response.map((item) =>
-        BillingMapper.mapBillingHistory(item)
-      );
+      const response = await BillingAPI.getTransactionHistory(userId);
+      const history = BillingMapper.mapTransactionsResponseToModels(response);
       setState((prev) => ({ ...prev, history, loading: false }));
     } catch (error) {
       setState((prev) => ({
@@ -107,22 +54,70 @@ export const useBilling = () => {
     }
   }, []);
 
-  // Clear error
+  // this function is a placeholder for the actual subscription logic, which would typically involve calling an API endpoint to create a subscription for the user. For now, it simulates a successful subscription with a timeout.
+  // But it now uses user route to update the subscription
+  const submitSubscription = useCallback(
+    async (userId: string, credits: number) => {
+      setState((prev) => ({ ...prev, loading: true, error: null }));
+      try {
+        // Implement subscription logic here (e.g., call API to subscribe)
+        // For now, we'll just simulate a successful subscription
+        const response = await updateUserSubscription(userId, credits);
+        console.log("Subscription updated successfully:", response);
+        setState((prev) => ({ ...prev, loading: false }));
+      } catch (error) {
+        setState((prev) => ({
+          ...prev,
+          error:
+            error instanceof Error
+              ? error.message
+              : "Failed to subscribe to plan",
+          loading: false,
+        }));
+      }
+    },
+    []
+  );
+
+  const createTransaction = useCallback(
+    async (request: CreateTransactionRequest) => {
+      setState((prev) => ({ ...prev, loading: true, error: null }));
+      try {
+        const response = await BillingAPI.createTransaction(request);
+        const transaction =
+          BillingMapper.mapTransactionResponseToModel(response);
+        setState((prev) => ({
+          ...prev,
+          history: [transaction, ...prev.history],
+          loading: false,
+        }));
+        return transaction;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to create transaction";
+        setState((prev) => ({ ...prev, error: errorMessage, loading: false }));
+        throw error;
+      }
+    },
+    []
+  );
+
   const clearError = useCallback(() => {
     setState((prev) => ({ ...prev, error: null }));
   }, []);
 
-  // Initial fetch
   useEffect(() => {
-    fetchPackages();
-  }, [fetchPackages]);
+    void fetchPlans();
+  }, [fetchPlans]);
 
   return {
     ...state,
-    fetchBillingInfo,
-    fetchPackages,
+    fetchPlans,
     fetchHistory,
-    purchaseCredits,
+    submitSubscription,
+    createTransaction,
     clearError,
   };
 };

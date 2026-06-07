@@ -3,6 +3,7 @@ import type {
   AnalysisRequestResponse,
   CreateAnalysisRequest,
   GenerateDesignRequest,
+  TriggerStatusResponse,
 } from "../analysis.types";
 
 // Dịch vụ phân tích
@@ -70,7 +71,7 @@ export const AnalysisService = {
     return response.data;
   },
 
-  getTriggerStatus: async (reqId: string) => {
+  getTriggerStatus: async (reqId: string): Promise<TriggerStatusResponse[]> => {
     // Du lieu api chua hoan chinh
     // const response = await apiClient.get(`/analysis_requests/request/${reqId}`);
     const response = await apiClient.get(`/generated_designs/request/${reqId}`);
@@ -85,7 +86,7 @@ export const AnalysisService = {
     return response.data;
   },
 
-  handleAICallback: async (data) => {
+  handleAICallback: async (data: unknown) => {
     // Du lieu api chua hoan chinh
     const response = await apiClient.post(
       `/analysis_requests/callback/image-results`,

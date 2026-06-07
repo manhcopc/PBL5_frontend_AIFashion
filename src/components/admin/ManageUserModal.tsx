@@ -6,9 +6,9 @@ interface ManageUserModalProps {
   onClose: () => void;
   userName: string;
   currentCredits: number;
-  currentPlan: "Free" | "Pro" | "Enterprise";
+  // currentPlan: "Free" | "Pro" | "Enterprise";
   onTopUp: (amount: number) => Promise<boolean>;
-  onPlanChange: (newPlan: "Free" | "Pro" | "Enterprise") => Promise<boolean>;
+  // onPlanChange: (newPlan: "Free" | "Pro" | "Enterprise") => Promise<boolean>;
   isLoading?: boolean;
   error?: string | null;
 }
@@ -18,16 +18,16 @@ export const ManageUserModal = ({
   onClose,
   userName,
   currentCredits,
-  currentPlan,
+  // currentPlan,
   onTopUp,
-  onPlanChange,
+  // onPlanChange,
   isLoading,
   error,
 }: ManageUserModalProps) => {
   const [topUpAmount, setTopUpAmount] = useState("");
-  const [selectedPlan, setSelectedPlan] = useState<
-    "Free" | "Pro" | "Enterprise"
-  >(currentPlan);
+  // const [selectedPlan, setSelectedPlan] = useState<
+  //   "Free" | "Pro" | "Enterprise"
+  // >(currentPlan);
   const [activeTab, setActiveTab] = useState<"credits" | "plan">("credits");
   const [localError, setLocalError] = useState<string | null>(null);
 
@@ -45,17 +45,17 @@ export const ManageUserModal = ({
     }
   };
 
-  const handlePlanChange = async () => {
-    if (selectedPlan === currentPlan) {
-      setLocalError("Please select a different plan");
-      return;
-    }
-    setLocalError(null);
-    const success = await onPlanChange(selectedPlan);
-    if (success) {
-      onClose();
-    }
-  };
+  // const handlePlanChange = async () => {
+  //   if (selectedPlan === currentPlan) {
+  //     setLocalError("Please select a different plan");
+  //     return;
+  //   }
+  //   setLocalError(null);
+  //   const success = await onPlanChange(selectedPlan);
+  //   if (success) {
+  //     onClose();
+  //   }
+  // };
 
   if (!isOpen) return null;
 
@@ -161,21 +161,21 @@ export const ManageUserModal = ({
 
           {activeTab === "plan" && (
             <div className="space-y-4">
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-2">
                   Current Plan
                 </label>
                 <div className="p-3 bg-zinc-800/50 rounded-lg text-lg font-semibold text-amber-400">
                   {currentPlan}
                 </div>
-              </div>
+              </div> */}
 
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-3">
                   Select New Plan
                 </label>
                 <div className="space-y-2">
-                  {(["Free", "Pro", "Enterprise"] as const).map((plan) => (
+                  {/* {(["Free", "Pro", "Enterprise"] as const).map((plan) => (
                     <label
                       key={plan}
                       className="flex items-center p-3 border rounded-lg cursor-pointer transition-all"
@@ -208,13 +208,13 @@ export const ManageUserModal = ({
                         </span>
                       )}
                     </label>
-                  ))}
+                  ))} */}
                 </div>
               </div>
 
               <button
-                onClick={handlePlanChange}
-                disabled={isLoading || selectedPlan === currentPlan}
+                // onClick={handlePlanChange}
+                // disabled={isLoading || selectedPlan === currentPlan}
                 className="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
               >
                 {isLoading ? "Processing..." : "Confirm Change"}

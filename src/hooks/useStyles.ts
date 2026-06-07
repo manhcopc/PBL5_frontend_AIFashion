@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { styleApi } from '../features/style/api';
-import { transformStylesToUI, StyleUIFormat } from '../features/style/mappers/styleMapper';
-import { StylePresetResponse } from '../features/style/style.types';
+import { transformStylesToUI } from '../features/style/mappers/styleMapper';
+import type { StyleUIFormat } from '../features/style/mappers/styleMapper';
+import type { StylePresetResponse } from '../features/style/style.types';
 
 interface UseStylesState {
   styles: StyleUIFormat[];

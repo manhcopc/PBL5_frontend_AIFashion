@@ -1,4 +1,4 @@
-import { TrendInsightResponse } from '../trend.types';
+import type { TrendInsightResponse } from '../trend.types';
 
 /**
  * Trend UI Format

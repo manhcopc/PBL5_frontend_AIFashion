@@ -10,15 +10,23 @@ import {
 } from "../../constants/trends";
 import { useUserStore } from "../../store/UserContext";
 // import { transformToProxyUrl } from "../../utils/util";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GeneratedResultsModal } from "@/components/user/GeneratedResultsModal";
+
+type RouteDesignImage = string | { imageUrl?: string; url?: string };
+
+interface CreateDesignLocationState {
+  requestId?: string;
+  generatedImages?: RouteDesignImage[];
+}
 
 export default function CreateDesign() {
   const { credits } = useUserStore();
   const [showResults, setShowResults] = useState(false); // Thêm state quản lý modal
   const location = useLocation();
-  const requestId = location.state?.requestId;
-  const initialImages = location.state?.generatedImages || [];
+  const routeState = location.state as CreateDesignLocationState | null;
+  const requestId = routeState?.requestId ?? "";
+  const initialImages = routeState?.generatedImages ?? [];
   const {
     season,
     setSeason,
@@ -57,10 +65,17 @@ export default function CreateDesign() {
   const path4 = "/src/assets/product/hinh4.jpeg";
   const mockTrends = [path1, path2, path3, path4];
 
+  useEffect(() => {
+    if (isSuccess && designs.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setShowResults(true);
+    }
+  }, [designs.length, isSuccess]);
+
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 flex flex-col font-sans">
       <GeneratedResultsModal
-        isOpen={isSuccess && designs.length > 0}
+        isOpen={showResults && isSuccess && designs.length > 0}
         onClose={() => setShowResults(false)}
         onReset={() => {
           setShowResults(false);
@@ -132,9 +147,11 @@ export default function CreateDesign() {
               </div>
 
               <div className="flex gap-5 overflow-x-auto pb-4 hidden-scrollbar snap-x">
-                {displayDesigns.map((item, index) => {
+                {displayDesigns.map((item: RouteDesignImage, index: number) => {
                   const imageUrl =
-                    typeof item === "string" ? item : item.imageUrl || item.url;
+                    typeof item === "string"
+                      ? item
+                      : item.imageUrl || item.url || "";
                   const generatedId = `design-${index}`;
                   const isSelected = selectedTrend === imageUrl;
 

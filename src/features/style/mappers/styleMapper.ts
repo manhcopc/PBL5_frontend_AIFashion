@@ -1,4 +1,4 @@
-import { StylePresetResponse } from '../style.types';
+import type { StylePresetResponse } from '../style.types';
 
 /**
  * Style UI Format

@@ -1,4 +1,4 @@
-import type { DesignResponse } from "../design.types";
+import type { CreateDesignRequest, DesignResponse } from "../design.types";
 
 /**
  * Design Mock Service
@@ -41,7 +41,7 @@ export const designMockService = {
   /**
    * Create a new design (mock)
    */
-  createDesign: async (data): Promise<DesignResponse> => {
+  createDesign: async (data: CreateDesignRequest): Promise<DesignResponse> => {
     const newDesign: DesignResponse = {
       _id: `design_${Date.now()}`,
       request_id: data.request_id,

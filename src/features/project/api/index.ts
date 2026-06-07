@@ -33,11 +33,9 @@ export const projectApi = {
   getProjectDetail: async (
     projectId: string
   ): Promise<ProjectDetailsResponse> => {
-    return;
-    // USE_MOCK_DATA
-    //   ? projectMockService.getProjectById(projectId)
-    //   :
-    ProjectService.getProjectDetail(projectId);
+    return USE_MOCK_DATA
+      ? projectMockService.getProjectById(projectId)
+      : ProjectService.getProjectDetail(projectId);
   },
 
   /**

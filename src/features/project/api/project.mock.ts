@@ -1,4 +1,4 @@
-import type { ProjectResponse } from "../project.types";
+import type { ProjectDetailsResponse, ProjectResponse } from "../project.types";
 
 /**
  * Mock Projects Data Layer
@@ -53,7 +53,7 @@ export const projectMockService = {
    * @returns Promise of ProjectResponse array
    */
   getUserProjects: async (
-    userId: string,
+    _userId: string,
     page: number = 1,
     limit: number = 10
   ): Promise<ProjectResponse[]> => {
@@ -71,14 +71,20 @@ export const projectMockService = {
    * @param projectId - Project ID to fetch
    * @returns Promise of ProjectResponse
    */
-  getProjectById: async (projectId: string): Promise<ProjectResponse> => {
+  getProjectById: async (
+    projectId: string
+  ): Promise<ProjectDetailsResponse> => {
     await new Promise((resolve) => setTimeout(resolve, 300));
 
     const project = mockProjectsResponse.find((p) => p._id === projectId);
     if (!project) {
       throw new Error(`Project with ID ${projectId} not found`);
     }
-    return project;
+    return {
+      ...project,
+      total_requests: 0,
+      requests: [],
+    };
   },
 
   /**

@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 // import { Badge } from "../../components/ui/Badge";
 import { Card } from "../../components/user/Card";
-import { useCredits } from "../../hooks/useCredits";
+import { useUserStore } from "@/store/UserContext";
 import { Plus } from "lucide-react";
 import { CreateProjectModal } from "../../components/user/CreateProjectModal";
 // import type { Project } from "../../types";
@@ -12,13 +12,10 @@ import { useNavigate } from "react-router-dom";
 
 export default function Workspace() {
   const navigate = useNavigate();
-  const { credits } = useCredits(150);
+  const { credits } = useUserStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   // const [projects, setProjects] = useState<Project[]>(mockProjects);
   const { projects, fetchProjects } = useProjects();
-  useEffect(() => {
-    fetchProjects();
-  }, []);
 
   const onNewProjectClick = () => {
     // Check if the user has enough credits before opening the modal

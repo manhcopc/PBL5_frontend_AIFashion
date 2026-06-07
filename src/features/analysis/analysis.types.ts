@@ -47,3 +47,7 @@ export interface DesignResultResponse {
   user_rating: number;
   created_at: string;
 }
+
+export interface TriggerStatusResponse extends DesignResultResponse {
+  status: "PENDING" | "COMPLETED" | "FAILED" | "GENERATING_IMAGES";
+}

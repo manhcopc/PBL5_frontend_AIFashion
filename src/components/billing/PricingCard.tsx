@@ -1,19 +1,22 @@
-import React from "react";
 import { Check, Zap } from "lucide-react";
-import type { PricingPlan } from "../../constants/billingPlans";
+// import type { PricingPlan } from "../../constants/billingPlans";
+
+import type { BillingPlan } from "@/features/billing/billing.types";
 
 interface PricingCardProps {
-  plan: PricingPlan;
+  plan: BillingPlan;
   price: number;
-  isAnnual: boolean;
+  // isAnnual: boolean;
   isPopular?: boolean;
+  onTap?: () => void;
 }
 
 export function PricingCard({
   plan,
   price,
-  isAnnual,
+  // isAnnual,
   isPopular,
+  onTap,
 }: PricingCardProps) {
   return (
     <div
@@ -66,14 +69,8 @@ export function PricingCard({
                 ${price}
               </span>
               <span className="text-zinc-400 text-sm font-medium">
-                / {isAnnual ? "year" : "month"}
+                {/* / {isAnnual ? "year" : "month"} */}/ {"month"}
               </span>
-              {isAnnual && price > 0 && (
-                <p className="text-xs text-emerald-600 font-bold mt-2 bg-emerald-50 px-2.5 py-1 rounded-md w-fit border border-emerald-100">
-                  Save ${(plan.monthlyPrice * 12 - plan.annualPrice).toFixed(0)}
-                  /year
-                </p>
-              )}
             </div>
           )}
         </div>
@@ -82,7 +79,7 @@ export function PricingCard({
         <div className="mb-8 inline-flex items-center gap-2 px-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl w-fit">
           <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
           <span className="text-sm font-bold text-zinc-700">
-            {plan.credits} Credits/Month
+            {plan.creditsPerMonth} Credits/Month
           </span>
         </div>
 
@@ -93,8 +90,10 @@ export function PricingCard({
               ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-100"
               : "bg-white hover:bg-zinc-50 text-zinc-800 border border-zinc-200"
           }`}
+          onClick={onTap}
         >
-          {plan.buttonLabel}
+          {/* {plan.buttonLabel} */}
+          Subscription
         </button>
 
         {/* Features List */}
@@ -121,3 +120,14 @@ export function PricingCard({
     </div>
   );
 }
+
+// export interface BillingPlan {
+//   id: string;
+//   name: string;
+//   pricePerMonth: number;
+//   creditsPerMonth: number;
+//   description: string;
+//   isPopular: boolean;
+//   features: string[];
+//   createdAt: Date;
+// }

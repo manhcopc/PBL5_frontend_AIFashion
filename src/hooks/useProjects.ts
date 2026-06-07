@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import projectApi from "@/features/project/api";
-import { transformProjectsResponseToUI } from "@/features/project/mappers/projectMapper";
+import {
+  transformProjectResponseToUI,
+  transformProjectsResponseToUI,
+} from "@/features/project/mappers/projectMapper";
 import type { Project } from "@/types";
 import { useAuthStore } from "@/features/auth/state/use-auth-store";
-import { ProjectService } from "@/features/project/api/project.service";
 import type {
   ProjectDetailsResponse,
   ProjectRequestSummary,
@@ -53,6 +55,11 @@ export function useProjects(autoFetch: boolean = true) {
     setError(null);
 
     try {
+      if (!userId) {
+        setProjects([]);
+        return;
+      }
+
       // Fetch raw API response
       console.log(`Fetching projects for userId from useProjects: ${userId}`);
       const rawProjects = await projectApi.getUserProjects(userId);
@@ -86,41 +93,16 @@ export function useProjects(autoFetch: boolean = true) {
     setError(null);
     try {
       console.log(`Fetching project details for projectId: ${projectId}`);
-      const rawProject = await ProjectService.getProjectDetail(projectId);
-      // Debug log: Nên in rawProject ra thay vì in projectDetails
-      console.log(
-        `Raw project details for projectId ${projectId}:`,
-        rawProject
-      );
-      // 1. Cập nhật vào state để lưu trữ lâu dài cho component sử dụng
+      const rawProject = await projectApi.getProjectDetail(projectId);
       setProjectDetails(rawProject);
 
-      // Debug log: Nên in rawProject ra thay vì in projectDetails
-      console.log(
-        `Raw project details for projectId ${projectId}:`,
-        rawProject
-      );
-
-      // 2. SỬA TẠI ĐÂY: Sử dụng trực tiếp rawProject để trích xuất requests một cách an toàn
       if (rawProject && rawProject.requests) {
         setDetailSummary(rawProject.requests);
       } else {
-        setDetailSummary([]); // Đề phòng trường hợp API trả về không có requests
+        setDetailSummary([]);
       }
 
-      // Nếu giao diện (ProjectDetail.tsx) của bạn đang chờ hàm này return về dữ liệu:
       return rawProject;
-      // const rawProject = await ProjectService.getProjectDetail(projectId);
-      // setProjectDetails(rawProject);
-      // console.log(
-      //   `Raw project details for projectId ${projectId}:`,
-      //   projectDetails
-      // );
-      // setDetailSummary(projectDetails.requests);
-      // const transformedProject = await import(
-      //   "@/features/project/mappers/projectMapper"
-      // ).then((m) => m.transformProjectResponseToUI(rawProject));
-      // return transformedProject;
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to fetch project details";
@@ -149,16 +131,12 @@ export function useProjects(autoFetch: boolean = true) {
       setError(null);
 
       try {
+        if (!userId) {
+          throw new Error("User ID is required to create a project");
+        }
+
         const rawProject = await projectApi.createProject(projectData, userId);
-        const transformedProject = await (
-          await Promise.all(
-            [rawProject].map((p) =>
-              import("@/features/project/mappers/projectMapper").then((m) =>
-                m.transformProjectResponseToUI(p)
-              )
-            )
-          )
-        )[0];
+        const transformedProject = await transformProjectResponseToUI(rawProject);
 
         // Add new project to the beginning of the list
         setProjects((prevProjects) => [transformedProject, ...prevProjects]);

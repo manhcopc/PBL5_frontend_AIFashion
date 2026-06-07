@@ -1,13 +1,9 @@
 import { useState } from "react";
-import { Search, X } from "lucide-react";
+import { AlertCircle, Search, X } from "lucide-react";
 import { useCreditLogs } from "@/hooks/useCreditLogs";
 import { LogTable } from "@/components/admin/LogTable";
 import type { CreditLogType } from "@/features/admin/types/admin.types";
-import {
-  // mockAdminUsers,
-  // // mockAdminStats,
-  mockCreditLogs,
-} from "@/constants/mockAdmin";
+
 export const CreditLogs = () => {
   const {
     logs,
@@ -94,11 +90,12 @@ export const CreditLogs = () => {
         </div>
 
         {/* Error Alert */}
-        {/* {error && (
-          <div className="mb-6 p-4 bg-red-900/20 border border-red-700/50 rounded-lg">
+        {error && (
+          <div className="mb-6 p-4 bg-red-900/20 border border-red-700/50 rounded-lg flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
             <p className="text-sm text-red-300">{error}</p>
           </div>
-        )} */}
+        )}
 
         {/* Filters Section */}
         <div className="mb-6 p-6 bg-zinc-900 border border-zinc-800 rounded-lg">
@@ -156,8 +153,7 @@ export const CreditLogs = () => {
 
         {/* Logs Table */}
         <LogTable
-          // logs={logs}
-          logs={mockCreditLogs}
+          logs={logs}
           loading={loading}
           currentPage={paginationInfo.currentPage}
           totalPages={paginationInfo.totalPages}

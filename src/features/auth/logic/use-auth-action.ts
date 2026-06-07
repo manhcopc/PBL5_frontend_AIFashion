@@ -48,9 +48,7 @@ export function useAuthActions() {
       return true;
     } catch (err) {
       const errorMessage =
-        err instanceof Error
-          ? err.message
-          : err.response?.data?.message || "Login failed";
+        err instanceof Error ? err.message : "Login failed";
       setError(errorMessage);
       console.error("Login error from action:", err);
       return false;
@@ -87,9 +85,7 @@ export function useAuthActions() {
       return true;
     } catch (err) {
       const errorMessage =
-        err instanceof Error
-          ? err.message
-          : err.response?.data?.message || "Register failed";
+        err instanceof Error ? err.message : "Register failed";
       setError(errorMessage);
       console.error("Register error from action:", err);
       return false;

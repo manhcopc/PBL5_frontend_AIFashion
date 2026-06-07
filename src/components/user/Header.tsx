@@ -1,12 +1,12 @@
 import { Bell, Zap } from "lucide-react";
-import { useCredits } from "../../hooks/useCredits";
+import { useUserStore } from "@/store/UserContext";
 // import type { Project } from "../../types";
 // // import { handleNewProject } from "../../utils/projectActions";
 // import { useState } from "react";
 // import { mockProjects } from "../../constants/projects";
 
 export default function Header() {
-  const { credits } = useCredits(150);
+  const { credits } = useUserStore();
   //   const [projects, setProjects] = useState<Project[]>(mockProjects);
   //   const handleProjectSuccess = (newProject: Project) => {
   //     // Consume credits when project is successfully created

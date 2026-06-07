@@ -46,6 +46,7 @@ export const getUserId = (): string | null => {
 export const removeToken = (): void => {
   if (typeof window === "undefined") return;
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem("userId");
 };
 
 /**

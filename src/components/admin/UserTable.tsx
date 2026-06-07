@@ -1,12 +1,12 @@
 import { ChevronUp, Trash2, Settings } from "lucide-react";
-import { getPlanColor, formatCredits } from "@/mappers/adminMapper";
+import { formatCredits } from "@/mappers/adminMapper";
 import type { AdminUser } from "@/features/admin/types/admin.types";
 
 interface UserTableProps {
   users: AdminUser[];
   isLoading: boolean;
   onManage: (user: AdminUser) => void;
-  onDelete: (userId: string, userName: string) => void;
+  onDelete: (userId: string, username: string) => void;
 }
 
 export const UserTable = ({
@@ -32,18 +32,18 @@ export const UserTable = ({
               <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
                 User
               </th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
+              {/* <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
                 Plan
-              </th>
+              </th> */}
               <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
                 Credits
               </th>
               <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
                 Join Date
               </th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
+              {/* <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
                 Status
-              </th>
+              </th> */}
               <th className="px-6 py-4 text-right text-sm font-semibold text-zinc-300">
                 Actions
               </th>
@@ -52,17 +52,17 @@ export const UserTable = ({
           <tbody>
             {users.map((user) => (
               <tr
-                key={user.id}
+                key={user._id}
                 className="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors"
               >
                 {/* User */}
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <img
+                    {/* <img
                       src={user.avatar}
                       alt={user.username}
                       className="w-8 h-8 rounded-full"
-                    />
+                    /> */}
                     <div>
                       <p className="text-sm font-medium text-white">
                         {user.username}
@@ -73,7 +73,7 @@ export const UserTable = ({
                 </td>
 
                 {/* Plan */}
-                <td className="px-6 py-4">
+                {/* <td className="px-6 py-4">
                   <span
                     className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getPlanColor(
                       user.plan
@@ -81,25 +81,25 @@ export const UserTable = ({
                   >
                     {user.plan}
                   </span>
-                </td>
+                </td> */}
 
                 {/* Credits */}
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
                     <ChevronUp className="w-4 h-4 text-purple-400" />
                     <span className="text-sm font-semibold text-white">
-                      {formatCredits(user.creditsRemaining)}
+                      {formatCredits(user.available_credits)}
                     </span>
                   </div>
                 </td>
 
                 {/* Join Date */}
                 <td className="px-6 py-4 text-sm text-zinc-400">
-                  {user.joinDate}
+                  {user.created_at}
                 </td>
 
                 {/* Status */}
-                <td className="px-6 py-4">
+                {/* <td className="px-6 py-4">
                   <div
                     className={`inline-flex items-center px-2.5 py-1.5 rounded-full text-xs font-medium ${
                       user.isActive
@@ -114,7 +114,7 @@ export const UserTable = ({
                     />
                     {user.isActive ? "Active" : "Inactive"}
                   </div>
-                </td>
+                </td> */}
 
                 {/* Actions */}
                 <td className="px-6 py-4 text-right">
@@ -128,7 +128,7 @@ export const UserTable = ({
                       <Settings className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => onDelete(user.id, user.username)}
+                      onClick={() => onDelete(user._id, user.username)}
                       disabled={isLoading}
                       className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       title="Delete user"

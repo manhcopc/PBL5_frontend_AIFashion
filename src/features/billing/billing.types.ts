@@ -28,7 +28,7 @@ export interface Transaction {
   userId: string;
   type: "TOP_UP" | "USAGE";
   amount: number;
-  relatedRequestId: string;
+  relatedRequestId?: string;
   createdAt: Date;
 }
 
