@@ -1,10 +1,16 @@
 export interface AdminUser {
-  _id: string;
+  _id?: string;
+  id?: string;
   email: string;
   username: string;
-  available_credits: number;
-  created_at: string;
-  role: "User" | "Admin";
+  available_credits?: number;
+  created_at?: string;
+  role?: "User" | "Admin";
+  plan?: "Free" | "Pro" | "Enterprise";
+  creditsRemaining?: number;
+  joinDate?: string;
+  avatar?: string;
+  isActive?: boolean;
 }
 
 export interface AdminStats {
@@ -49,6 +55,7 @@ export interface CreditLog {
   userEmail: string;
   status: CreditLogStatus;
   timestamp: string;
+  description?: string;
 }
 
 // Response body

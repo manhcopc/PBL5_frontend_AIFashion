@@ -1,5 +1,7 @@
 import apiClient from "../../../services/ApiClient";
 import type {
+  AnalysisListItemResponse,
+  AnalysisRequestDetailResponse,
   AnalysisRequestResponse,
   CreateAnalysisRequest,
   GenerateDesignRequest,
@@ -19,7 +21,7 @@ export const AnalysisService = {
   // Lấy danh sách yêu cầu phân tích theo dự án
   getListAnalysisByProject: async (
     projectId: string
-  ): Promise<AnalysisRequestResponse[]> => {
+  ): Promise<AnalysisListItemResponse[]> => {
     const response = await apiClient.get(
       `/analysis_requests/project/${projectId}`
     );
@@ -92,6 +94,13 @@ export const AnalysisService = {
       `/analysis_requests/callback/image-results`,
       data
     );
+    return response.data;
+  },
+  // Lấy thông tin chi tiết và trạng thái hiện tại của một phiên phân tích. GET /api/v2/analysis_requests/{req_id}
+  getAnalysisRequest: async (
+    req_id: string
+  ): Promise<AnalysisRequestDetailResponse> => {
+    const response = await apiClient.get(`/analysis_requests/${req_id}`);
     return response.data;
   },
 };

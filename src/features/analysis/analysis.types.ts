@@ -3,13 +3,23 @@ export interface CreateAnalysisRequest {
   category_name: string;
 }
 
-export interface AnalysisRequestResponse extends CreateAnalysisRequest {
+export type AnalysisRequestStatus =
+  | "PENDING"
+  | "PROCESSING"
+  | "COMPLETED"
+  | "FAILED"
+  | "GENERATING_IMAGES";
+
+export interface AnalysisListItemResponse extends CreateAnalysisRequest {
   _id: string;
   project_id: string;
   category_name: string;
-  status: "PENDING" | "COMPLETED" | "FAILED" | "GENERATING_IMAGES";
+  status: AnalysisRequestStatus;
   created_at: string;
   updated_at: string;
+}
+
+export interface AnalysisRequestResponse extends AnalysisListItemResponse {
   ai_job_id: string;
   ai_callback_raw: {
     job_id: string;
@@ -26,6 +36,14 @@ export interface AnalysisRequestResponse extends CreateAnalysisRequest {
     error: string;
   };
   result_images?: string[];
+}
+
+export interface AnalysisRequestDetailResponse
+  extends AnalysisListItemResponse {
+  base_img_url?: string;
+  ai_job_id?: string;
+  result_images?: string[];
+  ai_callback_raw?: AnalysisRequestResponse["ai_callback_raw"];
 }
 
 export interface GenerateDesignRequest {
@@ -49,5 +67,12 @@ export interface DesignResultResponse {
 }
 
 export interface TriggerStatusResponse extends DesignResultResponse {
-  status: "PENDING" | "COMPLETED" | "FAILED" | "GENERATING_IMAGES";
+  status: AnalysisRequestStatus;
+}
+
+export interface JobCreateResponse {
+  jobId: string;
+  requestId: string;
+  status: string;
+  startedAt?: string;
 }

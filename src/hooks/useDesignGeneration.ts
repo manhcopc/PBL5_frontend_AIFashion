@@ -1,223 +1,145 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useCallback, useState } from "react";
 import analysisApi from "@/features/analysis/api";
-import { transformDesignResults } from "@/features/analysis/mappers/analysisMapper";
+import { useJobStore } from "@/store/useJobStore";
+import type { JobStatus } from "@/types/job";
+import { normalizeJobStatus } from "@/utils/jobStatus";
 
-/**
- * Generation State Type
- */
 export type GenerationState =
   | "PENDING"
-  | "COMPLETED"
-  | "FAILED"
-  | "GENERATING_IMAGES"
   | "ERROR"
   | "SUCCESS"
   | "LOADING";
 
-/**
- * Hook: useDesignGeneration
- *
- * Manages async design generation with polling
- * Handles state transitions: IDLE → LOADING → SUCCESS/ERROR
- * Supports polling for long-running AI generation tasks
- */
+interface AnalysisPayload {
+  project_id: string;
+  category_name: string;
+}
+
 export function useDesignGeneration() {
+  const addJob = useJobStore((state) => state.addJob);
+  const removeJob = useJobStore((state) => state.removeJob);
+  const jobs = useJobStore((state) => state.jobs);
   const [status, setStatus] = useState<GenerationState>("PENDING");
+  const [jobStatus, setJobStatus] = useState<JobStatus>("queued");
   const [designs, setDesigns] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [currentRequestId, setCurrentRequestId] = useState<string | null>(null);
+  const [jobStartedAt, setJobStartedAt] = useState<string | null>(null);
+  const [lastPayload, setLastPayload] = useState<AnalysisPayload | null>(null);
 
-  // Polling control
-  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const pollAttemptRef = useRef(0);
-
-  /**
-   * Poll for generation status
-   */
-  const pollGenerationStatus = useCallback(async (requestId: string) => {
-    try {
-      const attempt = pollAttemptRef.current;
-
-      // Chỉ gọi API 1 LẦN DUY NHẤT trong mỗi nhịp polling
-      const response = await analysisApi.getAnalysisStatus(requestId, attempt);
-
-      if (response.status === "COMPLETED") {
-        console.log(
-          `project id: ${response.project_id}\nrequest id: ${response._id}\nai_job_id: ${response.ai_job_id} `
-        );
-        // KIỂM TRA: Đã COMPLETED nhưng đã trả về mảng ảnh chưa?
-        if (response.result_images && response.result_images.length > 0) {
-          console.log(
-            "API response contains result_images:",
-            response.result_images
-          );
-
-          // Format dữ liệu
-          const transformed = transformDesignResults(response);
-
-          // Cập nhật State
-          setDesigns(transformed.map((d) => d.imageUrl)); // Lấy URL để hiển thị
-          setStatus("SUCCESS");
-          setError(null);
-
-          // ✅ ĐÃ CÓ ẢNH: Dừng vòng lặp polling
-          if (pollIntervalRef.current) {
-            clearInterval(pollIntervalRef.current);
-            pollIntervalRef.current = null;
-          }
-        } else {
-          // ⏳ BÁO COMPLETED NHƯNG CHƯA CÓ ẢNH:
-          // Chỉ log ra cảnh báo và KHÔNG clear interval.
-          // Vòng lặp sẽ tự động chạy lại vào 1 giây sau để check tiếp.
-          console.warn(
-            "Status là COMPLETED nhưng chưa có ảnh, tiếp tục chờ..."
-          );
-        }
-      } else if (response.status === "FAILED") {
-        setStatus("ERROR");
-        setError("Quá trình tạo thiết kế thất bại từ máy chủ.");
-
-        // ❌ LỖI TỪ SERVER: Dừng vòng lặp polling
-        if (pollIntervalRef.current) {
-          clearInterval(pollIntervalRef.current);
-          pollIntervalRef.current = null;
-        }
-      }
-
-      // Tăng biến đếm số lần gọi (nếu bạn có dùng limit)
-      pollAttemptRef.current += 1;
-    } catch (err) {
-      const errorMsg =
-        err instanceof Error
-          ? err.message
-          : "Failed to check generation status";
-      setError(errorMsg);
-      setStatus("ERROR");
-
-      // ❌ LỖI MẠNG / CRASH: Dừng vòng lặp polling
-      if (pollIntervalRef.current) {
-        clearInterval(pollIntervalRef.current);
-        pollIntervalRef.current = null;
-      }
-    }
-  }, []);
-
-  /**
-   * Start design generation
-   */
-  const generateDesigns = useCallback(
-    async (analysisData?: { project_id: string; category_name: string }) => {
-      // 1. Dọn dẹp polling cũ nếu đang chạy để tránh xung đột
-      if (pollIntervalRef.current) {
-        clearInterval(pollIntervalRef.current);
-        pollIntervalRef.current = null;
-      }
-
-      setStatus("LOADING"); // Thống nhất trạng thái đang xử lý
-      setError(null);
-      setDesigns([]);
-      pollAttemptRef.current = 0;
-
-      try {
-        // 2. Chuẩn bị payload (Sử dụng dữ liệu mặc định nếu không có analysisData)
-        const payload = analysisData || {
-          project_id: "default-project",
-          category_name: "Dresses",
-        };
-
-        const analysisRequest = await analysisApi.createAnalysisRequest(
-          payload
-        );
-
-        const requestId = analysisRequest._id;
-
-        if (!requestId)
-          throw new Error("Không nhận được Request ID từ máy chủ.");
-
-        console.log(`Khởi tạo thành công, request ID: ${requestId}`);
-        setCurrentRequestId(requestId);
-
-        // 3. Thiết lập Polling
-        pollIntervalRef.current = setInterval(() => {
-          // Sử dụng void để tránh cảnh báo floating promise của linter
-          void pollGenerationStatus(requestId);
-        }, 1000);
-
-        // Gọi poll lần đầu ngay lập tức để giảm thời gian chờ của người dùng
-        await pollGenerationStatus(requestId);
-      } catch (err) {
-        const errorMsg =
-          err instanceof Error ? err.message : "Khởi tạo thiết kế thất bại";
-        setError(errorMsg);
-        setStatus("ERROR");
-
-        // Đảm bảo dừng polling nếu bước khởi tạo lỗi
-        if (pollIntervalRef.current) {
-          clearInterval(pollIntervalRef.current);
-        }
-      }
-    },
-    [pollGenerationStatus]
+  const currentJob = jobs.find(
+    (job) => job.type === "trend_analysis" && job.requestId === currentRequestId
   );
 
-  /**
-   * Reset generation state
-   */
-  const resetStudio = useCallback(() => {
-    if (pollIntervalRef.current) {
-      clearInterval(pollIntervalRef.current);
-      pollIntervalRef.current = null;
-    }
-    pollAttemptRef.current = 0;
+  const derivedJobStatus = currentJob?.status || jobStatus;
+  const derivedStatus: GenerationState = currentJob
+    ? currentJob.status === "queued" || currentJob.status === "processing"
+      ? "LOADING"
+      : currentJob.status === "completed"
+        ? "SUCCESS"
+        : "ERROR"
+    : status;
+  const derivedDesigns =
+    currentJob?.status === "completed" ? currentJob.resultImages || [] : designs;
+  const derivedError =
+    currentJob?.status === "failed" || currentJob?.status === "timeout"
+      ? currentJob.error ||
+        (currentJob.status === "timeout"
+          ? "Trend analysis timed out. Please retry later."
+          : "Trend analysis failed. Please retry.")
+      : error;
+  const derivedStartedAt = currentJob?.startedAt || currentJob?.createdAt || jobStartedAt;
 
+  const generateDesigns = useCallback(
+    async (analysisData?: AnalysisPayload) => {
+      const payload = analysisData || {
+        project_id: "default-project",
+        category_name: "Dresses",
+      };
+
+      setStatus("LOADING");
+      setJobStatus("queued");
+      setError(null);
+      setDesigns([]);
+      setLastPayload(payload);
+
+      try {
+        const job = await analysisApi.createTrendAnalysisJob(payload);
+        const requestId = job.requestId || job.jobId;
+
+        if (!requestId) {
+          throw new Error("Backend did not return a requestId/jobId.");
+        }
+
+        setCurrentRequestId(requestId);
+        setJobStartedAt(job.startedAt || new Date().toISOString());
+
+        addJob({
+          jobId: job.jobId || requestId,
+          requestId,
+          type: "trend_analysis",
+          status: normalizeJobStatus(job.status),
+          title: `Trend analysis: ${payload.category_name}`,
+          projectId: payload.project_id,
+          createdAt: new Date().toISOString(),
+          startedAt: job.startedAt || new Date().toISOString(),
+        });
+      } catch (err) {
+        const errorMsg =
+          err instanceof Error ? err.message : "Failed to create analysis job.";
+        setError(errorMsg);
+        setStatus("ERROR");
+        setJobStatus("failed");
+      }
+    },
+    [addJob]
+  );
+
+  const retry = useCallback(async () => {
+    await generateDesigns(lastPayload || undefined);
+  }, [generateDesigns, lastPayload]);
+
+  const resetStudio = useCallback(() => {
     setStatus("PENDING");
+    setJobStatus("queued");
     setDesigns([]);
     setError(null);
     setCurrentRequestId(null);
+    setJobStartedAt(null);
   }, []);
 
-  /**
-   * Cancel ongoing generation
-   */
   const cancelGeneration = useCallback(async () => {
-    if (pollIntervalRef.current) {
-      clearInterval(pollIntervalRef.current);
-      pollIntervalRef.current = null;
+    if (currentJob) {
+      removeJob(currentJob.jobId);
     }
 
     if (currentRequestId) {
       try {
         await analysisApi.deleteAnalysisRequest(currentRequestId);
       } catch (err) {
-        console.error("Failed to cancel generation:", err);
+        console.error("Failed to cancel analysis:", err);
       }
     }
 
     resetStudio();
-  }, [currentRequestId, resetStudio]);
+  }, [currentJob, currentRequestId, removeJob, resetStudio]);
 
-  /**
-   * Clear error state
-   */
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (pollIntervalRef.current) {
-        clearInterval(pollIntervalRef.current);
-      }
-    };
-  }, []);
-
   return {
-    status,
-    designs,
-    error,
+    status: derivedStatus,
+    jobStatus: derivedJobStatus,
+    jobStartedAt: derivedStartedAt,
+    elapsedMs: 0,
+    isPolling:
+      currentJob?.status === "queued" || currentJob?.status === "processing",
+    designs: derivedDesigns,
+    error: derivedError,
     currentRequestId,
     generateDesigns,
+    retry,
     resetStudio,
     cancelGeneration,
     clearError,

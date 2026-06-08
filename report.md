@@ -1,3 +1,245 @@
+# Development Report: Global Job Watcher & Polling Flow Refactor
+
+## 1. Overview
+Updated the frontend polling mechanism for the two long-running AI workflows and moved active job tracking to a global background watcher:
+
+* **Trend analysis:** user submits a project/category request, backend creates an analysis job, frontend polls until the trend/result data is ready.
+* **Image generation:** user submits generation settings, backend creates a generation job, frontend polls until generated images are ready.
+
+The goal was to avoid long blocking API waits, standardize task statuses, prevent duplicated polling intervals, keep watching jobs after users close modals or change routes, and make the UI handle `completed`, `failed`, and timeout states more clearly.
+
+## 2. New Shared Job Model
+
+Added a shared job status model:
+
+```ts
+type JobType = "trend_analysis" | "image_generation";
+type JobStatus = "queued" | "processing" | "completed" | "failed" | "timeout";
+```
+
+### New files
+
+* `src/types/job.ts`
+  * Defines `JobType`, `JobStatus`, `TrackedJob`, and notification payload types.
+* `src/utils/jobStatus.ts`
+  * Maps backend statuses such as `PENDING`, `PROCESSING`, `GENERATING_IMAGES`, `COMPLETED`, `FAILED`, `ERROR`, `TIMEOUT` into the normalized `JobStatus`.
+* `src/hooks/usePollingJobStatus.ts`
+  * Reusable local polling hook retained for isolated use cases.
+* `src/store/useJobStore.ts`
+  * Zustand store persisted under `active_jobs`, storing active jobs and job notifications.
+* `src/components/jobs/GlobalJobWatcher.tsx`
+  * App-level background watcher that polls active jobs independently from modal/page lifecycle.
+
+## 3. Global Job Watcher
+
+`GlobalJobWatcher` is mounted inside `UserLayout`, so it stays alive while users navigate between protected user pages.
+
+Behavior:
+
+* Reads running jobs from `useJobStore`.
+* Polls all `queued` and `processing` jobs every `3000ms`.
+* Avoids duplicate in-flight requests for the same `jobId`.
+* Continues polling after modal/page unmount.
+* Updates job status, result images, errors, and completion time in global store.
+* Creates global notifications for `completed`, `failed`, and `timeout`.
+* Shows toast-style notifications with a `Xem kết quả` action when `projectId` is available.
+* Stops jobs after `120000ms` timeout.
+
+`Header` now shows:
+
+* Running task badge, for example `2 tasks running`.
+* Notification bell count for unread job notifications.
+
+## 4. Polling Hook Behavior
+
+`usePollingJobStatus` supports:
+
+* No polling when `jobId` is missing.
+* No duplicated intervals.
+* Sequential polling using `setTimeout`, avoiding overlapping API calls.
+* Automatic cleanup on unmount.
+* Stop polling on `completed`, `failed`, or `timeout`.
+* Temporary network error handling with retry count.
+* Safe handling when API returns `null`, `undefined`, empty arrays, or missing status fields.
+
+Default behavior:
+
+* `intervalMs`: `3000`
+* `timeoutMs`: `120000`
+* `maxNetworkErrors`: `3`
+
+## 5. Trend Analysis Flow
+
+Updated `src/hooks/useDesignGeneration.ts`.
+
+New flow:
+
+```txt
+User submits trend analysis request
+→ frontend calls createTrendAnalysisJob
+→ backend returns requestId/jobId + initial status
+→ frontend stores job in global useJobStore
+→ GlobalJobWatcher polls fetchTrendAnalysisStatus
+→ queued/processing: keep polling
+→ completed: stop polling, store result images/report, show notification
+→ failed: stop polling, show error notification + Retry in local UI if still open
+→ timeout: stop polling, show timeout notification
+```
+
+Updated `src/components/user/ProjectRequestModal.tsx`:
+
+* Shows a non-crashing status card while analysis is running.
+* Shows normalized status label.
+* Shows start time if available.
+* Shows clear error state.
+* Adds `Retry analysis` button.
+
+## 6. Image Generation Flow
+
+Updated `src/hooks/useGenerationFlow.ts`.
+
+New flow:
+
+```txt
+User submits image generation settings
+→ frontend calls createImageGenerationJob
+→ backend returns requestId/jobId + initial status
+→ frontend stores job in global useJobStore
+→ GlobalJobWatcher polls fetchImageGenerationStatus
+→ queued/processing: keep polling
+→ completed: stop polling, store generated images, show notification
+→ failed: stop polling, show error notification + Retry in local UI if still open
+→ timeout: stop polling, show timeout notification
+```
+
+Updated `src/pages/Design/CreateDesign.tsx`:
+
+* Removed full-screen blocking loading overlay.
+* Added in-page generation status card.
+* Added image skeleton placeholders while images are being generated.
+* Added failed state with Retry button.
+* Local completion toast was removed to avoid duplicate notifications; global watcher now handles completion toast.
+
+## 7. Project Detail Integration
+
+Updated `src/pages/Workspace/ProjectDetail.tsx`:
+
+* Reads tracked image generation jobs from `useJobStore`.
+* Merges global job state with backend request history.
+* Maps global status into request cards:
+  * `queued` -> `PENDING`
+  * `processing` -> `GENERATING_IMAGES`
+  * `completed` -> `COMPLETED`
+  * `failed` / `timeout` -> `FAILED`
+* Shows completed job images in the gallery even before a backend refetch catches up.
+
+## 8. Credit Handling
+
+Image generation now avoids repeated credit deduction from polling:
+
+* Polling never consumes credits.
+* A request is tracked by `chargedRequestId`.
+* Retrying the same request does not deduct credits multiple times.
+* Credits are only consumed when starting a generation job for a request that has not been charged yet.
+
+## 9. API Layer Changes
+
+Updated `src/features/analysis/api/index.ts` with clearer job-based methods:
+
+* `createTrendAnalysisJob`
+* `fetchTrendAnalysisStatus`
+* `createImageGenerationJob`
+* `fetchImageGenerationStatus`
+
+The existing methods are still present for compatibility.
+
+Updated `src/features/analysis/api/analysis.mock.ts`:
+
+* Mock trend analysis now progresses through attempts instead of staying pending.
+* Mock image generation now returns `PENDING -> PROCESSING -> COMPLETED`.
+* Completed mock generation returns generated image URLs.
+
+## 10. Type Safety Updates
+
+Updated:
+
+* `src/features/analysis/analysis.types.ts`
+  * Added `PROCESSING`.
+  * Added `JobCreateResponse`.
+* `src/features/analysis/mappers/analysisMapper.ts`
+  * Supports `PROCESSING` status.
+* `src/features/admin/types/admin.types.ts`
+  * Added compatibility fields for current mock/admin display data.
+
+## 11. Backend Requirements
+
+To fully support the new flow, backend should avoid holding long HTTP requests open. Instead, it should return immediately after creating a job.
+
+### Trend analysis create endpoint
+
+Expected response:
+
+```ts
+{
+  jobId: string;
+  requestId: string;
+  status: "queued" | "processing";
+  startedAt?: string;
+}
+```
+
+### Trend analysis status endpoint
+
+Expected response:
+
+```ts
+{
+  requestId: string;
+  status: string;
+  result_images?: string[];
+  error?: string;
+}
+```
+
+### Image generation create endpoint
+
+Expected response:
+
+```ts
+{
+  jobId: string;
+  requestId: string;
+  status: "queued" | "processing";
+  startedAt?: string;
+}
+```
+
+### Image generation status endpoint
+
+Expected response:
+
+```ts
+[
+  {
+    request_id: string;
+    status: string;
+    design_image_url?: string[];
+    error?: string;
+  }
+]
+```
+
+## 12. Verification
+
+The following checks passed:
+
+```bash
+npm run lint
+npm run build
+```
+
+---
+
 # Development Report: Design Studio Component
 
 ## 1. Overview

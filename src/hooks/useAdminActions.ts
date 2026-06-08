@@ -55,8 +55,8 @@ export const useAdminActions = () => {
       }
     },
     [
-      // pagination.page,
-      // pagination.limit,
+      pagination.page,
+      pagination.limit,
       // filters,
       setUsers,
       setLoading,

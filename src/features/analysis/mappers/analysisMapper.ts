@@ -1,4 +1,8 @@
-import type { AnalysisRequestResponse } from "../analysis.types";
+import type {
+  AnalysisListItemResponse,
+  AnalysisRequestDetailResponse,
+  AnalysisRequestResponse,
+} from "../analysis.types";
 
 /**
  * Design Result UI Type
@@ -18,10 +22,21 @@ export interface DesignResult {
  */
 export interface TransformedAnalysisResult {
   requestId: string;
-  status: "PENDING" | "COMPLETED" | "FAILED" | "GENERATING_IMAGES";
+  status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED" | "GENERATING_IMAGES";
   designs: DesignResult[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface AnalysisHistoryItem {
+  requestId: string;
+  projectId: string;
+  categoryName: string;
+  status: AnalysisListItemResponse["status"];
+  createdAt: string;
+  updatedAt: string;
+  createdAtLabel: string;
+  updatedAtLabel: string;
 }
 
 interface GeneratedDesignPayload {
@@ -113,6 +128,45 @@ export function transformAnalysisResponseToUI(
     createdAt: formatDateForUI(apiResponse.created_at),
     updatedAt: formatDateForUI(apiResponse.updated_at),
   };
+}
+
+export function transformAnalysisHistoryItem(
+  response: AnalysisListItemResponse
+): AnalysisHistoryItem {
+  return {
+    requestId: response._id,
+    projectId: response.project_id,
+    categoryName: response.category_name || "Untitled analysis",
+    status: response.status,
+    createdAt: response.created_at,
+    updatedAt: response.updated_at,
+    createdAtLabel: formatDateForUI(response.created_at),
+    updatedAtLabel: formatDateForUI(response.updated_at),
+  };
+}
+
+export function transformAnalysisHistoryList(
+  responses: AnalysisListItemResponse[] | null | undefined
+): AnalysisHistoryItem[] {
+  return Array.isArray(responses)
+    ? responses.map((item) => transformAnalysisHistoryItem(item))
+    : [];
+}
+
+export function getAnalysisDetailImages(
+  response: AnalysisRequestDetailResponse | null | undefined
+): string[] {
+  if (!response) return [];
+
+  if (Array.isArray(response.result_images) && response.result_images.length) {
+    return response.result_images.filter(Boolean);
+  }
+
+  return (
+    response.ai_callback_raw?.generated_designs
+      ?.map((item) => item.url)
+      .filter(Boolean) || []
+  );
 }
 
 /**

@@ -13,7 +13,7 @@ export default function Billing() {
   const { plans, fetchPlans, submitSubscription } = useBilling();
   useEffect(() => {
     fetchPlans();
-  }, []); // Empty dependency array means this runs once on mount
+  }, [fetchPlans]);
   const { userId } = useAuthStore();
 
   return (
@@ -46,7 +46,11 @@ export default function Billing() {
             // const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
             return (
               <PricingCard
-                onTap={() => submitSubscription(userId, plan.creditsPerMonth)}
+                onTap={() => {
+                  if (userId) {
+                    submitSubscription(userId, plan.creditsPerMonth);
+                  }
+                }}
                 key={plan.id}
                 plan={plan}
                 price={plan.pricePerMonth}

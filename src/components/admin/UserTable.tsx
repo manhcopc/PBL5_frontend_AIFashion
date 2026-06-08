@@ -50,9 +50,14 @@ export const UserTable = ({
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr
-                key={user._id}
+            {users.map((user) => {
+              const userId = user._id || user.id || "";
+              const credits = user.available_credits ?? user.creditsRemaining ?? 0;
+              const joinDate = user.created_at || user.joinDate || "N/A";
+
+              return (
+                <tr
+                key={userId || user.email}
                 className="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors"
               >
                 {/* User */}
@@ -88,14 +93,14 @@ export const UserTable = ({
                   <div className="flex items-center gap-2">
                     <ChevronUp className="w-4 h-4 text-purple-400" />
                     <span className="text-sm font-semibold text-white">
-                      {formatCredits(user.available_credits)}
+                      {formatCredits(credits)}
                     </span>
                   </div>
                 </td>
 
                 {/* Join Date */}
                 <td className="px-6 py-4 text-sm text-zinc-400">
-                  {user.created_at}
+                  {joinDate}
                 </td>
 
                 {/* Status */}
@@ -128,7 +133,7 @@ export const UserTable = ({
                       <Settings className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => onDelete(user._id, user.username)}
+                      onClick={() => onDelete(userId, user.username)}
                       disabled={isLoading}
                       className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       title="Delete user"
@@ -138,7 +143,8 @@ export const UserTable = ({
                   </div>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>

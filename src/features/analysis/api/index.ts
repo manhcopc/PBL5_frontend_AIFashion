@@ -1,8 +1,11 @@
 import { AnalysisService } from "./analysis.service";
 import { analysisMockService } from "./analysis.mock";
 import type {
+  AnalysisListItemResponse,
+  AnalysisRequestDetailResponse,
   AnalysisRequestResponse,
   GenerateDesignRequest,
+  JobCreateResponse,
   TriggerStatusResponse,
 } from "../analysis.types";
 import type { DesignResult } from "../mappers/analysisMapper";
@@ -22,6 +25,70 @@ const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === "true";
  * Provides a consistent interface regardless of mock/real service
  */
 export const analysisApi = {
+  createTrendAnalysisJob: async (data: {
+    project_id: string;
+    category_name: string;
+  }): Promise<JobCreateResponse> => {
+    const response = USE_MOCK_DATA
+      ? await analysisMockService.createAnalysisRequest(data)
+      : await AnalysisService.createAnalysis(data);
+
+    return {
+      jobId: response.ai_job_id || response._id,
+      requestId: response._id,
+      status: response.status,
+      startedAt: response.created_at,
+    };
+  },
+
+  fetchTrendAnalysisStatus: async (
+    requestId: string
+  ): Promise<AnalysisRequestResponse> => {
+    return USE_MOCK_DATA
+      ? analysisMockService.getAnalysisStatus(requestId)
+      : AnalysisService.getAnalysisReq(requestId);
+  },
+
+  createImageGenerationJob: async (
+    requestId: string,
+    data: GenerateDesignRequest
+  ): Promise<JobCreateResponse> => {
+    const response = USE_MOCK_DATA
+      ? await analysisMockService.triggerGeneration(requestId, data)
+      : await AnalysisService.triggerGenerate(requestId, data);
+
+    return {
+      jobId: response.ai_job_id || response._id,
+      requestId: response._id || requestId,
+      status: response.status,
+      startedAt: response.created_at,
+    };
+  },
+
+  fetchImageGenerationStatus: async (
+    requestId: string
+  ): Promise<TriggerStatusResponse[]> => {
+    return USE_MOCK_DATA
+      ? analysisMockService.getTriggerStatus(requestId)
+      : AnalysisService.getTriggerStatus(requestId);
+  },
+
+  getProjectAnalysisRequests: async (
+    projectId: string
+  ): Promise<AnalysisListItemResponse[]> => {
+    return USE_MOCK_DATA
+      ? analysisMockService.getListAnalysisByProject(projectId)
+      : AnalysisService.getListAnalysisByProject(projectId);
+  },
+
+  getAnalysisRequestDetail: async (
+    requestId: string
+  ): Promise<AnalysisRequestDetailResponse> => {
+    return USE_MOCK_DATA
+      ? analysisMockService.getAnalysisRequest(requestId)
+      : AnalysisService.getAnalysisRequest(requestId);
+  },
+
   /**
    * Create a new analysis request for design generation
    * @param data - Analysis request data with project, category, styles, trends
@@ -100,7 +167,9 @@ export const analysisApi = {
   getTriggerStatus: async (
     requestId: string
   ): Promise<TriggerStatusResponse[]> => {
-    return AnalysisService.getTriggerStatus(requestId);
+    return USE_MOCK_DATA
+      ? analysisMockService.getTriggerStatus(requestId)
+      : AnalysisService.getTriggerStatus(requestId);
   },
 
   /**

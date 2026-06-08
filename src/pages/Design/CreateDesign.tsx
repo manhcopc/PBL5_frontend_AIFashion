@@ -1,4 +1,12 @@
-import { ArrowLeft, Zap, Loader2, Sparkles, CheckCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Zap,
+  Sparkles,
+  CheckCircle,
+  Loader2,
+  Clock,
+  RotateCcw,
+} from "lucide-react";
 // ✅ 1. Import useLocation thay cho useParams
 import { Link, useLocation } from "react-router-dom";
 import { useGenerationFlow } from "../../hooks/useGenerationFlow";
@@ -12,12 +20,16 @@ import { useUserStore } from "../../store/UserContext";
 // import { transformToProxyUrl } from "../../utils/util";
 import { useEffect, useState } from "react";
 import { GeneratedResultsModal } from "@/components/user/GeneratedResultsModal";
+import { getJobStatusLabel } from "@/utils/jobStatus";
 
 type RouteDesignImage = string | { imageUrl?: string; url?: string };
 
 interface CreateDesignLocationState {
   requestId?: string;
+  projectId?: string;
   generatedImages?: RouteDesignImage[];
+  generatedResultImages?: string[];
+  openGeneratedResults?: boolean;
 }
 
 export default function CreateDesign() {
@@ -26,7 +38,10 @@ export default function CreateDesign() {
   const location = useLocation();
   const routeState = location.state as CreateDesignLocationState | null;
   const requestId = routeState?.requestId ?? "";
+  const projectId = routeState?.projectId;
   const initialImages = routeState?.generatedImages ?? [];
+  const generatedResultImages = routeState?.generatedResultImages ?? [];
+  const shouldOpenGeneratedResults = routeState?.openGeneratedResults === true;
   const {
     season,
     setSeason,
@@ -37,17 +52,21 @@ export default function CreateDesign() {
     selectedTrend,
     setSelectedTrend,
     isGenerating,
+    jobStatus,
+    jobStartedAt,
     loadingMessage,
     isSuccess,
     isValid,
     hasEnoughCredits,
     startGeneration,
+    retryGeneration,
 
     designs,
+    analysisError,
   } = useGenerationFlow(requestId, {
     num_images: 4,
     seed: 42,
-  }); // Truyền projectId vào thay cho requestId
+  }, projectId); // Truyền projectId để global job watcher điều hướng kết quả
 
   // ✅ 3. Nếu không có projectId trong state thì đẩy về trang studio
   // if (!projectId) {
@@ -59,6 +78,8 @@ export default function CreateDesign() {
   // - Hoặc nếu Modal truyền sang đã có sẵn ảnh (initialImages.length > 0) -> dùng ảnh từ Modal
   const displayDesigns =
     isSuccess && designs.length > 0 ? designs : initialImages;
+  const modalDesigns =
+    isSuccess && designs.length > 0 ? designs : generatedResultImages;
   const path1 = "/src/assets/product/hinh1.jpeg";
   const path2 = "/src/assets/product/hinh2.jpg";
   const path3 = "/src/assets/product/hinh3.jpeg";
@@ -66,16 +87,24 @@ export default function CreateDesign() {
   const mockTrends = [path1, path2, path3, path4];
 
   useEffect(() => {
-    if (isSuccess && designs.length > 0) {
+    if (
+      (isSuccess && designs.length > 0) ||
+      (shouldOpenGeneratedResults && generatedResultImages.length > 0)
+    ) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowResults(true);
     }
-  }, [designs.length, isSuccess]);
+  }, [
+    designs.length,
+    generatedResultImages.length,
+    isSuccess,
+    shouldOpenGeneratedResults,
+  ]);
 
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 flex flex-col font-sans">
       <GeneratedResultsModal
-        isOpen={showResults && isSuccess && designs.length > 0}
+        isOpen={showResults && modalDesigns.length > 0}
         onClose={() => setShowResults(false)}
         onReset={() => {
           setShowResults(false);
@@ -86,21 +115,8 @@ export default function CreateDesign() {
           setWeather("");
         }}
         referenceImages={mockTrends} // Truyền ảnh phong cách tham chiếu vào Modal
-        designs={designs}
+        designs={modalDesigns}
       />
-      {isGenerating && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center backdrop-blur-md bg-white/80 animate-in fade-in duration-300">
-          <Loader2 className="w-16 h-16 text-indigo-600 animate-spin mb-8" />
-          <div className="h-8 flex items-center justify-center relative overflow-hidden w-full max-w-xl">
-            <p
-              key={loadingMessage}
-              className="text-xl font-bold text-indigo-600 animate-in slide-in-from-bottom-4 fade-in duration-300 text-center px-4 absolute"
-            >
-              {loadingMessage}
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* Header */}
       <header className="border-b border-zinc-200 bg-white/70 backdrop-blur-md sticky top-0 z-30">
@@ -133,6 +149,80 @@ export default function CreateDesign() {
               trends.
             </p>
           </div>
+
+          {(isGenerating || analysisError) && (
+            <section className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+              <div className="flex items-start gap-4">
+                <div
+                  className={`rounded-2xl p-3 ${
+                    analysisError
+                      ? "bg-rose-50 text-rose-600"
+                      : "bg-indigo-50 text-indigo-600"
+                  }`}
+                >
+                  {analysisError ? (
+                    <RotateCcw className="h-6 w-6" />
+                  ) : (
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h2 className="text-lg font-extrabold text-zinc-900">
+                        {analysisError
+                          ? "Image generation failed"
+                          : "Generating AI images"}
+                      </h2>
+                      <p className="mt-1 text-sm text-zinc-500">
+                        {analysisError ||
+                          loadingMessage ||
+                          "Your image generation job is running in the background."}
+                      </p>
+                    </div>
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${
+                        analysisError
+                          ? "bg-rose-50 text-rose-700"
+                          : "bg-indigo-50 text-indigo-700"
+                      }`}
+                    >
+                      {analysisError ? "Failed" : getJobStatusLabel(jobStatus)}
+                    </span>
+                  </div>
+
+                  {jobStartedAt && !analysisError && (
+                    <p className="mt-4 flex items-center gap-1.5 text-xs font-medium text-zinc-500">
+                      <Clock className="h-3.5 w-3.5" />
+                      Started{" "}
+                      {new Date(jobStartedAt).toLocaleTimeString("vi-VN")}
+                    </p>
+                  )}
+
+                  {!analysisError && (
+                    <div className="mt-5 grid grid-cols-2 gap-4">
+                      {[0, 1, 2, 3].map((slot) => (
+                        <div
+                          key={slot}
+                          className="aspect-[4/5] animate-pulse rounded-2xl border border-zinc-200 bg-zinc-100"
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {analysisError && (
+                    <button
+                      onClick={retryGeneration}
+                      className="mt-4 inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-rose-700"
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                      Retry
+                    </button>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
 
           {/* ✅ KHU VỰC HIỂN THỊ ẢNH KẾT QUẢ */}
           {displayDesigns.length > 0 && (

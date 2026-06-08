@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { Clock, Loader2, RotateCcw, X } from "lucide-react";
 import { useProjects } from "../../hooks/useProjects";
 import { useDesignGeneration } from "../../hooks/useDesignGeneration";
 import { useNavigate } from "react-router-dom";
+import { getJobStatusLabel } from "@/utils/jobStatus";
 // import { request } from "node_modules/axios/index.d.cts";
 // import type { ProjectResponse } from "../../features/project/api";
 // import projectApi from "../../features/project/api";
@@ -32,8 +33,17 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
   const [isDisplay, setIsDisplay] = useState(false);
 
   // 1. GỌI TẤT CẢ CUSTOM HOOKS
-  const { status, generateDesigns, error, designs, currentRequestId } =
-    useDesignGeneration();
+  const {
+    status,
+    jobStatus,
+    jobStartedAt,
+    isPolling,
+    generateDesigns,
+    retry,
+    error,
+    designs,
+    currentRequestId,
+  } = useDesignGeneration();
   const { projects, fetchProjects } = useProjects();
 
   // 2. GỌI TẤT CẢ USE EFFECT LÊN TRÊN CÙNG
@@ -46,7 +56,7 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
       navigate("/create-design", {
         state: {
           generatedImages: designs, // Mảng link ảnh từ useDesignGeneration
-          // projectId: selectedProjectId,
+          projectId: selectedProjectId,
           requestId: currentRequestId, // Có thể dùng projectId làm requestId nếu cần
           promptText: text,
         },
@@ -175,6 +185,36 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
           />
         </div>
 
+        {status === "LOADING" && (
+          <div className="mb-6 rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5 rounded-xl bg-white p-2 text-indigo-600 shadow-sm">
+                <Loader2 className="h-5 w-5 animate-spin" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-bold text-zinc-900">
+                    Analyzing trends...
+                  </p>
+                  <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-bold uppercase text-indigo-700">
+                    {getJobStatusLabel(jobStatus)}
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-zinc-500">
+                  {text || "Trend analysis request"} is running in the
+                  background while this modal remains open.
+                </p>
+                {jobStartedAt && (
+                  <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-zinc-500">
+                    <Clock className="h-3.5 w-3.5" />
+                    Started {new Date(jobStartedAt).toLocaleTimeString("vi-VN")}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Nút Submit & Cancel */}
         <div className="flex flex-col sm:flex-row gap-3">
           <button
@@ -189,7 +229,7 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
             {status === "LOADING" ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="w-4 h-4 border-2 border-zinc-300 border-t-indigo-600 animate-spin rounded-full"></span>
-                Đang xử lý...
+                Đang phân tích...
               </span>
             ) : (
               "Gửi yêu cầu"
@@ -206,9 +246,17 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
 
         {/* Hiển thị lỗi */}
         {error && (
-          <p className="text-red-500 text-xs mt-3 text-center font-medium">
-            {error}
-          </p>
+          <div className="mt-4 rounded-xl border border-rose-100 bg-rose-50 p-3">
+            <p className="text-sm font-semibold text-rose-700">{error}</p>
+            <button
+              onClick={retry}
+              disabled={isPolling}
+              className="mt-3 inline-flex items-center gap-2 rounded-lg bg-rose-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-rose-700 disabled:cursor-not-allowed disabled:bg-rose-300"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              Retry analysis
+            </button>
+          </div>
         )}
       </div>
     </div>

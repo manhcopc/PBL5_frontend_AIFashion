@@ -13,12 +13,34 @@ import {
 import { Link, useParams } from "react-router-dom";
 import { useProjects } from "@/hooks/useProjects";
 import type { ProjectRequestSummary } from "@/features/project/project.types";
+import { useJobStore } from "@/store/useJobStore";
+import type { TrackedJob } from "@/types/job";
 
 type TabType = "requests" | "gallery";
 
 interface RequestCardProps {
   request: ProjectRequestSummary;
   loadingMessage?: string;
+}
+
+function mapJobToRequestSummary(job: TrackedJob): ProjectRequestSummary {
+  const statusMap: Record<TrackedJob["status"], ProjectRequestSummary["status"]> = {
+    queued: "PENDING",
+    processing: "GENERATING_IMAGES",
+    completed: "COMPLETED",
+    failed: "FAILED",
+    timeout: "FAILED",
+  };
+
+  return {
+    request_id: job.requestId,
+    category_name:
+      job.type === "trend_analysis" ? "Trend Analysis" : "Image Generation",
+    style_name: job.title,
+    status: statusMap[job.status],
+    created_at: job.createdAt,
+    result_thumbnail_url: job.resultImages || null,
+  };
 }
 
 // ==================== COMPLETED REQUEST CARD ====================
@@ -339,6 +361,7 @@ export default function ProjectDetail() {
     isLoading,
     error,
   } = useProjects();
+  const trackedJobs = useJobStore((state) => state.jobs);
 
   useEffect(() => {
     if (projectId) {
@@ -350,8 +373,19 @@ export default function ProjectDetail() {
     "Status: ANALYZING_AI - Scoring styles with PhoBERT..."
   );
 
+  const projectJobs = trackedJobs.filter(
+    (job) => job.projectId === projectId && job.type === "image_generation"
+  );
+  const backendRequestIds = new Set(
+    (detailSummary || []).map((request) => request.request_id)
+  );
+  const trackedSummaries = projectJobs
+    .filter((job) => !backendRequestIds.has(job.requestId))
+    .map(mapJobToRequestSummary);
+  const displayedSummary = [...trackedSummaries, ...(detailSummary || [])];
+
   // Lấy ra toàn bộ danh sách ảnh đã được tạo thành công để đổ vào tab Gallery thực tế
-  const galleryImages = (detailSummary || [])
+  const galleryImages = displayedSummary
     .filter((req) => req.status === "COMPLETED" && req.result_thumbnail_url)
     .flatMap((req) => req.result_thumbnail_url || []);
 
@@ -433,7 +467,7 @@ export default function ProjectDetail() {
                 : "text-zinc-400 hover:text-zinc-600"
             }`}
           >
-            Request History ({(detailSummary || []).length})
+            Request History ({displayedSummary.length})
             {activeTab === "requests" && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 rounded-t" />
             )}
@@ -457,7 +491,7 @@ export default function ProjectDetail() {
         {/* Request History Tab - Visual Grid Layout */}
         {activeTab === "requests" && (
           <>
-            {!detailSummary || detailSummary.length === 0 ? (
+            {displayedSummary.length === 0 ? (
               <div className="bg-white border border-zinc-200 rounded-2xl p-12 text-center shadow-sm">
                 <ImageIcon className="w-12 h-12 text-zinc-300 mx-auto mb-3" />
                 <p className="text-base font-bold text-zinc-700">
@@ -469,7 +503,7 @@ export default function ProjectDetail() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {detailSummary.map((request) => (
+                {displayedSummary.map((request) => (
                   <RequestCard
                     key={request.request_id}
                     request={request}

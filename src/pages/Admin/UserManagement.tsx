@@ -66,7 +66,9 @@ export const UserManagement = () => {
 
   const handleTopUp = async (amount: number) => {
     if (!selectedUser) return false;
-    return topUpUserCredits(selectedUser._id, amount);
+    const userId = selectedUser._id || selectedUser.id;
+    if (!userId) return false;
+    return topUpUserCredits(userId, amount);
   };
 
   // const handlePlanChange = async (newPlan: "Free" | "Pro" | "Enterprise") => {
@@ -173,7 +175,9 @@ export const UserManagement = () => {
             setSelectedUser(null);
           }}
           userName={selectedUser.username}
-          currentCredits={selectedUser.available_credits}
+          currentCredits={
+            selectedUser.available_credits ?? selectedUser.creditsRemaining ?? 0
+          }
           // currentPlan={selectedUser.plan}
           onTopUp={handleTopUp}
           // onPlanChange={handlePlanChange}
