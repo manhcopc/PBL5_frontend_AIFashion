@@ -12,6 +12,7 @@ import Workspace from "@/pages/Workspace/Workspace";
 import DesignStudio from "@/pages/DesignStudio/DesignStudio";
 import CreateDesign from "@/pages/Design/CreateDesign";
 import Billing from "@/pages/Billing/Billing";
+import UserSettings from "@/pages/Settings/UserSettings";
 import ProjectDetail from "@/pages/Workspace/ProjectDetail";// Admin Pages
 import { AdminDashboard } from "@/pages/Admin/AdminDashboard";
 import { UserManagement } from "@/pages/Admin/UserManagement";
@@ -22,7 +23,7 @@ import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import UserLayout from "@/components/layout/UserLayout";
 import { UserProvider } from "@/store/UserContext";
-import { Settings } from "./pages/Admin/Settings";
+import { Settings as AdminSettings } from "./pages/Admin/Settings";
 
 function App() {
   const validateAndRestoreAuth = useAuthStore(
@@ -63,6 +64,7 @@ function App() {
             <Route path="/design-studio" element={<DesignStudio />} />
             <Route path="/create-design" element={<CreateDesign />} />
             <Route path="/billing" element={<Billing />} />{" "}
+            <Route path="/settings" element={<UserSettings />} />
             <Route path="/workspace/:projectId" element={<ProjectDetail />} />          </Route>
 
           {/* Admin routes - protected, requires admin role only */}
@@ -76,7 +78,7 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<UserManagement />} />
             <Route path="/admin/credit-logs" element={<CreditLogs />} />
-            <Route path="/admin/settings" element={<Settings />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
           </Route>
 
           {/* Catch all - redirect to root */}

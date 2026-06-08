@@ -1,5 +1,5 @@
-// import type { User } from '../user.types';
 import apiClient from "../../../services/ApiClient";
+import type { UpdateUserProfilePayload, User } from "../user.types";
 
 export const fetchListUsers = async () => {
   try {
@@ -11,11 +11,12 @@ export const fetchListUsers = async () => {
   }
 };
 
-export const getUserInfo = async () => {
+export const getUserInfo = async (userId: string): Promise<User> => {
   try {
-    const response = await apiClient.get("/users/me");
+    const response = await apiClient.get(`/users/${userId}`);
+    const data = response.data as User | { user: User };
 
-    return response.data;
+    return "user" in data ? data.user : data;
   } catch (error) {
     console.error("Error fetching user info:", error);
     throw error;
@@ -44,6 +45,20 @@ export const deleteUser = async (userId: string) => {
     return response.data;
   } catch (error) {
     console.error("Error deleting user account:", error);
+    throw error;
+  }
+};
+
+export const updateUser = async (
+  userId: string,
+  data: UpdateUserProfilePayload
+): Promise<User> => {
+  try {
+    const response = await apiClient.patch(`/users/${userId}`, data);
+    const responseData = response.data as User | { user: User };
+    return "user" in responseData ? responseData.user : responseData;
+  } catch (error) {
+    console.error("Error updating user account:", error);
     throw error;
   }
 };

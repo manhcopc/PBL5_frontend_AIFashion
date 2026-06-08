@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/state/use-auth-store';
+import { isTokenValid } from '@/services/auth';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -15,7 +16,7 @@ interface ProtectedRouteProps {
  * - Redirects to unauthorized if role doesn't match
  */
 export const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
-  const { user, isAuthenticated, isLoading } = useAuthStore();
+  const { user, isAuthenticated, isLoading, clearAuth } = useAuthStore();
 
   // Show loading while checking auth
   if (isLoading) {
@@ -30,8 +31,9 @@ export const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) 
   }
 
   // Redirect to login if not authenticated
-  if (!isAuthenticated || !user) {
+  if (!isAuthenticated || !user || !isTokenValid()) {
     console.warn('ProtectedRoute: User not authenticated, redirecting to login');
+    clearAuth();
     return <Navigate to="/login" replace />;
   }
 

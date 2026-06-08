@@ -80,9 +80,8 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
 
   const handleProjects = async () => {
     try {
-      fetchProjects();
+      await fetchProjects();
       setIsDisplay(true);
-      console.log("Fetched projects:", projects);
     } catch (err) {
       console.error("Error fetching projects:", err);
     }

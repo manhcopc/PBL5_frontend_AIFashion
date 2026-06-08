@@ -240,6 +240,180 @@ npm run build
 
 ---
 
+# Follow-up Development Notes
+
+## 13. Completed Job Navigation & Notifications
+
+Updated job notification behavior for both main AI flows:
+
+* Completed `trend_analysis` notifications route to `/create-design` with `generatedImages`.
+* Completed `image_generation` notifications route to `/create-design` with `generatedResultImages` and automatically open the generated results modal.
+* Toast action no longer depends on `projectId`; completed jobs can be opened by `jobId`.
+* `CreateDesign` now supports route state for opening completed generated image results from notifications.
+
+Files changed:
+
+* `src/components/user/Header.tsx`
+* `src/components/jobs/GlobalJobWatcher.tsx`
+* `src/pages/Design/CreateDesign.tsx`
+
+## 14. Design Studio Analysis History
+
+Added project-based analysis history to Design Studio:
+
+* Design Studio now displays project cards.
+* Clicking a project loads analysis requests using `getListAnalysisByProject`.
+* Clicking an analysis session loads detail using `getAnalysisRequest`.
+* Detail response `result_images` is passed to `CreateDesign` through route state, matching the normal completed analysis flow.
+
+Architecture was kept layered:
+
+* API/service layer handles backend calls.
+* API facade exposes analysis history methods.
+* Mapper layer formats analysis list/detail data for UI.
+* Hook layer coordinates fetching and navigation.
+* Page layer only renders UI and calls hook actions.
+
+Files changed:
+
+* `src/features/analysis/analysis.types.ts`
+* `src/features/analysis/api/analysis.service.ts`
+* `src/features/analysis/api/index.ts`
+* `src/features/analysis/api/analysis.mock.ts`
+* `src/features/analysis/mappers/analysisMapper.ts`
+* `src/hooks/useAnalysisHistory.ts`
+* `src/pages/DesignStudio/DesignStudio.tsx`
+
+## 15. Server-State Cache
+
+Added a Zustand cache store to reduce repeated API calls caused by route remounts and repeated clicks:
+
+* `projectsByUser`
+* `projectDetailsById`
+* `analysisByProject`
+* `analysisDetailById`
+
+Cache behavior:
+
+* Projects TTL: 5 minutes.
+* Project detail TTL: 2 minutes.
+* Analysis list TTL: 2 minutes.
+* Completed analysis detail TTL: 10 minutes.
+* In-progress analysis detail uses a shorter TTL.
+* Existing in-flight requests are reused to prevent duplicate parallel API calls.
+* Cache is invalidated after project delete, trend analysis create/cancel/complete/fail, and image generation complete/fail.
+
+Files changed:
+
+* `src/store/useServerCacheStore.ts`
+* `src/hooks/useProjects.ts`
+* `src/hooks/useAnalysisHistory.ts`
+* `src/hooks/useDesignGeneration.ts`
+* `src/components/jobs/GlobalJobWatcher.tsx`
+* `src/components/user/ProjectRequestModal.tsx`
+
+## 16. Logout, Session Cleanup, and Route Protection
+
+Fixed logout and protected route behavior:
+
+* User/admin logout now calls `logout()` instead of only navigating to `/login`.
+* Added `clearClientSession()` to clear token, job store, server cache, admin store, and config store.
+* `ProtectedRoute` now validates the actual JWT token with `isTokenValid()`, not only persisted `isAuthenticated`.
+* API `401` responses and expired-token request checks now clear the full client session.
+* Persisted auth storage is cleared on logout/clearAuth.
+
+Files changed:
+
+* `src/services/session.ts`
+* `src/services/ApiClient.ts`
+* `src/features/auth/state/use-auth-store.ts`
+* `src/components/layout/ProtectedRoute.tsx`
+* `src/components/user/Sidebar.tsx`
+* `src/components/admin/AdminSidebar.tsx`
+* `src/pages/auth/unauthorized_page.tsx`
+* `src/store/useJobStore.ts`
+* `src/store/useAdminStore.ts`
+* `src/store/useConfigStore.ts`
+
+## 17. Login and Register UX
+
+Improved authentication form feedback:
+
+* Login/register submit is now awaited correctly.
+* Button shows loading state such as `Signing in...` or `Creating account...`.
+* Inputs are disabled while request is pending.
+* Errors are displayed inline instead of using `alert`.
+* Error messages distinguish invalid credentials, forbidden access, server errors, and network problems.
+
+Updated register flow to match backend response:
+
+* Backend register returns a user object directly, not `{ token, user }`.
+* Register no longer auto-login.
+* After successful registration, UI switches back to Login and shows success message.
+
+Files changed:
+
+* `src/pages/auth/login_page.tsx`
+* `src/features/auth/logic/use-auth-action.ts`
+* `src/features/auth/api/auth.service.ts`
+* `src/features/auth/types/auth.types.ts`
+
+## 18. Credit Synchronization
+
+Fixed credit source-of-truth problems:
+
+* Removed hard-coded `150` credit value from `UserContext`.
+* Credit now comes from `authStore.user.available_credits`.
+* Login response and user profile response update the auth store.
+* `refreshCurrentUser()` now calls `getUserInfo(userId)` from `user.service`.
+* Image generation still optimistically deducts 10 credits, but rolls back if job creation fails.
+* After creating trend analysis or image generation jobs, frontend refreshes user profile to sync real backend credits.
+
+Files changed:
+
+* `src/store/UserContext.tsx`
+* `src/features/auth/state/use-auth-store.ts`
+* `src/features/auth/types/auth.types.ts`
+* `src/features/user/api/user.service.ts`
+* `src/hooks/useGenerationFlow.ts`
+* `src/hooks/useDesignGeneration.ts`
+
+## 19. User Settings Page
+
+Added user-facing Settings page at `/settings`:
+
+* Profile update form:
+  * `username`
+  * `email`
+  * Calls `updateUser(userId, { username, email })`.
+* Password change form:
+  * `current_password`
+  * `new_password`
+  * `confirm_password`
+  * Calls `authService.changePassword(...)`.
+* Includes loading, success, and error states for each section.
+* Sidebar now highlights active route from the current URL.
+
+Files changed:
+
+* `src/pages/Settings/UserSettings.tsx`
+* `src/hooks/useUserSettings.ts`
+* `src/features/user/api/user.service.ts`
+* `src/features/user/user.types.ts`
+* `src/App.tsx`
+* `src/components/user/Sidebar.tsx`
+
+## 20. Latest Verification
+
+After these follow-up changes, the checks passed:
+
+```bash
+npm run lint
+npm run build
+```
+
+---
+
 # Development Report: Design Studio Component
 
 ## 1. Overview

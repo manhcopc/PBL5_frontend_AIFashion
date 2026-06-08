@@ -16,7 +16,8 @@ export function useGenerationFlow(
   data: InitialGenerationData,
   projectId?: string
 ) {
-  const { credits, consumeCredits } = useUserStore();
+  const { credits, consumeCredits, addCredits, refreshCredits } =
+    useUserStore();
   const addJob = useJobStore((state) => state.addJob);
   const jobs = useJobStore((state) => state.jobs);
 
@@ -87,6 +88,8 @@ export function useGenerationFlow(
     setDesigns([]);
     setIsSuccess(false);
 
+    let didChargeLocally = false;
+
     try {
       if (chargedRequestId !== requestId) {
         if (!consumeCredits(10)) {
@@ -94,6 +97,7 @@ export function useGenerationFlow(
           setAnalysisError("Insufficient credits for design generation");
           return;
         }
+        didChargeLocally = true;
         setChargedRequestId(requestId);
       }
 
@@ -127,7 +131,12 @@ export function useGenerationFlow(
         createdAt: new Date().toISOString(),
         startedAt,
       });
+      void refreshCredits();
     } catch (err) {
+      if (didChargeLocally) {
+        addCredits(10);
+        setChargedRequestId(null);
+      }
       const errorMsg =
         err instanceof Error ? err.message : "Failed to start generation";
       setIsGenerating(false);
@@ -136,12 +145,14 @@ export function useGenerationFlow(
     }
   }, [
     addJob,
+    addCredits,
     chargedRequestId,
     consumeCredits,
     data,
     hasEnoughCredits,
     isValid,
     projectId,
+    refreshCredits,
     requestId,
     selectedTrend,
     season,

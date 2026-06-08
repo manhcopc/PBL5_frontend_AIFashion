@@ -38,9 +38,10 @@ interface AdminState {
   ) => void;
   removeUser: (userId: string) => void;
   clearError: () => void;
+  resetAdminStore: () => void;
 }
 
-export const useAdminStore = create<AdminState>((set) => ({
+const initialAdminState = {
   users: [],
   stats: null,
   loading: false,
@@ -52,8 +53,12 @@ export const useAdminStore = create<AdminState>((set) => ({
   },
   filters: {
     email: "",
-    plan: "All",
+    plan: "All" as const,
   },
+};
+
+export const useAdminStore = create<AdminState>((set) => ({
+  ...initialAdminState,
 
   setUsers: (users) => set({ users }),
 
@@ -95,4 +100,6 @@ export const useAdminStore = create<AdminState>((set) => ({
     })),
 
   clearError: () => set({ error: null }),
+
+  resetAdminStore: () => set(initialAdminState),
 }));

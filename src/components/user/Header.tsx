@@ -20,13 +20,12 @@ export default function Header() {
   const runningJobs = useMemo(
     () =>
       jobs.filter(
-      (job) => job.status === "queued" || job.status === "processing"
+        (job) => job.status === "queued" || job.status === "processing"
       ),
     [jobs]
   );
   const unreadNotifications = useMemo(
-    () =>
-      notifications.reduce((count, item) => count + (item.read ? 0 : 1), 0),
+    () => notifications.reduce((count, item) => count + (item.read ? 0 : 1), 0),
     [notifications]
   );
   const recentNotifications = notifications.slice(0, 8);
@@ -90,7 +89,7 @@ export default function Header() {
           <div className="flex items-center gap-6">
             {/* Credits Badge */}
             <div className="flex items-center gap-2 px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-full shadow-sm">
-              <Zap className="w-4 h-4 text-indigo-600 fill-indigo-600/10" />
+              {/* <Zap className="w-4 h-4 text-indigo-600 fill-indigo-600/10" /> */}
               <span className="font-bold text-indigo-700">
                 ⚡ {credits} Credits
               </span>
@@ -168,13 +167,13 @@ export default function Header() {
                           const Icon = isSuccess
                             ? CheckCircle
                             : isTimeout
-                              ? Clock
-                              : XCircle;
+                            ? Clock
+                            : XCircle;
                           const iconClass = isSuccess
                             ? "text-emerald-600"
                             : isTimeout
-                              ? "text-amber-600"
-                              : "text-rose-600";
+                            ? "text-amber-600"
+                            : "text-rose-600";
 
                           return (
                             <button

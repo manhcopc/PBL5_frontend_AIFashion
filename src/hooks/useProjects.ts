@@ -10,6 +10,12 @@ import type {
   ProjectDetailsResponse,
   ProjectRequestSummary,
 } from "@/features/project/project.types";
+import {
+  isCacheFresh,
+  PROJECT_DETAIL_CACHE_TTL_MS,
+  PROJECTS_CACHE_TTL_MS,
+  useServerCacheStore,
+} from "@/store/useServerCacheStore";
 
 /**
  * Error State Interface
@@ -18,6 +24,12 @@ interface UseProjectsError {
   message: string;
   code?: string;
 }
+
+const projectListRequests = new Map<string, Promise<Project[]>>();
+const projectDetailRequests = new Map<
+  string,
+  Promise<ProjectDetailsResponse | null>
+>();
 
 /**
  * Custom Hook: useProjects
@@ -45,31 +57,72 @@ export function useProjects(autoFetch: boolean = true) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<UseProjectsError | null>(null);
   const userId = useAuthStore((state) => state.userId);
+  const setProjectsForUser = useServerCacheStore(
+    (state) => state.setProjectsForUser
+  );
+  const setProjectDetailsCache = useServerCacheStore(
+    (state) => state.setProjectDetails
+  );
+  const invalidateProject = useServerCacheStore(
+    (state) => state.invalidateProject
+  );
+  const invalidateAnalysisForProject = useServerCacheStore(
+    (state) => state.invalidateAnalysisForProject
+  );
 
   /**
    * Fetch and transform projects
    * Converts raw API responses to UI-ready format
    */
-  const fetchProjects = useCallback(async () => {
+  const fetchProjects = useCallback(async (refreshArg?: unknown) => {
+    const forceRefresh =
+      refreshArg === true ||
+      (refreshArg !== undefined && refreshArg !== false);
+
     setIsLoading(true);
     setError(null);
 
     try {
       if (!userId) {
         setProjects([]);
-        return;
+        return [];
       }
 
-      // Fetch raw API response
-      console.log(`Fetching projects for userId from useProjects: ${userId}`);
-      const rawProjects = await projectApi.getUserProjects(userId);
-      console.log("Raw projects fetched:", rawProjects);
-      // Transform to UI format
-      const transformedProjects = await transformProjectsResponseToUI(
-        rawProjects
-      );
+      const cachedProjects =
+        useServerCacheStore.getState().projectsByUser[userId];
 
+      if (
+        !forceRefresh &&
+        isCacheFresh(cachedProjects, PROJECTS_CACHE_TTL_MS)
+      ) {
+        setProjects(cachedProjects.data);
+        return cachedProjects.data;
+      }
+
+      if (cachedProjects?.data?.length) {
+        setProjects(cachedProjects.data);
+      }
+
+      const existingRequest = projectListRequests.get(userId);
+      if (existingRequest) {
+        const cachedOrFetchedProjects = await existingRequest;
+        setProjects(cachedOrFetchedProjects);
+        return cachedOrFetchedProjects;
+      }
+
+      const request = (async () => {
+        const rawProjects = await projectApi.getUserProjects(userId);
+        const transformedProjects = await transformProjectsResponseToUI(
+          rawProjects
+        );
+        setProjectsForUser(userId, transformedProjects);
+        return transformedProjects;
+      })();
+
+      projectListRequests.set(userId, request);
+      const transformedProjects = await request;
       setProjects(transformedProjects);
+      return transformedProjects;
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to fetch projects";
@@ -78,30 +131,66 @@ export function useProjects(autoFetch: boolean = true) {
         code: err instanceof Error ? "FETCH_ERROR" : "UNKNOWN_ERROR",
       });
       console.error("useProjects fetchProjects error:", err);
+      return [];
     } finally {
       setIsLoading(false);
+      if (userId) {
+        projectListRequests.delete(userId);
+      }
     }
-  }, [userId]);
+  }, [setProjectsForUser, userId]);
 
   /**
    * Fetch detailed project information by ID
    * @param projectId - Project ID to fetch details for
    * @returns Detailed Project object or null on error
    */
-  const fetchProjectDetails = useCallback(async (projectId: string) => {
+  const fetchProjectDetails = useCallback(async (
+    projectId: string,
+    forceRefresh: boolean = false
+  ) => {
     setIsLoading(true);
     setError(null);
     try {
-      console.log(`Fetching project details for projectId: ${projectId}`);
-      const rawProject = await projectApi.getProjectDetail(projectId);
-      setProjectDetails(rawProject);
+      const cacheState = useServerCacheStore.getState();
+      const cachedProject = cacheState.projectDetailsById[projectId];
+      const cachedSummary = cacheState.projectRequestSummaryById[projectId];
 
-      if (rawProject && rawProject.requests) {
-        setDetailSummary(rawProject.requests);
-      } else {
-        setDetailSummary([]);
+      if (
+        !forceRefresh &&
+        isCacheFresh(cachedProject, PROJECT_DETAIL_CACHE_TTL_MS)
+      ) {
+        setProjectDetails(cachedProject.data);
+        setDetailSummary(cachedSummary?.data || []);
+        return cachedProject.data;
       }
 
+      if (cachedProject?.data) {
+        setProjectDetails(cachedProject.data);
+        setDetailSummary(cachedSummary?.data || []);
+      }
+
+      const existingRequest = projectDetailRequests.get(projectId);
+      if (existingRequest) {
+        const fetchedProject = await existingRequest;
+        if (fetchedProject) {
+          setProjectDetails(fetchedProject);
+          setDetailSummary(fetchedProject.requests || []);
+        }
+        return fetchedProject;
+      }
+
+      const request = (async () => {
+        const rawProject = await projectApi.getProjectDetail(projectId);
+        const summary = rawProject?.requests || [];
+        setProjectDetailsCache(projectId, rawProject, summary);
+        return rawProject;
+      })();
+
+      projectDetailRequests.set(projectId, request);
+      const rawProject = await request;
+      setProjectDetails(rawProject);
+      setDetailSummary(rawProject?.requests || []);
       return rawProject;
     } catch (err) {
       const errorMessage =
@@ -114,8 +203,9 @@ export function useProjects(autoFetch: boolean = true) {
       return null;
     } finally {
       setIsLoading(false);
+      projectDetailRequests.delete(projectId);
     }
-  }, []);
+  }, [setProjectDetailsCache]);
 
   /**
    * Create a new project
@@ -139,7 +229,11 @@ export function useProjects(autoFetch: boolean = true) {
         const transformedProject = await transformProjectResponseToUI(rawProject);
 
         // Add new project to the beginning of the list
-        setProjects((prevProjects) => [transformedProject, ...prevProjects]);
+        setProjects((prevProjects) => {
+          const nextProjects = [transformedProject, ...prevProjects];
+          setProjectsForUser(userId, nextProjects);
+          return nextProjects;
+        });
 
         return transformedProject;
       } catch (err) {
@@ -155,7 +249,7 @@ export function useProjects(autoFetch: boolean = true) {
         setIsLoading(false);
       }
     },
-    [userId]
+    [setProjectsForUser, userId]
   );
 
   /**
@@ -171,9 +265,15 @@ export function useProjects(autoFetch: boolean = true) {
         await projectApi.deleteProject(projectId);
 
         // Remove project from state
-        setProjects((prevProjects) =>
-          prevProjects.filter((p) => p.id !== projectId)
-        );
+        setProjects((prevProjects) => {
+          const nextProjects = prevProjects.filter((p) => p.id !== projectId);
+          if (userId) {
+            setProjectsForUser(userId, nextProjects);
+          }
+          return nextProjects;
+        });
+        invalidateProject(projectId);
+        invalidateAnalysisForProject(projectId);
 
         return true;
       } catch (err) {
@@ -187,7 +287,7 @@ export function useProjects(autoFetch: boolean = true) {
         return false;
       }
     },
-    []
+    [invalidateAnalysisForProject, invalidateProject, setProjectsForUser, userId]
   );
 
   /**
@@ -201,7 +301,7 @@ export function useProjects(autoFetch: boolean = true) {
    * Refresh projects manually
    */
   const refresh = useCallback(() => {
-    void fetchProjects();
+    void fetchProjects(true);
   }, [fetchProjects]);
 
   // Auto-fetch projects on mount if userId is provided

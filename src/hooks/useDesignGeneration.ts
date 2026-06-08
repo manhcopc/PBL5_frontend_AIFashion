@@ -1,6 +1,8 @@
 import { useCallback, useState } from "react";
 import analysisApi from "@/features/analysis/api";
+import { useUserStore } from "@/store/UserContext";
 import { useJobStore } from "@/store/useJobStore";
+import { useServerCacheStore } from "@/store/useServerCacheStore";
 import type { JobStatus } from "@/types/job";
 import { normalizeJobStatus } from "@/utils/jobStatus";
 
@@ -19,6 +21,10 @@ export function useDesignGeneration() {
   const addJob = useJobStore((state) => state.addJob);
   const removeJob = useJobStore((state) => state.removeJob);
   const jobs = useJobStore((state) => state.jobs);
+  const invalidateAnalysisForProject = useServerCacheStore(
+    (state) => state.invalidateAnalysisForProject
+  );
+  const { refreshCredits } = useUserStore();
   const [status, setStatus] = useState<GenerationState>("PENDING");
   const [jobStatus, setJobStatus] = useState<JobStatus>("queued");
   const [designs, setDesigns] = useState<string[]>([]);
@@ -66,6 +72,7 @@ export function useDesignGeneration() {
       try {
         const job = await analysisApi.createTrendAnalysisJob(payload);
         const requestId = job.requestId || job.jobId;
+        invalidateAnalysisForProject(payload.project_id);
 
         if (!requestId) {
           throw new Error("Backend did not return a requestId/jobId.");
@@ -84,6 +91,7 @@ export function useDesignGeneration() {
           createdAt: new Date().toISOString(),
           startedAt: job.startedAt || new Date().toISOString(),
         });
+        void refreshCredits();
       } catch (err) {
         const errorMsg =
           err instanceof Error ? err.message : "Failed to create analysis job.";
@@ -92,7 +100,7 @@ export function useDesignGeneration() {
         setJobStatus("failed");
       }
     },
-    [addJob]
+    [addJob, invalidateAnalysisForProject, refreshCredits]
   );
 
   const retry = useCallback(async () => {
@@ -116,13 +124,23 @@ export function useDesignGeneration() {
     if (currentRequestId) {
       try {
         await analysisApi.deleteAnalysisRequest(currentRequestId);
+        if (lastPayload?.project_id) {
+          invalidateAnalysisForProject(lastPayload.project_id);
+        }
       } catch (err) {
         console.error("Failed to cancel analysis:", err);
       }
     }
 
     resetStudio();
-  }, [currentJob, currentRequestId, removeJob, resetStudio]);
+  }, [
+    currentJob,
+    currentRequestId,
+    invalidateAnalysisForProject,
+    lastPayload,
+    removeJob,
+    resetStudio,
+  ]);
 
   const clearError = useCallback(() => {
     setError(null);

@@ -5,12 +5,13 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/features/auth/state/use-auth-store";
 
 export const Sidebar: React.FC = () => {
   const navigate = useNavigate();
-  const [activePath, setActivePath] = useState("/workspace");
+  const location = useLocation();
+  const logout = useAuthStore((state) => state.logout);
 
   const navItems = [
     {
@@ -66,13 +67,16 @@ export const Sidebar: React.FC = () => {
         {/* Navigation */}
         <nav className="px-4 space-y-1.5 mt-2">
           {navItems.map((item, index) => {
-            const isActive = activePath === item.path;
+            const isActive =
+              item.path === "/workspace"
+                ? location.pathname === "/workspace" ||
+                  location.pathname.startsWith("/workspace/")
+                : location.pathname.startsWith(item.path);
             return (
               <button
                 key={index}
                 onClick={() => {
                   navigate(item.path);
-                  setActivePath(item.path);
                 }}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
                   isActive
@@ -101,7 +105,10 @@ export const Sidebar: React.FC = () => {
       <div className="p-4 border-t border-zinc-100">
         <button
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-zinc-500 hover:bg-rose-50 hover:text-rose-600 transition-all duration-200"
-          onClick={() => navigate("/login")}
+          onClick={() => {
+            logout();
+            navigate("/login", { replace: true });
+          }}
         >
           <LogOut className="w-5 h-5" />
           Logout

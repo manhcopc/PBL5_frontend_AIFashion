@@ -17,6 +17,7 @@ interface ConfigState {
   resetConfig: () => void;
   clearError: () => void;
   markClean: () => void;
+  resetConfigStore: () => void;
 }
 
 // Default system configuration
@@ -86,4 +87,13 @@ export const useConfigStore = create<ConfigState>((set) => ({
   clearError: () => set({ error: null }),
 
   markClean: () => set({ isDirty: false }),
+
+  resetConfigStore: () =>
+    set({
+      config: DEFAULT_CONFIG,
+      loading: false,
+      error: null,
+      isDirty: false,
+      originalConfig: DEFAULT_CONFIG,
+    }),
 }));

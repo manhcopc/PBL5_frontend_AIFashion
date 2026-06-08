@@ -15,6 +15,7 @@ interface JobState {
   getRunningJobs: () => TrackedJob[];
   addNotification: (notification: JobNotification) => void;
   markNotificationsRead: () => void;
+  clearJobStore: () => void;
 }
 
 export const useJobStore = create<JobState>()(
@@ -88,10 +89,15 @@ export const useJobStore = create<JobState>()(
             read: true,
           })),
         })),
+
+      clearJobStore: () =>
+        set({
+          jobs: [],
+          notifications: [],
+        }),
     }),
     {
       name: ACTIVE_JOBS_STORAGE_KEY,
     }
   )
 );
-

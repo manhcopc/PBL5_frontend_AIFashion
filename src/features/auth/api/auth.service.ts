@@ -4,8 +4,8 @@ import apiClient from "../../../services/ApiClient";
 import type {
   LoginRequest,
   RegisterRequest,
+  RegisterResponse,
   AuthResponse,
-  User,
 } from "../types/auth.types";
 
 export const authService = {
@@ -16,14 +16,21 @@ export const authService = {
     return response.data;
   },
 
-  register: async (data: RegisterRequest): Promise<AuthResponse> => {
+  register: async (data: RegisterRequest): Promise<RegisterResponse> => {
     const response = await apiClient.post("/auth/register", data);
     return response.data;
   },
-  getCurrentUser: async (): Promise<User> => {
-    // Lưu ý: Hỏi lại Backend xem endpoint để lấy thông tin user là gì.
-    // Thường là /auth/me, /users/me hoặc /profile
-    const response = await apiClient.get("/auth/me");
+  changePassword: async (
+    user_id: string,
+    currentPassword: string,
+    newPassword: string,
+    confirmPassword: string
+  ) => {
+    const response = await apiClient.post(`/auth/change-password/${user_id}`, {
+      current_password: currentPassword,
+      new_password: newPassword,
+      confirm_password: confirmPassword,
+    });
     return response.data;
   },
 };

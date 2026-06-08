@@ -7,6 +7,7 @@ import type {
   TriggerStatusResponse,
 } from "@/features/analysis/analysis.types";
 import { useJobStore } from "@/store/useJobStore";
+import { useServerCacheStore } from "@/store/useServerCacheStore";
 import type { JobNotification, JobStatus, TrackedJob } from "@/types/job";
 import { normalizeJobStatus } from "@/utils/jobStatus";
 
@@ -59,6 +60,15 @@ export function GlobalJobWatcher() {
   const updateJob = useJobStore((state) => state.updateJob);
   const markAsNotified = useJobStore((state) => state.markAsNotified);
   const addNotification = useJobStore((state) => state.addNotification);
+  const invalidateProject = useServerCacheStore(
+    (state) => state.invalidateProject
+  );
+  const invalidateAnalysisForProject = useServerCacheStore(
+    (state) => state.invalidateAnalysisForProject
+  );
+  const setAnalysisDetail = useServerCacheStore(
+    (state) => state.setAnalysisDetail
+  );
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const inFlightJobsRef = useRef<Set<string>>(new Set());
 
@@ -154,6 +164,13 @@ export function GlobalJobWatcher() {
       const ageMs = Date.now() - new Date(job.createdAt).getTime();
       if (ageMs >= JOB_TIMEOUT_MS) {
         const message = `${job.title} timed out. Please retry later.`;
+        if (job.projectId) {
+          if (job.type === "trend_analysis") {
+            invalidateAnalysisForProject(job.projectId);
+          } else {
+            invalidateProject(job.projectId);
+          }
+        }
         updateJob(job.jobId, {
           status: "timeout",
           error: message,
@@ -183,6 +200,10 @@ export function GlobalJobWatcher() {
           if (status === "completed") {
             const images = extractTrendImages(response);
             const message = "Phân tích xu hướng đã hoàn tất";
+            if (job.projectId) {
+              invalidateAnalysisForProject(job.projectId);
+            }
+            setAnalysisDetail(job.requestId, response);
             updateJob(job.jobId, {
               status,
               resultImages: images,
@@ -202,6 +223,9 @@ export function GlobalJobWatcher() {
             const message =
               response?.ai_callback_raw?.error ||
               "Trend analysis failed. Please retry.";
+            if (job.projectId) {
+              invalidateAnalysisForProject(job.projectId);
+            }
             updateJob(job.jobId, {
               status,
               error: message,
@@ -232,6 +256,9 @@ export function GlobalJobWatcher() {
           if (status === "completed") {
             const images = extractGenerationImages(response);
             const message = "Sinh ảnh AI đã hoàn tất";
+            if (job.projectId) {
+              invalidateProject(job.projectId);
+            }
             updateJob(job.jobId, {
               status,
               resultImages: images,
@@ -249,6 +276,9 @@ export function GlobalJobWatcher() {
             markAsNotified(job.jobId);
           } else if (status === "failed" || status === "timeout") {
             const message = "Image generation failed. Please retry.";
+            if (job.projectId) {
+              invalidateProject(job.projectId);
+            }
             updateJob(job.jobId, {
               status,
               error: message,
@@ -294,7 +324,15 @@ export function GlobalJobWatcher() {
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [addNotification, markAsNotified, runningJobs, updateJob]);
+  }, [
+    addNotification,
+    invalidateAnalysisForProject,
+    invalidateProject,
+    markAsNotified,
+    runningJobs,
+    setAnalysisDetail,
+    updateJob,
+  ]);
 
   if (toasts.length === 0) return null;
 
