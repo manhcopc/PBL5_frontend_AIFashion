@@ -106,6 +106,7 @@ export function useCreditLogs() {
 
   // Fetch logs when filters change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void fetchLogs();
   }, [filters, fetchLogs]);
 

@@ -1,27 +1,28 @@
-import type { AdminUserResponse, AdminUser } from '@/features/admin/types/admin.types';
+// import type {
+//   // AdminUserResponse,
+//   AdminUser,
+// } from "@/features/admin/types/admin.types";
 
 /**
  * Transform backend user data to frontend display format
  */
-export const mapAdminUserToDisplay = (user: AdminUserResponse): AdminUser => {
-  return {
-    id: user.id,
-    email: user.email,
-    username: user.username,
-    plan: user.plan,
-    creditsRemaining: user.creditsRemaining,
-    joinDate: formatDate(user.joinDate),
-    avatar: user.avatar || generateAvatarUrl(user.email),
-    isActive: user.isActive,
-  };
-};
+// export const mapAdminUserToDisplay = (user: AdminUser): AdminUser => {
+//   return {
+//     id: user.id,
+//     email: user.email,
+//     username: user.username,
+//     creditsRemaining: user.creditsRemaining,
+//     joinDate: formatDate(user.joinDate),
+//     role: user.role,
+//   };
+// };
 
 /**
  * Transform array of backend users to display format
  */
-export const mapAdminUsersToDisplay = (users: AdminUserResponse[]): AdminUser[] => {
-  return users.map(mapAdminUserToDisplay);
-};
+// export const mapAdminUsersToDisplay = (users: AdminUser[]): AdminUser[] => {
+//   return users.map(mapAdminUserToDisplay);
+// };
 
 /**
  * Generate avatar URL from email (using gravatar or initials)
@@ -36,10 +37,10 @@ export const generateAvatarUrl = (email: string): string => {
 export const formatDate = (dateString: string): string => {
   try {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   } catch {
     return dateString;
@@ -49,11 +50,11 @@ export const formatDate = (dateString: string): string => {
 /**
  * Get plan badge color based on plan type
  */
-export const getPlanColor = (plan: 'Free' | 'Pro' | 'Enterprise'): string => {
+export const getPlanColor = (plan: "Free" | "Pro" | "Enterprise"): string => {
   const colors: Record<string, string> = {
-    Free: 'bg-zinc-800 text-zinc-300',
-    Pro: 'bg-purple-900/40 text-purple-300 border border-purple-700/50',
-    Enterprise: 'bg-amber-900/40 text-amber-300 border border-amber-700/50',
+    Free: "bg-zinc-800 text-zinc-300",
+    Pro: "bg-purple-900/40 text-purple-300 border border-purple-700/50",
+    Enterprise: "bg-amber-900/40 text-amber-300 border border-amber-700/50",
   };
   return colors[plan] || colors.Free;
 };
@@ -62,5 +63,5 @@ export const getPlanColor = (plan: 'Free' | 'Pro' | 'Enterprise'): string => {
  * Format credit amount with thousand separator
  */
 export const formatCredits = (credits: number): string => {
-  return credits.toLocaleString('en-US');
+  return credits.toLocaleString("en-US");
 };

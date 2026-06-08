@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2, Mail, Lock } from "lucide-react";
 import { useAuthActions } from "../../features/auth/logic/use-auth-action";
 
 export default function LoginPage() {
@@ -9,23 +9,31 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const { handleLogin, handleRegister, isLoading, error } = useAuthActions();
+  const {
+    handleLogin,
+    handleRegister,
+    clearAuthMessages,
+    isLoading,
+    error,
+    success,
+  } = useAuthActions();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isLogin) {
-      console.log("Logging in with:", { email, password });
-      handleLogin({ email, password });
-      if (error) {
-        console.error("Login error:", error);
-        alert("Login failed: " + error);
-      }
-      // console.log(
-      //   "Current auth state after login attempt:",
-      //   useAuthStore.getState()
-      // );
+      await handleLogin({ email, password });
     } else {
-      handleRegister({ email, password, username, role: "user" });
+      const registered = await handleRegister({
+        email,
+        password,
+        username,
+        role: "user",
+      });
+
+      if (registered) {
+        setIsLogin(true);
+        setPassword("");
+      }
     }
   };
 
@@ -81,7 +89,11 @@ export default function LoginPage() {
           {/* Toggle Tab */}
           <div className="flex p-1 bg-zinc-900 rounded-lg mb-8">
             <button
-              onClick={() => setIsLogin(true)}
+              onClick={() => {
+                setIsLogin(true);
+                clearAuthMessages();
+              }}
+              disabled={isLoading}
               className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
                 isLogin
                   ? "bg-zinc-800 shadow-sm text-white"
@@ -91,7 +103,11 @@ export default function LoginPage() {
               Login
             </button>
             <button
-              onClick={() => setIsLogin(false)}
+              onClick={() => {
+                setIsLogin(false);
+                clearAuthMessages();
+              }}
+              disabled={isLoading}
               className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
                 !isLogin
                   ? "bg-zinc-800 shadow-sm text-white"
@@ -103,7 +119,7 @@ export default function LoginPage() {
           </div>
 
           {/* Form */}
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {!isLogin && (
               <div className="space-y-2">
                 <label className="text-sm font-medium text-zinc-300">
@@ -113,8 +129,12 @@ export default function LoginPage() {
                   <input
                     type="text"
                     value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={(e) => {
+                      clearAuthMessages();
+                      setUsername(e.target.value);
+                    }}
                     placeholder="John Doe"
+                    disabled={isLoading}
                     className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg py-3 px-4 pl-11 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
                   />
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -143,8 +163,13 @@ export default function LoginPage() {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    clearAuthMessages();
+                    setEmail(e.target.value);
+                  }}
                   placeholder="you@example.com"
+                  disabled={isLoading}
+                  autoComplete="email"
                   className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg py-3 px-4 pl-11 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
                 />
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -171,8 +196,13 @@ export default function LoginPage() {
                 <input
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    clearAuthMessages();
+                    setPassword(e.target.value);
+                  }}
                   placeholder="••••••••"
+                  disabled={isLoading}
+                  autoComplete={isLogin ? "current-password" : "new-password"}
                   className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg py-3 px-4 pl-11 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
                 />
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -181,12 +211,35 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {error && (
+              <div className="flex items-start gap-3 rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-rose-200">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-300" />
+                <p className="text-sm font-medium leading-relaxed">{error}</p>
+              </div>
+            )}
+
+            {success && (
+              <div className="flex items-start gap-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-emerald-200">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
+                <p className="text-sm font-medium leading-relaxed">
+                  {success}
+                </p>
+              </div>
+            )}
+
             <button
-              className="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-medium py-3 px-4 rounded-lg transition-colors border border-zinc-700 shadow-sm"
-              onClick={handleSubmit}
+              type="submit"
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-3 font-medium text-white shadow-sm transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-70"
               disabled={isLoading}
             >
-              {isLogin ? "Sign In" : "Create Account"}
+              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {isLoading
+                ? isLogin
+                  ? "Signing in..."
+                  : "Creating account..."
+                : isLogin
+                  ? "Sign In"
+                  : "Create Account"}
             </button>
           </form>
 

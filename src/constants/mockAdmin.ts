@@ -1,0 +1,250 @@
+import type {
+  AdminUser,
+  AdminStats,
+  CreditLog,
+  CreditLogResponse,
+  SystemConfig,
+} from "@/features/admin/types/admin.types";
+
+// Mock Admin Users
+export const mockAdminUsers: AdminUser[] = [
+  {
+    id: "user-001",
+    email: "john.doe@example.com",
+    username: "johndoe",
+    plan: "Enterprise",
+    creditsRemaining: 5000,
+    joinDate: "2024-01-15",
+    avatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=johndoe&scale=80",
+    isActive: true,
+  },
+  {
+    id: "user-002",
+    email: "jane.smith@example.com",
+    username: "janesmith",
+    plan: "Pro",
+    creditsRemaining: 2500,
+    joinDate: "2024-02-20",
+    avatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=janesmith&scale=80",
+    isActive: true,
+  },
+  {
+    id: "user-003",
+    email: "bob.wilson@example.com",
+    username: "bobwilson",
+    plan: "Free",
+    creditsRemaining: 100,
+    joinDate: "2024-03-10",
+    avatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=bobwilson&scale=80",
+    isActive: true,
+  },
+  {
+    id: "user-004",
+    email: "alice.johnson@example.com",
+    username: "alicejohnson",
+    plan: "Pro",
+    creditsRemaining: 1500,
+    joinDate: "2024-03-25",
+    avatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=alicejohnson&scale=80",
+    isActive: false,
+  },
+  {
+    id: "user-005",
+    email: "charlie.brown@example.com",
+    username: "charliebrown",
+    plan: "Enterprise",
+    creditsRemaining: 8000,
+    joinDate: "2024-01-05",
+    avatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=charliebrown&scale=80",
+    isActive: true,
+  },
+  {
+    id: "user-006",
+    email: "diana.prince@example.com",
+    username: "dianaprince",
+    plan: "Free",
+    creditsRemaining: 50,
+    joinDate: "2024-04-01",
+    avatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=dianaprince&scale=80",
+    isActive: true,
+  },
+  {
+    id: "user-007",
+    email: "evan.taylor@example.com",
+    username: "evantaylor",
+    plan: "Pro",
+    creditsRemaining: 3000,
+    joinDate: "2024-02-14",
+    avatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=evantaylor&scale=80",
+    isActive: true,
+  },
+  {
+    id: "user-008",
+    email: "fiona.green@example.com",
+    username: "fionagreen",
+    plan: "Free",
+    creditsRemaining: 200,
+    joinDate: "2024-04-10",
+    avatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=fionagreen&scale=80",
+    isActive: true,
+  },
+];
+
+// Mock Admin Stats
+export const mockAdminStats: AdminStats = {
+  totalUsers: 248,
+  userGrowth: 12.5,
+  totalCreditsSold: 125430,
+  successRate: 94.2,
+  activeGenerations: 23,
+};
+
+// Mock Credit Logs
+export const mockCreditLogs: CreditLog[] = [
+  {
+    id: "log-001",
+    transactionId: "txn-2024-001",
+    userId: "user-001",
+    userEmail: "john.doe@example.com",
+    type: "Top-up",
+    amount: 1000,
+    status: "Success",
+    timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+    description: "Monthly top-up",
+  },
+  {
+    id: "log-002",
+    transactionId: "txn-2024-002",
+    userId: "user-002",
+    userEmail: "jane.smith@example.com",
+    type: "Design Generation",
+    amount: 50,
+    status: "Success",
+    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    description: "Design generation - Premium Layout",
+  },
+  {
+    id: "log-003",
+    transactionId: "txn-2024-003",
+    userId: "user-003",
+    userEmail: "bob.wilson@example.com",
+    type: "Refund",
+    amount: 100,
+    status: "Success",
+    timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+    description: "Refund for failed generation",
+  },
+  {
+    id: "log-004",
+    transactionId: "txn-2024-004",
+    userId: "user-004",
+    userEmail: "alice.johnson@example.com",
+    type: "Design Generation",
+    amount: 75,
+    status: "Success",
+    timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+    description: "Design generation - Web Development",
+  },
+  {
+    id: "log-005",
+    transactionId: "txn-2024-005",
+    userId: "user-005",
+    userEmail: "charlie.brown@example.com",
+    type: "Top-up",
+    amount: 2000,
+    status: "Success",
+    timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+    description: "Enterprise plan top-up",
+  },
+  {
+    id: "log-006",
+    transactionId: "txn-2024-006",
+    userId: "user-006",
+    userEmail: "diana.prince@example.com",
+    type: "Design Generation",
+    amount: 25,
+    status: "Failed",
+    timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+    description: "Design generation failed - Insufficient credits",
+  },
+  {
+    id: "log-007",
+    transactionId: "txn-2024-007",
+    userId: "user-007",
+    userEmail: "evan.taylor@example.com",
+    type: "Top-up",
+    amount: 500,
+    status: "Success",
+    timestamp: new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString(),
+    description: "Mid-month credit purchase",
+  },
+  {
+    id: "log-008",
+    transactionId: "txn-2024-008",
+    userId: "user-001",
+    userEmail: "john.doe@example.com",
+    type: "Design Generation",
+    amount: 100,
+    status: "Success",
+    timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+    description: "Design generation - Enterprise Template",
+  },
+  {
+    id: "log-009",
+    transactionId: "txn-2024-009",
+    userId: "user-008",
+    userEmail: "fiona.green@example.com",
+    type: "Refund",
+    amount: 50,
+    status: "Pending",
+    timestamp: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString(),
+    description: "Refund pending - Quality issue",
+  },
+  {
+    id: "log-010",
+    transactionId: "txn-2024-010",
+    userId: "user-002",
+    userEmail: "jane.smith@example.com",
+    type: "Top-up",
+    amount: 750,
+    status: "Success",
+    timestamp: new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString(),
+    description: "Pro plan top-up",
+  },
+];
+
+// Mock Credit Logs Response (with pagination)
+export const mockCreditLogsResponse: CreditLogResponse = {
+  logs: mockCreditLogs,
+  total: 1250,
+  totalCreditsIssued: 450000,
+  totalCreditsUsedToday: 12850,
+};
+
+// Mock System Config
+export const mockSystemConfig: SystemConfig = {
+  id: "config-001",
+  aiModel: {
+    apiKey: "sk-proj-xxxxxxxxxxx",
+    version: "gpt-4",
+    maintenanceMode: false,
+  },
+  pricing: {
+    creditPrice: 0.01,
+    creditsPerGeneration: 50,
+  },
+  security: {
+    emailVerificationRequired: true,
+    newUserBonusCredits: 100,
+  },
+  updatedAt: new Date().toISOString(),
+  updatedBy: "admin-001",
+};

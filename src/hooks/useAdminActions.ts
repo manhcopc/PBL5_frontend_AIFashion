@@ -1,7 +1,8 @@
-import { useCallback } from 'react';
-import { useAdminStore } from '@/store/useAdminStore';
-import { adminService } from '@/services/adminService';
-import { mapAdminUsersToDisplay } from '@/mappers/adminMapper';
+import { useCallback } from "react";
+import { useAdminStore } from "@/store/useAdminStore";
+import { adminService } from "@/services/adminService";
+import { fetchListUsers, deleteUser } from "@/features/user/api/user.service";
+import { mapAdminStats } from "@/features/admin/types/admin.maps";
 
 export const useAdminActions = () => {
   const {
@@ -23,40 +24,64 @@ export const useAdminActions = () => {
   /**
    * Fetch users with current filters and pagination
    */
-  const fetchUsers = useCallback(async (page?: number) => {
-    setLoading(true);
-    clearError();
-    try {
-      const currentPage = page || pagination.page;
-      const filterParams = {
-        email: filters.email || undefined,
-        plan: filters.plan !== 'All' ? filters.plan : undefined,
-      };
+  const fetchUsers = useCallback(
+    async (page?: number) => {
+      setLoading(true);
+      clearError();
+      try {
+        const currentPage = page || pagination.page;
+        // const filterParams = {
+        //   email: filters.email || undefined,
+        //   plan: filters.plan !== "All" ? filters.plan : undefined,
+        // };
 
-      const data = await adminService.getUsers(currentPage, pagination.limit, filterParams);
-      setUsers(mapAdminUsersToDisplay(data.users));
-      setPagination({
-        page: currentPage,
-        limit: pagination.limit,
-        total: data.total,
-      });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to fetch users';
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  }, [pagination.page, pagination.limit, filters, setUsers, setLoading, setError, setPagination, clearError]);
+        const data = await fetchListUsers();
+        // currentPage,
+        // pagination.limit,
+        // filterParams
+        console.log("[useAdminAction] Fetched users:", data);
+        setUsers(data);
+        setPagination({
+          page: currentPage,
+          limit: pagination.limit,
+          total: data.total,
+        });
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : "Failed to fetch users";
+        setError(message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [
+      pagination.page,
+      pagination.limit,
+      // filters,
+      setUsers,
+      setLoading,
+      setError,
+      setPagination,
+      clearError,
+    ]
+  );
 
   /**
    * Fetch dashboard statistics
    */
   const fetchStats = useCallback(async () => {
     try {
-      const stats = await adminService.getStats();
-      setStats(stats);
+      // const stats = await adminService.getStats();
+      // console.log("[useAdminAction] Fetched stats:", stats);
+      // setStats(stats);
+      const res = await adminService.getStats();
+
+      const mappedStats = mapAdminStats(res);
+
+      setStats(mappedStats);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to fetch stats';
+      const message =
+        err instanceof Error ? err.message : "Failed to fetch stats";
       setError(message);
     }
   }, [setStats, setError]);
@@ -75,7 +100,7 @@ export const useAdminActions = () => {
    * Filter users by plan
    */
   const filterByPlan = useCallback(
-    (plan: 'All' | 'Free' | 'Pro' | 'Enterprise') => {
+    (plan: "All" | "Free" | "Pro" | "Enterprise") => {
       setFilters({ plan });
     },
     [setFilters]
@@ -87,7 +112,7 @@ export const useAdminActions = () => {
   const topUpUserCredits = useCallback(
     async (userId: string, amount: number) => {
       if (amount <= 0) {
-        setError('Credits amount must be positive');
+        setError("Credits amount must be positive");
         return false;
       }
 
@@ -101,7 +126,8 @@ export const useAdminActions = () => {
         }
         return false;
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to top-up credits';
+        const message =
+          err instanceof Error ? err.message : "Failed to top-up credits";
         setError(message);
         return false;
       } finally {
@@ -115,7 +141,7 @@ export const useAdminActions = () => {
    * Change user plan
    */
   const changeUserPlan = useCallback(
-    async (userId: string, newPlan: 'Free' | 'Pro' | 'Enterprise') => {
+    async (userId: string, newPlan: "Free" | "Pro" | "Enterprise") => {
       setLoading(true);
       clearError();
       try {
@@ -126,7 +152,8 @@ export const useAdminActions = () => {
         }
         return false;
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to change plan';
+        const message =
+          err instanceof Error ? err.message : "Failed to change plan";
         setError(message);
         return false;
       } finally {
@@ -144,14 +171,15 @@ export const useAdminActions = () => {
       setLoading(true);
       clearError();
       try {
-        const result = await adminService.deleteUser(userId);
+        const result = await deleteUser(userId);
         if (result.success) {
           removeUser(userId);
           return true;
         }
         return false;
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to delete user';
+        const message =
+          err instanceof Error ? err.message : "Failed to delete user";
         setError(message);
         return false;
       } finally {

@@ -1,5 +1,6 @@
 import { BarChart3, Users, CreditCard, RotateCcw, LogOut } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/features/auth/state/use-auth-store";
 
 interface AdminSidebarProps {
   isOpen?: boolean; // Vẫn giữ để điều khiển mobile drawer nếu cần
@@ -9,6 +10,7 @@ interface AdminSidebarProps {
 export const AdminSidebar = ({ isOpen, onClose }: AdminSidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const logout = useAuthStore((state) => state.logout);
 
   const navItems = [
     { label: "Analytics", icon: BarChart3, href: "/admin" },
@@ -69,7 +71,10 @@ export const AdminSidebar = ({ isOpen, onClose }: AdminSidebarProps) => {
       <div className="p-4 border-t border-zinc-900">
         <button
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition-colors"
-          onClick={() => navigate("/login")}
+          onClick={() => {
+            logout();
+            navigate("/login", { replace: true });
+          }}
         >
           <LogOut className="w-5 h-5 shrink-0" />
           <span>Logout</span>

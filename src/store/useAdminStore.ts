@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import type { AdminUser, AdminStats } from '@/features/admin/types/admin.types';
+import { create } from "zustand";
+import type { AdminUser, AdminStats } from "@/features/admin/types/admin.types";
 
 interface AdminState {
   // Data
@@ -14,7 +14,7 @@ interface AdminState {
   };
   filters: {
     email: string;
-    plan: 'All' | 'Free' | 'Pro' | 'Enterprise';
+    plan: "All" | "Free" | "Pro" | "Enterprise";
   };
 
   // Actions
@@ -22,15 +22,26 @@ interface AdminState {
   setStats: (stats: AdminStats) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  setPagination: (pagination: { page: number; limit: number; total: number }) => void;
-  setFilters: (filters: { email?: string; plan?: 'All' | 'Free' | 'Pro' | 'Enterprise' }) => void;
+  setPagination: (pagination: {
+    page: number;
+    limit: number;
+    total: number;
+  }) => void;
+  setFilters: (filters: {
+    email?: string;
+    plan?: "All" | "Free" | "Pro" | "Enterprise";
+  }) => void;
   updateUserCredits: (userId: string, newCredits: number) => void;
-  updateUserPlan: (userId: string, newPlan: 'Free' | 'Pro' | 'Enterprise') => void;
+  updateUserPlan: (
+    userId: string,
+    newPlan: "Free" | "Pro" | "Enterprise"
+  ) => void;
   removeUser: (userId: string) => void;
   clearError: () => void;
+  resetAdminStore: () => void;
 }
 
-export const useAdminStore = create<AdminState>((set) => ({
+const initialAdminState = {
   users: [],
   stats: null,
   loading: false,
@@ -41,9 +52,13 @@ export const useAdminStore = create<AdminState>((set) => ({
     total: 0,
   },
   filters: {
-    email: '',
-    plan: 'All',
+    email: "",
+    plan: "All" as const,
   },
+};
+
+export const useAdminStore = create<AdminState>((set) => ({
+  ...initialAdminState,
 
   setUsers: (users) => set({ users }),
 
@@ -64,20 +79,20 @@ export const useAdminStore = create<AdminState>((set) => ({
   updateUserCredits: (userId, newCredits) =>
     set((state) => ({
       users: state.users.map((user) =>
-        user.id === userId ? { ...user, creditsRemaining: newCredits } : user
+        user._id === userId ? { ...user, creditsRemaining: newCredits } : user
       ),
     })),
 
   updateUserPlan: (userId, newPlan) =>
     set((state) => ({
       users: state.users.map((user) =>
-        user.id === userId ? { ...user, plan: newPlan } : user
+        user._id === userId ? { ...user, plan: newPlan } : user
       ),
     })),
 
   removeUser: (userId) =>
     set((state) => ({
-      users: state.users.filter((user) => user.id !== userId),
+      users: state.users.filter((user) => user._id !== userId),
       pagination: {
         ...state.pagination,
         total: Math.max(0, state.pagination.total - 1),
@@ -85,4 +100,6 @@ export const useAdminStore = create<AdminState>((set) => ({
     })),
 
   clearError: () => set({ error: null }),
+
+  resetAdminStore: () => set(initialAdminState),
 }));

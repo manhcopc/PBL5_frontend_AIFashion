@@ -34,7 +34,7 @@ export const UnauthorizedPage = () => {
           <button
             onClick={() => {
               logout();
-              navigate('/login');
+              navigate('/login', { replace: true });
             }}
             className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors font-medium"
           >

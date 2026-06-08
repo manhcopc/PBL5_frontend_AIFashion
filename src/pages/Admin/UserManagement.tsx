@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Search, Filter, AlertCircle } from "lucide-react";
+import { Search, Filter } from "lucide-react";
 import { useAdminActions } from "@/hooks/useAdminActions";
 import { UserTable } from "@/components/admin/UserTable";
 import { ManageUserModal } from "@/components/admin/ManageUserModal";
@@ -16,7 +16,7 @@ export const UserManagement = () => {
     searchUsers,
     filterByPlan,
     topUpUserCredits,
-    changeUserPlan,
+    // changeUserPlan,
     deleteUserAccount,
     nextPage,
     prevPage,
@@ -66,13 +66,15 @@ export const UserManagement = () => {
 
   const handleTopUp = async (amount: number) => {
     if (!selectedUser) return false;
-    return topUpUserCredits(selectedUser.id, amount);
+    const userId = selectedUser._id || selectedUser.id;
+    if (!userId) return false;
+    return topUpUserCredits(userId, amount);
   };
 
-  const handlePlanChange = async (newPlan: "Free" | "Pro" | "Enterprise") => {
-    if (!selectedUser) return false;
-    return changeUserPlan(selectedUser.id, newPlan);
-  };
+  // const handlePlanChange = async (newPlan: "Free" | "Pro" | "Enterprise") => {
+  //   if (!selectedUser) return false;
+  //   return changeUserPlan(selectedUser._id, newPlan);
+  // };
 
   return (
     <div className="flex-1 flex flex-col">
@@ -85,7 +87,6 @@ export const UserManagement = () => {
         <div className="space-y-6">
           {error && (
             <div className="p-4 bg-red-900/20 border border-red-700/50 rounded-lg flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
               <div>
                 <p className="font-medium text-red-300">Error</p>
                 <p className="text-sm text-red-200">{error}</p>
@@ -174,10 +175,12 @@ export const UserManagement = () => {
             setSelectedUser(null);
           }}
           userName={selectedUser.username}
-          currentCredits={selectedUser.creditsRemaining}
-          currentPlan={selectedUser.plan}
+          currentCredits={
+            selectedUser.available_credits ?? selectedUser.creditsRemaining ?? 0
+          }
+          // currentPlan={selectedUser.plan}
           onTopUp={handleTopUp}
-          onPlanChange={handlePlanChange}
+          // onPlanChange={handlePlanChange}
           isLoading={loading}
           error={error}
         />
