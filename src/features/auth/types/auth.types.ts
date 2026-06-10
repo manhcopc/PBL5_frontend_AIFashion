@@ -1,20 +1,27 @@
 export interface User {
   id: string;
   email: string;
-  username: string;      // Dữ liệu nội bộ UI dùng 'username'
+  username?: string;
+  company_name?: string | null;
+  available_credits: number;
   role: string;
+  created_at?: string;
 }
 
 export type LoginRequest = Pick<User, 'email'> & { 
   password: string; 
 };
 
-export type RegisterRequest = Omit<User, 'id'> & { 
-  username: string;  // API yêu cầu 'username' thay vì 'name'
+export interface RegisterRequest {
+  email: string;
+  username: string;
+  role: string;
   password: string; 
-};
+}
 
 export interface AuthResponse {
-  user: User & { company_name: string, available_credits: number }; // API trả về user không có 'id'
+  user: User;
   token: string;
 }
+
+export type RegisterResponse = User;

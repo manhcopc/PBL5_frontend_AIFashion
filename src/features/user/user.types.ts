@@ -21,3 +21,8 @@ export interface UpdateUserPayload {
   role?: string;
   available_credits?: number;
 }
+
+export interface UpdateUserProfilePayload {
+  username: string;
+  email: string;
+}
