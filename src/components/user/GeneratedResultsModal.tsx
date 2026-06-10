@@ -27,7 +27,6 @@ export function GeneratedResultsModal({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-900/80 backdrop-blur-md animate-in fade-in duration-500">
       <div className="bg-zinc-50 w-full max-w-7xl max-h-[95vh] overflow-y-auto rounded-[2.5rem] shadow-2xl p-6 md:p-10 flex flex-col gap-10">
-        {/* --- Header Section --- */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-zinc-200 pb-8">
           <div className="flex flex-col gap-1">
             <h2 className="text-4xl font-black text-zinc-900 tracking-tight">
@@ -60,7 +59,6 @@ export function GeneratedResultsModal({
         </div>
 
         <div className="flex flex-col lg:flex-row gap-10">
-          {/* --- CỘT TRÁI: REFERENCE STYLE (1/3 width) --- */}
           <aside className="lg:w-1/3 flex flex-col gap-6">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-black text-zinc-400 uppercase tracking-widest">
@@ -93,7 +91,6 @@ export function GeneratedResultsModal({
             </div>
           </aside>
 
-          {/* --- CỘT PHẢI: AI GENERATED (2/3 width) --- */}
           <main className="lg:w-2/3 flex flex-col gap-6">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-black text-indigo-600 uppercase tracking-widest">

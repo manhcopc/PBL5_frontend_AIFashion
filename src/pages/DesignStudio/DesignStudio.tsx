@@ -23,8 +23,11 @@ import useAnalysisHistory from "@/hooks/useAnalysisHistory";
 
 export default function DesignStudio() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { projects, isLoading: isLoadingProjects, error: projectError } =
-    useProjects();
+  const {
+    projects,
+    isLoading: isLoadingProjects,
+    error: projectError,
+  } = useProjects();
   const {
     selectedProjectId,
     analysisRequests,
@@ -57,14 +60,10 @@ export default function DesignStudio() {
 
   return (
     <>
-      {/* <div className="flex h-screen bg-zinc-50 text-zinc-900 font-sans overflow-hidden"> */}
       <main className="overflow-y-auto w-full relative flex flex-col">
-        {/* Header */}
         <Header />
 
-        {/* Container chung để quản lý padding thống nhất */}
         <div className="flex-1 flex flex-col px-8 py-6 max-w-7xl mx-auto w-full">
-          {/* Page Title & Action */}
           <div className="flex flex-col sm:items-center sm:flex-row justify-between gap-4 mb-8">
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-zinc-900">
@@ -93,7 +92,6 @@ export default function DesignStudio() {
             </div>
           )}
 
-          {/* Main Content Area */}
           <div className="flex-1 flex flex-col gap-8">
             <section className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1fr)_420px]">
               <div className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
@@ -118,8 +116,8 @@ export default function DesignStudio() {
                       No projects yet
                     </h3>
                     <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-500">
-                      Create a design request to start collecting trend
-                      analysis sessions for your projects.
+                      Create a design request to start collecting trend analysis
+                      sessions for your projects.
                     </p>
                   </div>
                 ) : (
@@ -254,7 +252,6 @@ export default function DesignStudio() {
               </aside>
             </section>
 
-            {/* Footer Stats Row */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-8">
               <div className="bg-white border border-zinc-200 rounded-2xl p-5 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
                 <div className="p-3 bg-purple-50 rounded-xl">
@@ -309,7 +306,6 @@ export default function DesignStudio() {
           alert("Selected product type:");
         }}
       />
-      {/* </div> */}
     </>
   );
 }

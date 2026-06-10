@@ -43,14 +43,11 @@ function App() {
     <UserProvider>
       <BrowserRouter>
         <Routes>
-          {/* Root route - redirects based on auth status */}
           <Route path="/" element={<RootPage />} />
 
-          {/* Auth routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-          {/* User routes - protected, requires user role */}
           <Route
             element={
               <ProtectedRoute requiredRole={["user", "admin"]}>
@@ -69,7 +66,6 @@ function App() {
             />{" "}
           </Route>
 
-          {/* Admin routes - protected, requires admin role only */}
           <Route
             element={
               <ProtectedRoute requiredRole={["admin"]}>
@@ -80,11 +76,13 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<UserManagement />} />
             <Route path="/admin/credit-logs" element={<CreditLogs />} />
-            <Route path="/admin/subscription-plans" element={<SubscriptionPlans />} />
+            <Route
+              path="/admin/subscription-plans"
+              element={<SubscriptionPlans />}
+            />
             <Route path="/admin/settings" element={<AdminSettings />} />
           </Route>
 
-          {/* Catch all - redirect to root */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

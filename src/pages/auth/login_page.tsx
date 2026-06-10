@@ -39,7 +39,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex text-zinc-900 font-sans bg-zinc-50">
-      {/* Left Side - Image & Glassmorphism (Hidden on Mobile) */}
       <div className="hidden lg:flex w-1/2 relative bg-zinc-100 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -62,31 +61,19 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right Side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24">
         <div className="w-full max-w-md space-y-8">
-          {/* Logo */}
           <div className="flex justify-center mb-10">
             <h1 className="text-3xl font-extrabold tracking-tighter flex items-center gap-2">
-              <span className="bg-indigo-600 rounded-lg p-2 text-white shadow-sm">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 2v20 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                </svg>
-              </span>
-              StyleAI
+              <img
+                src="/logo.png"
+                alt="TrendEngine logo"
+                className="h-11 w-11 rounded-xl object-contain shadow-sm"
+              />
+              TrendEngine
             </h1>
           </div>
 
-          {/* Toggle Tab */}
           <div className="flex p-1 bg-zinc-100 rounded-lg mb-8 border border-zinc-200">
             <button
               onClick={() => {
@@ -118,7 +105,6 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* Form */}
           <form className="space-y-6" onSubmit={handleSubmit}>
             {!isLogin && (
               <div className="space-y-2">
@@ -221,9 +207,7 @@ export default function LoginPage() {
             {success && (
               <div className="flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-700">
                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
-                <p className="text-sm font-medium leading-relaxed">
-                  {success}
-                </p>
+                <p className="text-sm font-medium leading-relaxed">{success}</p>
               </div>
             )}
 
@@ -238,8 +222,8 @@ export default function LoginPage() {
                   ? "Signing in..."
                   : "Creating account..."
                 : isLogin
-                  ? "Sign In"
-                  : "Create Account"}
+                ? "Sign In"
+                : "Create Account"}
             </button>
           </form>
 

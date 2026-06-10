@@ -43,28 +43,17 @@ export const Sidebar: React.FC = () => {
   return (
     <aside className="w-64 bg-white border-r border-zinc-200 h-screen flex flex-col justify-between hidden md:flex shadow-sm">
       <div>
-        {/* Logo Section */}
         <div className="p-6 flex items-center gap-3">
-          <span className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-2 text-white shadow-md shadow-indigo-100">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 2v20 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
-          </span>
+          <img
+            src="/logo.png"
+            alt="TrendEngine logo"
+            className="h-10 w-10 rounded-xl object-contain shadow-sm"
+          />
           <h1 className="text-xl font-extrabold tracking-tight text-zinc-900">
-            StyleAI
+            TrendEngine
           </h1>
         </div>
 
-        {/* Navigation */}
         <nav className="px-4 space-y-1.5 mt-2">
           {navItems.map((item, index) => {
             const isActive =
@@ -84,7 +73,6 @@ export const Sidebar: React.FC = () => {
                     : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
                 }`}
               >
-                {/* Clone icon để tùy chỉnh màu nếu cần, hoặc giữ nguyên nếu icon đã có màu nội bộ */}
                 <span
                   className={
                     isActive
@@ -101,7 +89,6 @@ export const Sidebar: React.FC = () => {
         </nav>
       </div>
 
-      {/* Footer Section */}
       <div className="p-4 border-t border-zinc-100">
         <button
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-zinc-500 hover:bg-rose-50 hover:text-rose-600 transition-all duration-200"
