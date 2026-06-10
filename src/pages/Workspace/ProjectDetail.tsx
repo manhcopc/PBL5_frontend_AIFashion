@@ -9,6 +9,7 @@ import {
   Eye,
   Image as ImageIcon,
   XCircle,
+  X,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { useProjects } from "@/hooks/useProjects";
@@ -21,6 +22,7 @@ type TabType = "requests" | "gallery";
 interface RequestCardProps {
   request: ProjectRequestSummary;
   loadingMessage?: string;
+  onView?: (request: ProjectRequestSummary) => void;
 }
 
 function mapJobToRequestSummary(job: TrackedJob): ProjectRequestSummary {
@@ -40,11 +42,143 @@ function mapJobToRequestSummary(job: TrackedJob): ProjectRequestSummary {
     status: statusMap[job.status],
     created_at: job.createdAt,
     result_thumbnail_url: job.resultImages || null,
+    payload: undefined,
   };
 }
 
+const payloadLabels: Array<{
+  key: keyof NonNullable<ProjectRequestSummary["payload"]>;
+  label: string;
+}> = [
+  { key: "target_style_prompt", label: "Style prompt" },
+  { key: "target_season", label: "Season" },
+  { key: "target_audience", label: "Audience" },
+  { key: "target_weather", label: "Weather" },
+  { key: "num_images", label: "Number of images" },
+  { key: "seed", label: "Seed" },
+];
+
+function RequestDetailModal({
+  request,
+  onClose,
+}: {
+  request: ProjectRequestSummary | null;
+  onClose: () => void;
+}) {
+  if (!request) return null;
+
+  const images = request.result_thumbnail_url || [];
+  const payload = request.payload || {};
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/50 p-4 backdrop-blur-sm">
+      <div className="flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-2xl">
+        <div className="flex items-start justify-between gap-4 border-b border-zinc-100 px-6 py-5">
+          <div>
+            <p className="text-xs font-black uppercase tracking-wider text-zinc-400">
+              Request details
+            </p>
+            <h2 className="mt-1 text-2xl font-extrabold text-zinc-900">
+              {request.category_name}
+            </h2>
+            <p className="mt-1 text-sm font-medium text-zinc-500">
+              ID: {request.request_id}
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="rounded-xl p-2 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
+            aria-label="Close request details"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="grid gap-0 overflow-y-auto lg:grid-cols-[1.35fr_0.65fr]">
+          <section className="border-b border-zinc-100 p-6 lg:border-b-0 lg:border-r">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-500">
+                Generated images ({images.length})
+              </h3>
+              <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
+                {request.status}
+              </span>
+            </div>
+
+            {images.length > 0 ? (
+              <div className="grid grid-cols-2 gap-4">
+                {images.slice(0, 4).map((url, index) => (
+                  <a
+                    key={`${url}-${index}`}
+                    href={url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group relative aspect-[4/5] overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 shadow-sm"
+                  >
+                    <img
+                      src={url}
+                      alt={`Generated design ${index + 1}`}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-bold text-zinc-700 shadow-sm">
+                      #{index + 1}
+                    </div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className="flex min-h-[320px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-200 bg-zinc-50 text-center">
+                <ImageIcon className="mb-3 h-10 w-10 text-zinc-300" />
+                <p className="text-sm font-bold text-zinc-700">
+                  No generated images available
+                </p>
+              </div>
+            )}
+          </section>
+
+          <aside className="p-6">
+            <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-zinc-500">
+              Generation payload
+            </h3>
+            <div className="space-y-3">
+              {payloadLabels.map(({ key, label }) => {
+                const value = payload[key];
+                return (
+                  <div
+                    key={key}
+                    className="rounded-xl border border-zinc-200 bg-zinc-50 p-3"
+                  >
+                    <p className="text-[11px] font-black uppercase tracking-wider text-zinc-400">
+                      {label}
+                    </p>
+                    <p className="mt-1 break-words text-sm font-semibold text-zinc-900">
+                      {value === undefined || value === null || value === ""
+                        ? "N/A"
+                        : String(value)}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-5 rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
+              <p className="text-sm font-bold text-indigo-900">
+                These parameters explain why this image set was generated.
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-indigo-700">
+                The style prompt, season, audience, weather, image count, and
+                seed are the inputs sent to the AI generation request.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ==================== COMPLETED REQUEST CARD ====================
-function CompletedRequestCard({ request }: RequestCardProps) {
+function CompletedRequestCard({ request, onView }: RequestCardProps) {
   const imageUrl =
     request.result_thumbnail_url && request.result_thumbnail_url.length > 0
       ? request.result_thumbnail_url[0]
@@ -109,7 +243,10 @@ function CompletedRequestCard({ request }: RequestCardProps) {
 
         {/* Action Buttons */}
         <div className="flex gap-2 pt-3 border-t border-zinc-100">
-          <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-zinc-50 hover:bg-zinc-100 text-zinc-700 rounded-lg text-xs font-bold transition-all active:scale-95 border border-zinc-200">
+          <button
+            onClick={() => onView?.(request)}
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-zinc-50 hover:bg-zinc-100 text-zinc-700 rounded-lg text-xs font-bold transition-all active:scale-95 border border-zinc-200"
+          >
             <Eye className="w-3.5 h-3.5 text-zinc-500" />
             View
           </button>
@@ -330,10 +467,10 @@ function FailedRequestCard({ request }: RequestCardProps) {
 }
 
 // ==================== REQUEST CARD ROUTER ====================
-function RequestCard({ request, loadingMessage }: RequestCardProps) {
+function RequestCard({ request, loadingMessage, onView }: RequestCardProps) {
   switch (request.status) {
     case "COMPLETED":
-      return <CompletedRequestCard request={request} />;
+      return <CompletedRequestCard request={request} onView={onView} />;
     case "GENERATING_IMAGES":
       return (
         <GeneratingRequestCard
@@ -354,6 +491,8 @@ function RequestCard({ request, loadingMessage }: RequestCardProps) {
 export default function ProjectDetail() {
   const { projectId } = useParams<{ projectId: string }>();
   const [activeTab, setActiveTab] = useState<TabType>("requests");
+  const [selectedRequest, setSelectedRequest] =
+    useState<ProjectRequestSummary | null>(null);
   const {
     detailSummary,
     fetchProjectDetails,
@@ -425,6 +564,11 @@ export default function ProjectDetail() {
 
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 font-sans">
+      <RequestDetailModal
+        request={selectedRequest}
+        onClose={() => setSelectedRequest(null)}
+      />
+
       {/* Header Navigation */}
       <header className="border-b border-zinc-200 bg-white/70 backdrop-blur-md sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-6">
@@ -508,6 +652,7 @@ export default function ProjectDetail() {
                     key={request.request_id}
                     request={request}
                     loadingMessage={loadingMessage}
+                    onView={setSelectedRequest}
                   />
                 ))}
               </div>

@@ -22,7 +22,7 @@ import type {
 // src/features/billing/api/billing.service.ts
 export const BillingService = {
   getPlans: async (): Promise<BillingPlanResponse[]> => {
-    const response = await apiClient.get("/billing/plans");
+    const response = await apiClient.get("/subscription_plans/");
     return response.data;
   },
 

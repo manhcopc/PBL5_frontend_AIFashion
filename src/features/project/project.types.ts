@@ -21,6 +21,14 @@ export interface ProjectRequestSummary {
   status: "PENDING" | "GENERATING_IMAGES" | "COMPLETED" | "FAILED";
   created_at: string;
   result_thumbnail_url: string[] | null; // Array of URLs or null if not available
+  payload?: {
+    target_style_prompt?: string;
+    target_season?: string;
+    target_audience?: string;
+    target_weather?: string;
+    num_images?: number;
+    seed?: number;
+  };
 }
 
 /** 

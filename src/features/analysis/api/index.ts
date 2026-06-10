@@ -150,6 +150,7 @@ export const analysisApi = {
     } else {
       return AnalysisService.triggerGenerate(requestId, {
         base_image_url: data.base_image_url,
+        target_style_prompt: data.target_style_prompt,
         target_season: data.target_season,
         target_audience: data.target_audience,
         target_weather: data.target_weather,

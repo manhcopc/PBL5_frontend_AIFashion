@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { createProject } from '../services/projectService';
+import projectApi from '@/features/project/api';
+import { transformProjectResponseToUI } from '@/features/project/mappers/projectMapper';
+import { useAuthStore } from '@/features/auth/state/use-auth-store';
 import type { Project } from '../types';
 
 export function useCreateProject(onSuccess: (project: Project) => void, onClose: () => void) {
@@ -7,6 +9,7 @@ export function useCreateProject(onSuccess: (project: Project) => void, onClose:
   const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const userId = useAuthStore((state) => state.userId);
 
   const resetForm = () => {
     setTitle('');
@@ -25,12 +28,23 @@ export function useCreateProject(onSuccess: (project: Project) => void, onClose:
 
     setIsSubmitting(true);
     try {
-      const newProject = await createProject({ title, description });
+      if (!userId) {
+        throw new Error('User ID is required to create a project.');
+      }
+
+      const rawProject = await projectApi.createProject(
+        {
+          project_name: title.trim(),
+          description: description.trim(),
+        },
+        userId
+      );
+      const newProject = await transformProjectResponseToUI(rawProject);
       resetForm();
       onSuccess(newProject);
       onClose();
-    } catch {
-      setError('Failed to create project. Please try again.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create project. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

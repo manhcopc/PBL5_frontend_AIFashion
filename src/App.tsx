@@ -2,23 +2,21 @@ import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/state/use-auth-store";
 
-// Auth Pages
 import Login from "@/pages/auth/login_page";
 import { UnauthorizedPage } from "@/pages/auth/unauthorized_page";
 import { RootPage } from "@/pages/RootPage";
 
-// User Pages
 import Workspace from "@/pages/Workspace/Workspace";
 import DesignStudio from "@/pages/DesignStudio/DesignStudio";
 import CreateDesign from "@/pages/Design/CreateDesign";
 import Billing from "@/pages/Billing/Billing";
 import UserSettings from "@/pages/Settings/UserSettings";
-import ProjectDetail from "@/pages/Workspace/ProjectDetail";// Admin Pages
+import ProjectDetail from "@/pages/Workspace/ProjectDetail";
 import { AdminDashboard } from "@/pages/Admin/AdminDashboard";
 import { UserManagement } from "@/pages/Admin/UserManagement";
 import { CreditLogs } from "@/pages/Admin/CreditLogs";
+import { SubscriptionPlans } from "@/pages/Admin/SubscriptionPlans";
 
-// Layouts & Route Protection
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import UserLayout from "@/components/layout/UserLayout";
@@ -65,7 +63,11 @@ function App() {
             <Route path="/create-design" element={<CreateDesign />} />
             <Route path="/billing" element={<Billing />} />{" "}
             <Route path="/settings" element={<UserSettings />} />
-            <Route path="/workspace/:projectId" element={<ProjectDetail />} />          </Route>
+            <Route
+              path="/workspace/:projectId"
+              element={<ProjectDetail />}
+            />{" "}
+          </Route>
 
           {/* Admin routes - protected, requires admin role only */}
           <Route
@@ -78,6 +80,7 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<UserManagement />} />
             <Route path="/admin/credit-logs" element={<CreditLogs />} />
+            <Route path="/admin/subscription-plans" element={<SubscriptionPlans />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
           </Route>
 

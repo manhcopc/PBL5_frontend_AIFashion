@@ -6,9 +6,9 @@ interface ManageUserModalProps {
   onClose: () => void;
   userName: string;
   currentCredits: number;
-  // currentPlan: "Free" | "Pro" | "Enterprise";
+
   onTopUp: (amount: number) => Promise<boolean>;
-  // onPlanChange: (newPlan: "Free" | "Pro" | "Enterprise") => Promise<boolean>;
+
   isLoading?: boolean;
   error?: string | null;
 }
@@ -18,16 +18,14 @@ export const ManageUserModal = ({
   onClose,
   userName,
   currentCredits,
-  // currentPlan,
+
   onTopUp,
-  // onPlanChange,
+
   isLoading,
   error,
 }: ManageUserModalProps) => {
   const [topUpAmount, setTopUpAmount] = useState("");
-  // const [selectedPlan, setSelectedPlan] = useState<
-  //   "Free" | "Pro" | "Enterprise"
-  // >(currentPlan);
+
   const [activeTab, setActiveTab] = useState<"credits" | "plan">("credits");
   const [localError, setLocalError] = useState<string | null>(null);
 
@@ -44,18 +42,6 @@ export const ManageUserModal = ({
       onClose();
     }
   };
-
-  // const handlePlanChange = async () => {
-  //   if (selectedPlan === currentPlan) {
-  //     setLocalError("Please select a different plan");
-  //     return;
-  //   }
-  //   setLocalError(null);
-  //   const success = await onPlanChange(selectedPlan);
-  //   if (success) {
-  //     onClose();
-  //   }
-  // };
 
   if (!isOpen) return null;
 
@@ -212,11 +198,7 @@ export const ManageUserModal = ({
                 </div>
               </div>
 
-              <button
-                // onClick={handlePlanChange}
-                // disabled={isLoading || selectedPlan === currentPlan}
-                className="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-zinc-300 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
-              >
+              <button className="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-zinc-300 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors">
                 {isLoading ? "Processing..." : "Confirm Change"}
               </button>
             </div>

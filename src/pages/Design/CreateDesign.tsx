@@ -27,6 +27,7 @@ type RouteDesignImage = string | { imageUrl?: string; url?: string };
 interface CreateDesignLocationState {
   requestId?: string;
   projectId?: string;
+  promptText?: string;
   generatedImages?: RouteDesignImage[];
   generatedResultImages?: string[];
   openGeneratedResults?: boolean;
@@ -39,6 +40,9 @@ export default function CreateDesign() {
   const routeState = location.state as CreateDesignLocationState | null;
   const requestId = routeState?.requestId ?? "";
   const projectId = routeState?.projectId;
+  const [targetStylePrompt, setTargetStylePrompt] = useState(
+    routeState?.promptText ?? ""
+  );
   const initialImages = routeState?.generatedImages ?? [];
   const generatedResultImages = routeState?.generatedResultImages ?? [];
   const shouldOpenGeneratedResults = routeState?.openGeneratedResults === true;
@@ -63,10 +67,15 @@ export default function CreateDesign() {
 
     designs,
     analysisError,
-  } = useGenerationFlow(requestId, {
-    num_images: 4,
-    seed: 42,
-  }, projectId); // Truyền projectId để global job watcher điều hướng kết quả
+  } = useGenerationFlow(
+    requestId,
+    {
+      target_style_prompt: targetStylePrompt.trim(),
+      num_images: 4,
+      seed: 42,
+    },
+    projectId
+  ); // Truyền projectId để global job watcher điều hướng kết quả
 
   // ✅ 3. Nếu không có projectId trong state thì đẩy về trang studio
   // if (!projectId) {
@@ -286,7 +295,23 @@ export default function CreateDesign() {
           <div className="bg-white border border-zinc-200 rounded-3xl p-8 sticky top-28 flex flex-col gap-8 shadow-sm">
             <section>
               <h2 className="text-sm font-bold text-zinc-400 uppercase tracking-widest mb-4">
-                2. Target season
+                2. Style prompt
+              </h2>
+              <textarea
+                value={targetStylePrompt}
+                onChange={(e) => setTargetStylePrompt(e.target.value)}
+                rows={4}
+                placeholder="Describe the style you want, e.g. minimalist office wear with soft pastel colors..."
+                className="w-full resize-none bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium placeholder:text-zinc-400"
+              />
+              <p className="mt-2 text-xs font-medium text-zinc-400">
+                This prompt will be sent as target_style_prompt.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-sm font-bold text-zinc-400 uppercase tracking-widest mb-4">
+                3. Target season
               </h2>
               <div className="relative">
                 <select
@@ -308,7 +333,7 @@ export default function CreateDesign() {
 
             <section>
               <h2 className="text-sm font-bold text-zinc-400 uppercase tracking-widest mb-4">
-                3. Target audience
+                4. Target audience
               </h2>
               <select
                 value={audience}
@@ -328,7 +353,7 @@ export default function CreateDesign() {
 
             <section>
               <h2 className="text-sm font-bold text-zinc-400 uppercase tracking-widest mb-4">
-                4. Target weather
+                5. Target weather
               </h2>
               <select
                 value={weather}

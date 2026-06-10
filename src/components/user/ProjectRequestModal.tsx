@@ -4,11 +4,7 @@ import { useProjects } from "../../hooks/useProjects";
 import { useDesignGeneration } from "../../hooks/useDesignGeneration";
 import { useNavigate } from "react-router-dom";
 import { getJobStatusLabel } from "@/utils/jobStatus";
-// import { request } from "node_modules/axios/index.d.cts";
-// import type { ProjectResponse } from "../../features/project/api";
-// import projectApi from "../../features/project/api";
 
-// Cập nhật lại interface để onSelect có thể nhận cả projectId và text
 interface ProjectRequestModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -20,19 +16,14 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
   onClose,
   onSelect,
 }) => {
-  // const userId = location.state?.userId; // Lấy userId từ state khi điều hướng đến Modal
-  // const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
   const [text, setText] = useState("");
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null
   );
-  // const [selectedRequestId, setSelectedRequestId] = useState<string | null>(
-  //   null
-  // );
+
   const [isDisplay, setIsDisplay] = useState(false);
 
-  // 1. GỌI TẤT CẢ CUSTOM HOOKS
   const {
     status,
     jobStatus,
@@ -46,18 +37,15 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
   } = useDesignGeneration();
   const { projects, fetchProjects } = useProjects();
 
-  // 2. GỌI TẤT CẢ USE EFFECT LÊN TRÊN CÙNG
   useEffect(() => {
     if (status === "SUCCESS" && selectedProjectId) {
-      // Gọi onSelect nếu parent component cần
       onSelect({ projectId: selectedProjectId, text });
 
-      // ✅ Đính kèm mảng designs vào state của navigate
       navigate("/create-design", {
         state: {
-          generatedImages: designs, // Mảng link ảnh từ useDesignGeneration
+          generatedImages: designs,
           projectId: selectedProjectId,
-          requestId: currentRequestId, // Có thể dùng projectId làm requestId nếu cần
+          requestId: currentRequestId,
           promptText: text,
         },
       });
@@ -75,7 +63,6 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
     currentRequestId,
   ]);
 
-  // 3. ĐẶT LỆNH RETURN SỚM Ở DƯỚI CÙNG CỦA KHU VỰC KHAI BÁO HOOKS
   if (!isOpen) return null;
 
   const handleProjects = async () => {
@@ -87,13 +74,10 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
     }
   };
 
-  // 2. Hàm xử lý Submit
-  // 2. Hàm xử lý Submit
   const handleSubmit = async () => {
     if (!selectedProjectId) return alert("Vui lòng chọn dự án!");
     if (!text.trim()) return alert("Vui lòng nhập từ khóa!");
 
-    // Chỉ cần gọi hàm này để kích hoạt luồng chạy. Mọi việc còn lại để useEffect lo.
     await generateDesigns({
       project_id: selectedProjectId,
       category_name: text,
