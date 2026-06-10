@@ -47,7 +47,6 @@ const ProductTypeModal: React.FC<ProductTypeModalProps> = ({
           </button>
         </div>
 
-        {/* Grid Options */}
         <div className="grid grid-cols-2 gap-3">
           {PRODUCT_TYPES.map((type) => (
             <button
@@ -95,7 +94,6 @@ export const Card: React.FC<CardProps> = ({ project, onTap }) => {
         onClick={() => onTap(project.id, "design")}
         className="bg-white border border-zinc-200 rounded-2xl overflow-hidden hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-100/50 transition-all duration-300 group cursor-pointer flex flex-col justify-between h-full shadow-sm"
       >
-        {/* Main Content Info */}
         <div className="p-6">
           <h3 className="text-xl font-bold text-zinc-900 group-hover:text-indigo-600 transition-colors tracking-tight line-clamp-1">
             {project.title}
@@ -105,7 +103,6 @@ export const Card: React.FC<CardProps> = ({ project, onTap }) => {
           </p>
         </div>
 
-        {/* Footer Card */}
         <div className="px-6 pb-6">
           <div className="pt-4 border-t border-zinc-100 flex items-center justify-between text-xs font-semibold text-zinc-400">
             <div className="flex items-center gap-1.5 bg-zinc-50 px-2.5 py-1.5 rounded-lg border border-zinc-200">

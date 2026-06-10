@@ -127,7 +127,6 @@ export default function CreateDesign() {
         designs={modalDesigns}
       />
 
-      {/* Header */}
       <header className="border-b border-zinc-200 bg-white/70 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link
@@ -147,7 +146,6 @@ export default function CreateDesign() {
       </header>
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-10 flex flex-col lg:flex-row gap-12">
-        {/* Main Content Area */}
         <div className="flex-1 max-w-3xl flex flex-col gap-10">
           <div>
             <h1 className="text-4xl font-extrabold text-zinc-900 mb-3 tracking-tight">
@@ -233,7 +231,6 @@ export default function CreateDesign() {
             </section>
           )}
 
-          {/* ✅ KHU VỰC HIỂN THỊ ẢNH KẾT QUẢ */}
           {displayDesigns.length > 0 && (
             <section className="p-8 bg-white border border-zinc-200 rounded-3xl shadow-sm">
               <div className="flex items-center justify-between mb-6">
@@ -290,7 +287,6 @@ export default function CreateDesign() {
           )}
         </div>
 
-        {/* Sidebar Configuration Panel */}
         <div className="w-full lg:w-[400px] flex flex-col">
           <div className="bg-white border border-zinc-200 rounded-3xl p-8 sticky top-28 flex flex-col gap-8 shadow-sm">
             <section>

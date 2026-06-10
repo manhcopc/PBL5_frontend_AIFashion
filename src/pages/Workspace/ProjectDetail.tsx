@@ -26,7 +26,10 @@ interface RequestCardProps {
 }
 
 function mapJobToRequestSummary(job: TrackedJob): ProjectRequestSummary {
-  const statusMap: Record<TrackedJob["status"], ProjectRequestSummary["status"]> = {
+  const statusMap: Record<
+    TrackedJob["status"],
+    ProjectRequestSummary["status"]
+  > = {
     queued: "PENDING",
     processing: "GENERATING_IMAGES",
     completed: "COMPLETED",
@@ -177,7 +180,6 @@ function RequestDetailModal({
   );
 }
 
-// ==================== COMPLETED REQUEST CARD ====================
 function CompletedRequestCard({ request, onView }: RequestCardProps) {
   const imageUrl =
     request.result_thumbnail_url && request.result_thumbnail_url.length > 0
@@ -186,7 +188,6 @@ function CompletedRequestCard({ request, onView }: RequestCardProps) {
 
   return (
     <div className="bg-white border border-zinc-200 rounded-2xl overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 flex flex-col h-full">
-      {/* Image Preview Area */}
       <div className="relative aspect-[3/4] bg-zinc-100 overflow-hidden">
         <img
           src={imageUrl}
@@ -206,7 +207,6 @@ function CompletedRequestCard({ request, onView }: RequestCardProps) {
         </div>
       </div>
 
-      {/* Card Content */}
       <div className="p-4 flex flex-col flex-1 gap-3">
         <div className="flex items-start justify-between gap-2">
           <div>
@@ -241,7 +241,6 @@ function CompletedRequestCard({ request, onView }: RequestCardProps) {
           </p>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex gap-2 pt-3 border-t border-zinc-100">
           <button
             onClick={() => onView?.(request)}
@@ -266,11 +265,9 @@ function CompletedRequestCard({ request, onView }: RequestCardProps) {
   );
 }
 
-// ==================== GENERATING REQUEST CARD ====================
 function GeneratingRequestCard({ request, loadingMessage }: RequestCardProps) {
   return (
     <div className="bg-white border-2 border-dashed border-blue-200 rounded-2xl overflow-hidden flex flex-col h-full shadow-sm">
-      {/* Loading Animation Area */}
       <div className="relative aspect-[3/4] bg-blue-50/40 flex flex-col items-center justify-center gap-4 border-b border-zinc-100">
         <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
         <div className="text-center px-4 animate-pulse">
@@ -283,7 +280,6 @@ function GeneratingRequestCard({ request, loadingMessage }: RequestCardProps) {
         </div>
       </div>
 
-      {/* Card Content */}
       <div className="p-4 flex flex-col flex-1 gap-3">
         <div className="flex items-start justify-between gap-2">
           <div>
@@ -318,7 +314,6 @@ function GeneratingRequestCard({ request, loadingMessage }: RequestCardProps) {
           </p>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex gap-2 pt-3 border-t border-zinc-100">
           <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-xs font-bold transition-all active:scale-95 border border-rose-100">
             ✕ Cancel
@@ -333,11 +328,9 @@ function GeneratingRequestCard({ request, loadingMessage }: RequestCardProps) {
   );
 }
 
-// ==================== PENDING REQUEST CARD ====================
 function PendingRequestCard({ request }: RequestCardProps) {
   return (
     <div className="bg-white border-2 border-dashed border-amber-200 rounded-2xl overflow-hidden flex flex-col h-full shadow-sm">
-      {/* Waiting Area */}
       <div className="relative aspect-[3/4] bg-amber-50/30 flex flex-col items-center justify-center gap-4 border-b border-zinc-100">
         <Clock className="w-10 h-10 text-amber-600 animate-pulse" />
         <div className="text-center px-4">
@@ -350,7 +343,6 @@ function PendingRequestCard({ request }: RequestCardProps) {
         </div>
       </div>
 
-      {/* Card Content */}
       <div className="p-4 flex flex-col flex-1 gap-3">
         <div className="flex items-start justify-between gap-2">
           <div>
@@ -385,7 +377,6 @@ function PendingRequestCard({ request }: RequestCardProps) {
           </p>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex gap-2 pt-3 border-t border-zinc-100">
           <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-zinc-50 hover:bg-zinc-100 text-zinc-700 rounded-lg text-xs font-bold transition-all active:scale-95 border border-zinc-200">
             ✕ Remove
@@ -400,11 +391,9 @@ function PendingRequestCard({ request }: RequestCardProps) {
   );
 }
 
-// ==================== FAILED REQUEST CARD ====================
 function FailedRequestCard({ request }: RequestCardProps) {
   return (
     <div className="bg-white border border-rose-200 rounded-2xl overflow-hidden flex flex-col h-full shadow-sm">
-      {/* Error Area */}
       <div className="relative aspect-[3/4] bg-rose-50/50 flex flex-col items-center justify-center gap-3 border-b border-rose-100">
         <XCircle className="w-10 h-10 text-rose-500" />
         <div className="text-center px-4">
@@ -417,7 +406,6 @@ function FailedRequestCard({ request }: RequestCardProps) {
         </div>
       </div>
 
-      {/* Card Content */}
       <div className="p-4 flex flex-col flex-1 gap-3">
         <div className="flex items-start justify-between gap-2">
           <div>
@@ -452,7 +440,6 @@ function FailedRequestCard({ request }: RequestCardProps) {
           </p>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex gap-2 pt-3 border-t border-zinc-100">
           <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-zinc-50 hover:bg-zinc-100 text-zinc-700 rounded-lg text-xs font-bold transition-all active:scale-95 border border-zinc-200">
             Dismiss
@@ -466,7 +453,6 @@ function FailedRequestCard({ request }: RequestCardProps) {
   );
 }
 
-// ==================== REQUEST CARD ROUTER ====================
 function RequestCard({ request, loadingMessage, onView }: RequestCardProps) {
   switch (request.status) {
     case "COMPLETED":
@@ -487,7 +473,6 @@ function RequestCard({ request, loadingMessage, onView }: RequestCardProps) {
   }
 }
 
-// ==================== MAIN COMPONENT ====================
 export default function ProjectDetail() {
   const { projectId } = useParams<{ projectId: string }>();
   const [activeTab, setActiveTab] = useState<TabType>("requests");
@@ -569,7 +554,6 @@ export default function ProjectDetail() {
         onClose={() => setSelectedRequest(null)}
       />
 
-      {/* Header Navigation */}
       <header className="border-b border-zinc-200 bg-white/70 backdrop-blur-md sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-6">
           <Link
@@ -599,9 +583,7 @@ export default function ProjectDetail() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-10">
-        {/* Tab Navigation */}
         <div className="flex gap-8 border-b border-zinc-200 mb-10">
           <button
             onClick={() => setActiveTab("requests")}
@@ -632,7 +614,6 @@ export default function ProjectDetail() {
           </button>
         </div>
 
-        {/* Request History Tab - Visual Grid Layout */}
         {activeTab === "requests" && (
           <>
             {displayedSummary.length === 0 ? (
@@ -660,7 +641,6 @@ export default function ProjectDetail() {
           </>
         )}
 
-        {/* Asset Gallery Tab */}
         {activeTab === "gallery" && (
           <>
             {galleryImages.length === 0 ? (

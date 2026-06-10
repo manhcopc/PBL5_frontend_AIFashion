@@ -56,7 +56,6 @@ export function ResultsGrid({
                 key={generatedId}
                 className="bg-white border border-zinc-200 rounded-2xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col"
               >
-                {/* Image Container */}
                 <div className="relative aspect-[3/4] overflow-hidden bg-zinc-100">
                   <img
                     src={imageUrl}
@@ -68,7 +67,6 @@ export function ResultsGrid({
                     }}
                   />
 
-                  {/* Overlay on Hover */}
                   <div className="absolute inset-0 bg-zinc-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4 backdrop-blur-[2px]">
                     <a
                       href={imageUrl}
@@ -83,14 +81,12 @@ export function ResultsGrid({
                   </div>
                 </div>
 
-                {/* Content info */}
                 <div className="p-5 flex flex-col gap-4">
                   <h3 className="text-lg font-bold text-zinc-900 line-clamp-1">
                     {generatedTitle}
                   </h3>
 
                   <div className="flex items-center justify-between mt-auto">
-                    {/* Star Ratings */}
                     <div className="flex items-center gap-1">
                       {[1, 2, 3, 4, 5].map((star) => {
                         const currentRating = ratings[generatedId] || 0;

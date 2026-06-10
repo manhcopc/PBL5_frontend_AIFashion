@@ -48,7 +48,6 @@ export const CreditLogs = () => {
 
   return (
     <div className="flex-1 flex flex-col overflow-auto">
-      {/* Header Section */}
       <div className="border-b border-zinc-200 bg-white px-8 py-6">
         <h1 className="text-3xl font-bold text-zinc-900 mb-2">Credit Logs</h1>
         <p className="text-zinc-500">
@@ -56,9 +55,7 @@ export const CreditLogs = () => {
         </p>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 overflow-auto p-8">
-        {/* Summary Bar */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div className="bg-white border border-emerald-100 rounded-lg p-6 shadow-sm">
             <div className="flex items-center justify-between">
@@ -89,7 +86,6 @@ export const CreditLogs = () => {
           </div>
         </div>
 
-        {/* Error Alert */}
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
@@ -97,10 +93,8 @@ export const CreditLogs = () => {
           </div>
         )}
 
-        {/* Filters Section */}
         <div className="mb-6 p-6 bg-white border border-zinc-200 rounded-lg shadow-sm">
           <div className="flex flex-col gap-4">
-            {/* Search Bar */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
               <input
@@ -112,9 +106,7 @@ export const CreditLogs = () => {
               />
             </div>
 
-            {/* Filter Row */}
             <div className="flex flex-col md:flex-row gap-4 md:items-end">
-              {/* Type Filter Dropdown */}
               <div className="flex-1">
                 <label className="block text-sm font-medium text-zinc-700 mb-2">
                   Filter by Type
@@ -139,7 +131,6 @@ export const CreditLogs = () => {
                 </select>
               </div>
 
-              {/* Reset Button */}
               <button
                 onClick={handleReset}
                 className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-lg transition-colors md:mb-0"
@@ -151,7 +142,6 @@ export const CreditLogs = () => {
           </div>
         </div>
 
-        {/* Logs Table */}
         <LogTable
           logs={logs}
           loading={loading}
