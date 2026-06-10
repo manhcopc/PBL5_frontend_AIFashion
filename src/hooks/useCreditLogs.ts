@@ -1,6 +1,10 @@
-import { useState, useCallback, useEffect } from 'react';
-import { adminService } from '@/services/adminService';
-import type { CreditLog, CreditLogFilters, CreditLogType } from '@/features/admin/types/admin.types';
+import { useState, useCallback, useEffect } from "react";
+import { adminService } from "@/services/adminService";
+import type {
+  CreditLog,
+  CreditLogFilters,
+  CreditLogType,
+} from "@/features/admin/types/admin.types";
 
 interface UseCreditLogsState {
   logs: CreditLog[];
@@ -24,31 +28,37 @@ export function useCreditLogs() {
   const [filters, setFilters] = useState<CreditLogFilters>({
     page: 1,
     limit: 20,
-    search: '',
+    search: "",
     type: undefined,
   });
 
   /**
    * Fetch credit logs based on current filters
    */
-  const fetchLogs = useCallback(async (customFilters?: CreditLogFilters) => {
-    setState((prev) => ({ ...prev, loading: true, error: null }));
-    try {
-      const filtersToUse = customFilters || filters;
-      const response = await adminService.getCreditLogs(filtersToUse);
-      setState((prev) => ({
-        ...prev,
-        logs: response.logs,
-        total: response.total,
-        totalCreditsIssued: response.totalCreditsIssued,
-        totalCreditsUsedToday: response.totalCreditsUsedToday,
-        loading: false,
-      }));
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch credit logs';
-      setState((prev) => ({ ...prev, error: errorMessage, loading: false }));
-    }
-  }, [filters]);
+  const fetchLogs = useCallback(
+    // async (customFilters?: CreditLogFilters) => {
+    async () => {
+      setState((prev) => ({ ...prev, loading: true, error: null }));
+      try {
+        // const filtersToUse = customFilters || filters;
+        // const response = await adminService.getCreditLogs(filtersToUse);
+        const response = await adminService.getCreditLogs();
+        setState((prev) => ({
+          ...prev,
+          logs: response.logs,
+          total: response.total,
+          totalCreditsIssued: response.totalCreditsIssued,
+          totalCreditsUsedToday: response.totalCreditsUsedToday,
+          loading: false,
+        }));
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to fetch credit logs";
+        setState((prev) => ({ ...prev, error: errorMessage, loading: false }));
+      }
+    },
+    [filters]
+  );
 
   /**
    * Update search filter and reset to page 1
@@ -89,7 +99,7 @@ export function useCreditLogs() {
     setFilters({
       page: 1,
       limit: 20,
-      search: '',
+      search: "",
       type: undefined,
     });
   }, []);

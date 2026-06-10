@@ -1,4 +1,4 @@
-import { Check, Zap } from "lucide-react";
+import { Check, Loader2, Zap } from "lucide-react";
 // import type { PricingPlan } from "../../constants/billingPlans";
 
 import type { BillingPlan } from "@/features/billing/billing.types";
@@ -9,6 +9,8 @@ interface PricingCardProps {
   // isAnnual: boolean;
   isPopular?: boolean;
   onTap?: () => void;
+  isSubmitting?: boolean;
+  isDisabled?: boolean;
 }
 
 export function PricingCard({
@@ -17,6 +19,8 @@ export function PricingCard({
   // isAnnual,
   isPopular,
   onTap,
+  isSubmitting = false,
+  isDisabled = false,
 }: PricingCardProps) {
   return (
     <div
@@ -86,14 +90,23 @@ export function PricingCard({
         {/* CTA Button */}
         <button
           className={`w-full py-3.5 rounded-xl font-bold text-base transition-all duration-300 mb-8 active:scale-95 shadow-sm ${
-            isPopular
+            isDisabled
+              ? "bg-zinc-100 text-zinc-400 border border-zinc-200 cursor-not-allowed shadow-none"
+              : isPopular
               ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-100"
               : "bg-white hover:bg-zinc-50 text-zinc-800 border border-zinc-200"
           }`}
+          disabled={isDisabled}
           onClick={onTap}
         >
-          {/* {plan.buttonLabel} */}
-          Subscription
+          {isSubmitting ? (
+            <span className="inline-flex items-center justify-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Pending top-up...
+            </span>
+          ) : (
+            "Subscription"
+          )}
         </button>
 
         {/* Features List */}

@@ -1,5 +1,3 @@
-
-
 export interface Project {
   _id: string;
   project_name: string;
@@ -75,7 +73,7 @@ export interface UpdateSubscriptionPlanPayload {
 export interface Transaction {
   id: string;
   date: string;
-  type: 'Top Up' | 'Usage AI';
+  type: "Top Up" | "Usage AI";
   amount: number;
   relatedRequestId?: string;
 }
@@ -99,11 +97,10 @@ export interface Asset {
   category: string;
 }
 
-// ============= CREDIT TRANSACTIONS =============
 export interface CreditTransaction {
   _id: string;
   user_id: string;
-  transaction_type: 'TOP_UP' | 'USAGE_AI';
+  transaction_type: "TOP_UP" | "USAGE_AI";
   amount: number;
   related_request_id?: string;
   created_at: string;
@@ -111,12 +108,11 @@ export interface CreditTransaction {
 
 export interface CreateCreditTransactionPayload {
   user_id: string;
-  transaction_type: 'TOP_UP' | 'USAGE_AI';
+  transaction_type: "TOP_UP" | "USAGE_AI";
   amount: number;
   related_request_id?: string;
 }
 
-// ============= GENERATED DESIGNS =============
 export interface GeneratedDesignResponse {
   _id: string;
   request_id: string;
@@ -135,7 +131,6 @@ export interface RateDesignPayload {
   user_rating: number;
 }
 
-// ============= STYLE PRESETS =============
 export interface StylePreset {
   _id: string;
   display_name: string;
@@ -154,7 +149,6 @@ export interface UpdateStylePresetPayload {
   thumbnail_url?: string;
 }
 
-// ============= TREND INSIGHTS =============
 export interface TrendInsight {
   _id: string;
   request_id: string;
@@ -173,7 +167,6 @@ export interface CreateTrendInsightPayload {
   total_reviews: number;
 }
 
-// ============= ANALYSIS ADVANCED =============
 export interface AnalysisStatus {
   request_id: string;
   status: string;
@@ -181,19 +174,6 @@ export interface AnalysisStatus {
   updated_at: string;
 }
 
-// export interface TrendInsights {
-//   [key: string]: any;
-// }
-
-// export interface AnalysisResults {
-//   [key: string]: any;
-// }
-
-// export interface TriggerGenerationPayload {
-//   [key: string]: any;
-// }
-
-// ============= API RESPONSE WRAPPERS =============
 export interface ApiResponse<T> {
   data: T;
   message?: string;

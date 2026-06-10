@@ -3,10 +3,10 @@ import { Download, Star, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export function ResultsGrid({
-  designs, // Lúc này designs là mảng các string (đường link)
+  designs,
   onReset,
 }: {
-  designs: string[]; // ✅ Khai báo nhận mảng chuỗi
+  designs: string[];
   onReset: () => void;
 }) {
   const [ratings, setRatings] = useState<Record<string, number>>({});

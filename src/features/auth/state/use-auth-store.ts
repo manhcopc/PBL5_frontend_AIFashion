@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import {
-  // decodeToken,
   isTokenExpired,
   getToken,
   setToken,
@@ -27,7 +26,7 @@ function normalizeUser(user: User | UserInfoResponse): User {
 
 interface AuthState {
   user: User | null;
-  userId: string | null; // 🆕 Thêm trường này
+  userId: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -45,13 +44,13 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
-      userId: getUserId(), // 🆕 Lấy giá trị khởi tạo từ localStorage qua Utils
+      userId: getUserId(),
       isAuthenticated: false,
       isLoading: true,
       error: null,
 
       setAuth: (user, token) => {
-        setToken(token); // ✅ Dùng hàm của Utils thay vì tự gọi localStorage
+        setToken(token);
         const normalizedUser = normalizeUser(user);
         const uid = normalizedUser.id;
         setUserId(uid);
@@ -120,14 +119,12 @@ export const useAuthStore = create<AuthState>()(
         try {
           const token = getToken();
 
-          // 1. Kiểm tra có token không
           if (!token) {
             get().clearAuth();
             set({ isLoading: false });
             return false;
           }
 
-          // 2. Kiểm tra token có hết hạn không (Hàm này chạy bình thường vì Token của bạn có chứa 'exp')
           if (isTokenExpired(token)) {
             get().clearAuth();
             set({
@@ -139,7 +136,6 @@ export const useAuthStore = create<AuthState>()(
 
           const currentUser = get().user;
 
-          // Nếu vì lý do gì đó mà mất data user (người dùng tự vào F12 xóa), thì bắt đăng nhập lại
           if (!currentUser) {
             get().clearAuth();
             set({

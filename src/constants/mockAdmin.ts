@@ -6,7 +6,6 @@ import type {
   SystemConfig,
 } from "@/features/admin/types/admin.types";
 
-// Mock Admin Users
 export const mockAdminUsers: AdminUser[] = [
   {
     id: "user-001",
@@ -15,8 +14,7 @@ export const mockAdminUsers: AdminUser[] = [
     plan: "Enterprise",
     creditsRemaining: 5000,
     joinDate: "2024-01-15",
-    avatar:
-      "https://api.dicebear.com/7.x/avataaars/svg?seed=johndoe&scale=80",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=johndoe&scale=80",
     isActive: true,
   },
   {
@@ -98,7 +96,6 @@ export const mockAdminUsers: AdminUser[] = [
   },
 ];
 
-// Mock Admin Stats
 export const mockAdminStats: AdminStats = {
   totalUsers: 248,
   userGrowth: 12.5,
@@ -107,7 +104,6 @@ export const mockAdminStats: AdminStats = {
   activeGenerations: 23,
 };
 
-// Mock Credit Logs
 export const mockCreditLogs: CreditLog[] = [
   {
     id: "log-001",
@@ -221,7 +217,6 @@ export const mockCreditLogs: CreditLog[] = [
   },
 ];
 
-// Mock Credit Logs Response (with pagination)
 export const mockCreditLogsResponse: CreditLogResponse = {
   logs: mockCreditLogs,
   total: 1250,
@@ -229,7 +224,6 @@ export const mockCreditLogsResponse: CreditLogResponse = {
   totalCreditsUsedToday: 12850,
 };
 
-// Mock System Config
 export const mockSystemConfig: SystemConfig = {
   id: "config-001",
   aiModel: {

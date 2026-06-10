@@ -22,7 +22,12 @@ export interface DesignResult {
  */
 export interface TransformedAnalysisResult {
   requestId: string;
-  status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED" | "GENERATING_IMAGES";
+  status:
+    | "PENDING"
+    | "PROCESSING"
+    | "COMPLETED"
+    | "FAILED"
+    | "GENERATING_IMAGES";
   designs: DesignResult[];
   createdAt: string;
   updatedAt: string;
@@ -113,7 +118,7 @@ export function transformAnalysisResponseToUI(
   apiResponse: AnalysisRequestResponse,
   designs: DesignResult[] = []
 ): TransformedAnalysisResult {
-  // ✅ Đảm bảo designs luôn là mảng trước khi map
+  //
   const safeDesigns = Array.isArray(designs) ? designs : [];
 
   const designsWithImages = safeDesigns.map((design) => ({
@@ -190,7 +195,6 @@ export function transformDesignResult(design: DesignResult): DesignResult {
 export function transformDesignResults(
   responseOrDesigns: AnalysisResultPayload | null | undefined
 ): DesignResult[] {
-  // 1. Nếu truyền thẳng toàn bộ response từ API (Cách an toàn và khuyên dùng nhất)
   if (
     responseOrDesigns &&
     responseOrDesigns.ai_callback_raw?.generated_designs
@@ -206,7 +210,6 @@ export function transformDesignResults(
     }));
   }
 
-  // 2. Nếu response trả về mảng result_images (dự phòng theo interface của bạn)
   if (
     responseOrDesigns &&
     Array.isArray(responseOrDesigns.result_images) &&
@@ -222,16 +225,6 @@ export function transformDesignResults(
     );
   }
 
-  // 3. Nếu lỡ truyền thẳng mảng {url, seed} vào
-  // if (Array.isArray(responseOrDesigns)) {
-  //   return responseOrDesigns.map((item: any, index: number) => ({
-  //     id: item.id || (item.seed ? String(item.seed) : `design-${index}`),
-  //     imageUrl: item.imageUrl || item.url, // Hỗ trợ cả 2 chuẩn key
-  //     title: item.title || `Thiết kế ${index + 1}`,
-  //   }));
-  // }
-
-  // Nếu không rơi vào trường hợp nào, trả về mảng rỗng để không bị crash map()
   console.warn(
     "Không tìm thấy dữ liệu ảnh hợp lệ trong response:",
     responseOrDesigns
@@ -253,15 +246,3 @@ export function getStatusDisplayText(status: string): string {
   };
   return statusMap[status] || status;
 }
-
-// export const transformDesignResponse = (
-//   res: DesignResultResponse
-// ): DesignResult => {
-//   return {
-//     id: res._id,
-//     requestId: res.request_id,
-//     // Lấy ảnh đầu tiên làm ảnh chính, nếu mảng rỗng thì dùng placeholder
-//     rating: res.user_rating,
-//     date: new Date(res.created_at).toLocaleDateString("vi-VN"), // Format ngày tiếng Việt
-//   };
-// };

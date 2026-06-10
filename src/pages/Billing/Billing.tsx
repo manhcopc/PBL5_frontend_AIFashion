@@ -10,7 +10,8 @@ export default function Billing() {
   //   const navigate = useNavigate();
   //   const { credits } = useUserStore();
   // const [isAnnual, setIsAnnual] = useState(false);
-  const { plans, fetchPlans, submitSubscription } = useBilling();
+  const { plans, fetchPlans, submitSubscription, submittingPlanId, error } =
+    useBilling();
   useEffect(() => {
     fetchPlans();
   }, [fetchPlans]);
@@ -41,6 +42,11 @@ export default function Billing() {
 
         {/* Pricing Cards Grid */}
         {/* Note: Hãy truyền thêm thuộc tính sáng nền hoặc tinh chỉnh PricingCard sang màu trắng */}
+        {error && (
+          <div className="mx-auto mb-6 max-w-2xl rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
+            {error}
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 mt-8">
           {plans.map((plan) => {
             // const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
@@ -48,9 +54,18 @@ export default function Billing() {
               <PricingCard
                 onTap={() => {
                   if (userId) {
-                    submitSubscription(userId, plan.creditsPerMonth);
+                    void submitSubscription(
+                      userId,
+                      plan.creditsPerMonth,
+                      plan.id
+                    );
+                  } else {
+                    // Nếu chưa đăng nhập, có thể điều hướng đến trang đăng nhập hoặc hiển thị thông báo
+                    alert("Please log in to subscribe to a plan.");
                   }
                 }}
+                isSubmitting={submittingPlanId === plan.id}
+                isDisabled={submittingPlanId !== null}
                 key={plan.id}
                 plan={plan}
                 price={plan.pricePerMonth}

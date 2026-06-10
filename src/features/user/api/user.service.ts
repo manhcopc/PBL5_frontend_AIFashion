@@ -28,6 +28,9 @@ export const updateUserSubscription = async (
   credits: number
 ) => {
   try {
+    console.log(
+      `[user.service] Updating user ${userId} subscription with credits: ${credits}`
+    );
     const response = await apiClient.patch(`/users/${userId}`, {
       available_credits: credits,
     });

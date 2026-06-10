@@ -43,6 +43,31 @@ const styleService = {
       params: { q: keyword },
     });
   },
+
+  addNewStylePreset: async (data: {
+    name: string;
+    description: string;
+    category: string;
+    parameters: Record<string, any>;
+  }): Promise<StylePresetResponse> => {
+    return apiClient.post("/style-presets/", data);
+  },
+
+  updateStylePreset: async (
+    styleId: string,
+    data: {
+      name?: string;
+      description?: string;
+      category?: string;
+      parameters?: Record<string, any>;
+    }
+  ): Promise<StylePresetResponse> => {
+    return apiClient.put(`/style-presets/${styleId}/`, data);
+  },
+
+  deleteStylePreset: async (styleId: string): Promise<void> => {
+    return apiClient.delete(`/style-presets/${styleId}/`);
+  },
 };
 
 export default styleService;
