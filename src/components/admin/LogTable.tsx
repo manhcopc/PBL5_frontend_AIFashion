@@ -12,18 +12,18 @@ interface LogTableProps {
 
 export const LogTable = ({ logs, loading, currentPage, totalPages, onPageChange }: LogTableProps) => {
   return (
-    <div className="bg-zinc-900 border border-zinc-900 rounded-lg overflow-hidden">
+    <div className="bg-white border border-zinc-200 rounded-lg overflow-hidden shadow-sm">
       {/* Table Container */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-zinc-800 bg-zinc-900/50">
-              <th className="px-6 py-4 text-left font-semibold text-zinc-300">Transaction ID</th>
-              <th className="px-6 py-4 text-left font-semibold text-zinc-300">User (Email)</th>
-              <th className="px-6 py-4 text-left font-semibold text-zinc-300">Type</th>
-              <th className="px-6 py-4 text-right font-semibold text-zinc-300">Amount</th>
-              <th className="px-6 py-4 text-left font-semibold text-zinc-300">Timestamp</th>
-              <th className="px-6 py-4 text-center font-semibold text-zinc-300">Status</th>
+            <tr className="border-b border-zinc-200 bg-zinc-50">
+              <th className="px-6 py-4 text-left font-semibold text-zinc-600">Transaction ID</th>
+              <th className="px-6 py-4 text-left font-semibold text-zinc-600">User (Email)</th>
+              <th className="px-6 py-4 text-left font-semibold text-zinc-600">Type</th>
+              <th className="px-6 py-4 text-right font-semibold text-zinc-600">Amount</th>
+              <th className="px-6 py-4 text-left font-semibold text-zinc-600">Timestamp</th>
+              <th className="px-6 py-4 text-center font-semibold text-zinc-600">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -31,8 +31,8 @@ export const LogTable = ({ logs, loading, currentPage, totalPages, onPageChange 
               <tr>
                 <td colSpan={6} className="px-6 py-8 text-center">
                   <div className="flex items-center justify-center gap-2">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
-                    <span className="text-zinc-400">Loading logs...</span>
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
+                    <span className="text-zinc-500">Loading logs...</span>
                   </div>
                 </td>
               </tr>
@@ -44,14 +44,14 @@ export const LogTable = ({ logs, loading, currentPage, totalPages, onPageChange 
               </tr>
             ) : (
               logs.map((log) => (
-                <tr key={log.id} className="border-b border-zinc-800 hover:bg-zinc-800/30 transition-colors">
+                <tr key={log.id} className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                   {/* Transaction ID */}
-                  <td className="px-6 py-4 font-mono text-xs text-zinc-300">
+                  <td className="px-6 py-4 font-mono text-xs text-zinc-600">
                     {log.transactionId.slice(0, 8)}...
                   </td>
 
                   {/* User Email */}
-                  <td className="px-6 py-4 text-zinc-300">
+                  <td className="px-6 py-4 text-zinc-700">
                     {log.userEmail}
                   </td>
 
@@ -68,7 +68,7 @@ export const LogTable = ({ logs, loading, currentPage, totalPages, onPageChange 
                   </td>
 
                   {/* Timestamp */}
-                  <td className="px-6 py-4 text-zinc-400 text-xs">
+                  <td className="px-6 py-4 text-zinc-500 text-xs">
                     {formatTimestamp(log.timestamp)}
                   </td>
 
@@ -87,8 +87,8 @@ export const LogTable = ({ logs, loading, currentPage, totalPages, onPageChange 
 
       {/* Pagination Controls */}
       {!loading && logs.length > 0 && (
-        <div className="flex items-center justify-between px-6 py-4 border-t border-zinc-800 bg-zinc-900/50">
-          <span className="text-sm text-zinc-400">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-zinc-200 bg-zinc-50">
+          <span className="text-sm text-zinc-500">
             Page {currentPage} of {totalPages}
           </span>
 
@@ -96,7 +96,7 @@ export const LogTable = ({ logs, loading, currentPage, totalPages, onPageChange 
             <button
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage <= 1}
-              className="p-2 rounded-lg border border-zinc-800 text-zinc-400 hover:text-zinc-300 hover:border-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-2 rounded-lg border border-zinc-200 text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               title="Previous page"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -105,7 +105,7 @@ export const LogTable = ({ logs, loading, currentPage, totalPages, onPageChange 
             <button
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage >= totalPages}
-              className="p-2 rounded-lg border border-zinc-800 text-zinc-400 hover:text-zinc-300 hover:border-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-2 rounded-lg border border-zinc-200 text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               title="Next page"
             >
               <ChevronRight className="w-4 h-4" />

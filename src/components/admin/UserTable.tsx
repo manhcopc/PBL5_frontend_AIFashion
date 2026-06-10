@@ -17,34 +17,34 @@ export const UserTable = ({
 }: UserTableProps) => {
   if (users.length === 0) {
     return (
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
-        <p className="text-zinc-400">No users found</p>
+      <div className="bg-white border border-zinc-200 rounded-xl p-8 text-center shadow-sm">
+        <p className="text-zinc-500">No users found</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+    <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-sm">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-zinc-800 bg-zinc-800/50">
-              <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
+            <tr className="border-b border-zinc-200 bg-zinc-50">
+              <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-600">
                 User
               </th>
               {/* <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
                 Plan
               </th> */}
-              <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
+              <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-600">
                 Credits
               </th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
+              <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-600">
                 Join Date
               </th>
               {/* <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
                 Status
               </th> */}
-              <th className="px-6 py-4 text-right text-sm font-semibold text-zinc-300">
+              <th className="px-6 py-4 text-right text-sm font-semibold text-zinc-600">
                 Actions
               </th>
             </tr>
@@ -58,7 +58,7 @@ export const UserTable = ({
               return (
                 <tr
                 key={userId || user.email}
-                className="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors"
+                className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors"
               >
                 {/* User */}
                 <td className="px-6 py-4">
@@ -69,10 +69,10 @@ export const UserTable = ({
                       className="w-8 h-8 rounded-full"
                     /> */}
                     <div>
-                      <p className="text-sm font-medium text-white">
+                      <p className="text-sm font-medium text-zinc-900">
                         {user.username}
                       </p>
-                      <p className="text-xs text-zinc-400">{user.email}</p>
+                      <p className="text-xs text-zinc-500">{user.email}</p>
                     </div>
                   </div>
                 </td>
@@ -91,15 +91,15 @@ export const UserTable = ({
                 {/* Credits */}
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
-                    <ChevronUp className="w-4 h-4 text-purple-400" />
-                    <span className="text-sm font-semibold text-white">
+                    <ChevronUp className="w-4 h-4 text-indigo-600" />
+                    <span className="text-sm font-semibold text-zinc-900">
                       {formatCredits(credits)}
                     </span>
                   </div>
                 </td>
 
                 {/* Join Date */}
-                <td className="px-6 py-4 text-sm text-zinc-400">
+                <td className="px-6 py-4 text-sm text-zinc-500">
                   {joinDate}
                 </td>
 
@@ -127,7 +127,7 @@ export const UserTable = ({
                     <button
                       onClick={() => onManage(user)}
                       disabled={isLoading}
-                      className="p-2 text-purple-400 hover:bg-purple-500/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       title="Manage user"
                     >
                       <Settings className="w-4 h-4" />
@@ -135,7 +135,7 @@ export const UserTable = ({
                     <button
                       onClick={() => onDelete(userId, user.username)}
                       disabled={isLoading}
-                      className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       title="Delete user"
                     >
                       <Trash2 className="w-4 h-4" />

@@ -62,6 +62,14 @@ export const useBilling = () => {
       try {
         // Implement subscription logic here (e.g., call API to subscribe)
         // For now, we'll just simulate a successful subscription
+        const user = localStorage.getItem("user");
+        if (!user) {
+          throw new Error("User not found in local storage");
+        }
+        const userData = JSON.parse(user);
+
+        credits += userData.available_credits; // Add the new credits to the existing ones
+
         const response = await updateUserSubscription(userId, credits);
         console.log("Subscription updated successfully:", response);
         setState((prev) => ({ ...prev, loading: false }));

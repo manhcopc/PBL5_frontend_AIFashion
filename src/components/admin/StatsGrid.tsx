@@ -14,10 +14,10 @@ export const StatsGrid = ({ stats, isLoading }: StatsGridProps) => {
         {[...Array(4)].map((_, i) => (
           <div
             key={i}
-            className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 animate-pulse"
+            className="bg-white border border-zinc-200 rounded-xl p-6 animate-pulse shadow-sm"
           >
-            <div className="h-4 bg-zinc-800 rounded w-1/2 mb-4"></div>
-            <div className="h-8 bg-zinc-800 rounded w-2/3"></div>
+            <div className="h-4 bg-zinc-100 rounded w-1/2 mb-4"></div>
+            <div className="h-8 bg-zinc-100 rounded w-2/3"></div>
           </div>
         ))}
       </div>
@@ -30,32 +30,32 @@ export const StatsGrid = ({ stats, isLoading }: StatsGridProps) => {
       value: stats.totalUsers.toString(),
       change: `+${stats.userGrowth}% this month`,
       icon: Users,
-      color: "text-blue-400",
-      bgColor: "bg-blue-900/10 border-blue-700/30",
+      color: "text-blue-600",
+      bgColor: "bg-white border-zinc-200",
     },
     {
       title: "Total Credits Sold",
       value: formatCredits(stats.totalCreditsSold),
       change: "This month",
       icon: Zap,
-      color: "text-purple-400",
-      bgColor: "bg-purple-900/10 border-purple-700/30",
+      color: "text-indigo-600",
+      bgColor: "bg-white border-zinc-200",
     },
     {
       title: "Success Rate",
       value: `${stats.successRate}%`,
       change: "All time",
       icon: TrendingUp,
-      color: "text-emerald-400",
-      bgColor: "bg-emerald-900/10 border-emerald-700/30",
+      color: "text-emerald-600",
+      bgColor: "bg-white border-zinc-200",
     },
     {
       title: "Active Generations",
       value: stats.activeGenerations.toString(),
       change: "Running now",
       icon: Activity,
-      color: "text-orange-400",
-      bgColor: "bg-orange-900/10 border-orange-700/30",
+      color: "text-orange-600",
+      bgColor: "bg-white border-zinc-200",
       pulse: true,
     },
   ];
@@ -67,16 +67,16 @@ export const StatsGrid = ({ stats, isLoading }: StatsGridProps) => {
         return (
           <div
             key={index}
-            className={`border rounded-xl p-6 transition-all ${card.bgColor} ${
+            className={`border rounded-xl p-6 transition-all shadow-sm ${card.bgColor} ${
               isLoading ? "opacity-50" : ""
             }`}
           >
             <div className="flex items-start justify-between mb-4">
-              <h3 className="text-sm font-medium text-zinc-400">
+              <h3 className="text-sm font-medium text-zinc-500">
                 {card.title}
               </h3>
               <div
-                className={`p-2 bg-zinc-800/50 rounded-lg ${
+                className={`p-2 bg-zinc-50 rounded-lg ${
                   card.pulse ? "animate-pulse" : ""
                 }`}
               >
@@ -84,8 +84,8 @@ export const StatsGrid = ({ stats, isLoading }: StatsGridProps) => {
               </div>
             </div>
             <div className="space-y-2">
-              <p className="text-2xl font-bold text-white">{card.value}</p>
-              <p className="text-xs text-zinc-400">{card.change}</p>
+              <p className="text-2xl font-bold text-zinc-900">{card.value}</p>
+              <p className="text-xs text-zinc-500">{card.change}</p>
             </div>
           </div>
         );

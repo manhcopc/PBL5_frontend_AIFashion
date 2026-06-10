@@ -60,16 +60,16 @@ export const ManageUserModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-zinc-900 border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-100/80 backdrop-blur-sm">
+      <div className="bg-white border border-zinc-200 rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="sticky top-0 bg-white border-b border-zinc-200 px-6 py-4 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-white">Manage User</h2>
-            <p className="text-sm text-zinc-400 mt-1">{userName}</p>
+            <h2 className="text-xl font-semibold text-zinc-900">Manage User</h2>
+            <p className="text-sm text-zinc-500 mt-1">{userName}</p>
           </div>
           <button
             onClick={onClose}
-            className="text-zinc-400 hover:text-white transition-colors"
+            className="text-zinc-400 hover:text-zinc-700 transition-colors"
             disabled={isLoading}
           >
             <X className="w-5 h-5" />
@@ -77,20 +77,20 @@ export const ManageUserModal = ({
         </div>
 
         {(error || localError) && (
-          <div className="mx-6 mt-4 p-3 bg-red-900/20 border border-red-700/50 rounded-lg flex items-gap-2">
-            <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-red-300">{error || localError}</p>
+          <div className="mx-6 mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-gap-2">
+            <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-red-700">{error || localError}</p>
           </div>
         )}
 
         <div className="p-6">
-          <div className="flex gap-2 mb-6 bg-zinc-800/50 p-1 rounded-lg">
+          <div className="flex gap-2 mb-6 bg-zinc-100 p-1 rounded-lg">
             <button
               onClick={() => setActiveTab("credits")}
               className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all ${
                 activeTab === "credits"
-                  ? "bg-purple-600 text-white"
-                  : "text-zinc-400 hover:text-white"
+                  ? "bg-white text-indigo-700 shadow-sm"
+                  : "text-zinc-600 hover:text-zinc-900"
               }`}
             >
               Top-Up Credits
@@ -99,8 +99,8 @@ export const ManageUserModal = ({
               onClick={() => setActiveTab("plan")}
               className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all ${
                 activeTab === "plan"
-                  ? "bg-purple-600 text-white"
-                  : "text-zinc-400 hover:text-white"
+                  ? "bg-white text-indigo-700 shadow-sm"
+                  : "text-zinc-600 hover:text-zinc-900"
               }`}
             >
               Change Plan
@@ -110,10 +110,10 @@ export const ManageUserModal = ({
           {activeTab === "credits" && (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <label className="block text-sm font-medium text-zinc-700 mb-2">
                   Current Credits
                 </label>
-                <div className="p-3 bg-zinc-800/50 rounded-lg text-lg font-semibold text-purple-400">
+                <div className="p-3 bg-indigo-50 rounded-lg text-lg font-semibold text-indigo-700 border border-indigo-100">
                   {currentCredits.toLocaleString()}
                 </div>
               </div>
@@ -121,7 +121,7 @@ export const ManageUserModal = ({
               <div>
                 <label
                   htmlFor="topup-amount"
-                  className="block text-sm font-medium text-zinc-300 mb-2"
+                  className="block text-sm font-medium text-zinc-700 mb-2"
                 >
                   Credits to Add
                 </label>
@@ -132,13 +132,13 @@ export const ManageUserModal = ({
                   value={topUpAmount}
                   onChange={(e) => setTopUpAmount(e.target.value)}
                   placeholder="Enter amount"
-                  className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20 transition-all"
+                  className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-lg text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all"
                   disabled={isLoading}
                 />
               </div>
 
-              <div className="p-3 bg-blue-900/20 border border-blue-700/50 rounded-lg">
-                <p className="text-sm text-blue-300">
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-700">
                   <strong>Preview:</strong> New balance will be{" "}
                   <span className="font-semibold">
                     {(
@@ -152,7 +152,7 @@ export const ManageUserModal = ({
               <button
                 onClick={handleTopUp}
                 disabled={isLoading || !topUpAmount}
-                className="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+                className="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-zinc-300 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
               >
                 {isLoading ? "Processing..." : "Confirm Top-Up"}
               </button>
@@ -171,7 +171,7 @@ export const ManageUserModal = ({
               </div> */}
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-3">
+                <label className="block text-sm font-medium text-zinc-700 mb-3">
                   Select New Plan
                 </label>
                 <div className="space-y-2">
@@ -215,7 +215,7 @@ export const ManageUserModal = ({
               <button
                 // onClick={handlePlanChange}
                 // disabled={isLoading || selectedPlan === currentPlan}
-                className="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+                className="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-zinc-300 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
               >
                 {isLoading ? "Processing..." : "Confirm Change"}
               </button>

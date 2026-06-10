@@ -27,17 +27,17 @@ export const AdminSidebar = ({ isOpen, onClose }: AdminSidebarProps) => {
 
   return (
     <aside
-      className={`fixed left-0 top-0 h-screen z-40 bg-black border-r border-zinc-900 flex flex-col justify-between transition-transform duration-300 
+      className={`fixed left-0 top-0 h-screen z-40 bg-white border-r border-zinc-200 flex flex-col justify-between transition-transform duration-300 shadow-sm
         ${isOpen ? "translate-x-0" : "-translate-x-full"} 
         md:relative md:translate-x-0 md:w-64 shrink-0`}
     >
       <div>
         {/* Logo Header */}
-        <div className="h-20 flex items-center px-6 gap-3 border-b border-zinc-900">
-          <span className="bg-gradient-to-r from-purple-500 to-indigo-500 rounded-lg p-1.5 text-white">
+        <div className="h-20 flex items-center px-6 gap-3 border-b border-zinc-200">
+          <span className="bg-indigo-600 rounded-lg p-1.5 text-white">
             <BarChart3 className="w-5 h-5" />
           </span>
-          <h1 className="text-xl font-bold tracking-tight text-white whitespace-nowrap">
+          <h1 className="text-xl font-bold tracking-tight text-zinc-900 whitespace-nowrap">
             AdminAI
           </h1>
         </div>
@@ -55,8 +55,8 @@ export const AdminSidebar = ({ isOpen, onClose }: AdminSidebarProps) => {
                 onClick={() => onClose?.()}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                   active
-                    ? "bg-purple-600 text-white shadow-sm"
-                    : "text-zinc-400 hover:bg-zinc-900 hover:text-white"
+                    ? "bg-indigo-50 text-indigo-700 shadow-sm"
+                    : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
                 }`}
               >
                 <Icon className="w-5 h-5 shrink-0" />
@@ -68,9 +68,9 @@ export const AdminSidebar = ({ isOpen, onClose }: AdminSidebarProps) => {
       </div>
 
       {/* Footer Logout */}
-      <div className="p-4 border-t border-zinc-900">
+      <div className="p-4 border-t border-zinc-200">
         <button
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
           onClick={() => {
             logout();
             navigate("/login", { replace: true });

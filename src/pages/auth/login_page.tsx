@@ -38,9 +38,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex text-white font-sans bg-[#0A0A0A]">
+    <div className="min-h-screen flex text-zinc-900 font-sans bg-zinc-50">
       {/* Left Side - Image & Glassmorphism (Hidden on Mobile) */}
-      <div className="hidden lg:flex w-1/2 relative bg-zinc-900 overflow-hidden">
+      <div className="hidden lg:flex w-1/2 relative bg-zinc-100 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -48,14 +48,14 @@ export default function LoginPage() {
               'url("https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop")',
           }}
         />
-        <div className="absolute inset-0 bg-black/20" />
-        <div className="absolute bottom-10 left-10 right-10 p-8 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl">
+        <div className="absolute inset-0 bg-white/15" />
+        <div className="absolute bottom-10 left-10 right-10 p-8 rounded-2xl bg-white/85 backdrop-blur-md border border-white/80 shadow-2xl">
           <h2 className="text-4xl font-bold mb-4 tracking-tight">
             Create Fashion,
             <br />
             Powered by AI
           </h2>
-          <p className="text-zinc-300">
+          <p className="text-zinc-600">
             Discover your unique style with our advanced artificial intelligence
             fashion recommendations.
           </p>
@@ -68,7 +68,7 @@ export default function LoginPage() {
           {/* Logo */}
           <div className="flex justify-center mb-10">
             <h1 className="text-3xl font-extrabold tracking-tighter flex items-center gap-2">
-              <span className="bg-gradient-to-r from-purple-500 to-indigo-500 rounded-lg p-2 text-white">
+              <span className="bg-indigo-600 rounded-lg p-2 text-white shadow-sm">
                 <svg
                   width="24"
                   height="24"
@@ -87,7 +87,7 @@ export default function LoginPage() {
           </div>
 
           {/* Toggle Tab */}
-          <div className="flex p-1 bg-zinc-900 rounded-lg mb-8">
+          <div className="flex p-1 bg-zinc-100 rounded-lg mb-8 border border-zinc-200">
             <button
               onClick={() => {
                 setIsLogin(true);
@@ -96,8 +96,8 @@ export default function LoginPage() {
               disabled={isLoading}
               className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
                 isLogin
-                  ? "bg-zinc-800 shadow-sm text-white"
-                  : "text-zinc-400 hover:text-white"
+                  ? "bg-white shadow-sm text-indigo-700"
+                  : "text-zinc-600 hover:text-zinc-900"
               }`}
             >
               Login
@@ -110,8 +110,8 @@ export default function LoginPage() {
               disabled={isLoading}
               className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
                 !isLogin
-                  ? "bg-zinc-800 shadow-sm text-white"
-                  : "text-zinc-400 hover:text-white"
+                  ? "bg-white shadow-sm text-indigo-700"
+                  : "text-zinc-600 hover:text-zinc-900"
               }`}
             >
               Sign Up
@@ -122,7 +122,7 @@ export default function LoginPage() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             {!isLogin && (
               <div className="space-y-2">
-                <label className="text-sm font-medium text-zinc-300">
+                <label className="text-sm font-medium text-zinc-700">
                   Full Name
                 </label>
                 <div className="relative">
@@ -135,11 +135,11 @@ export default function LoginPage() {
                     }}
                     placeholder="John Doe"
                     disabled={isLoading}
-                    className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg py-3 px-4 pl-11 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                    className="w-full bg-white border border-zinc-200 rounded-lg py-3 px-4 pl-11 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-colors"
                   />
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg
-                      className="h-5 w-5 text-zinc-500"
+                      className="h-5 w-5 text-zinc-400"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -156,7 +156,7 @@ export default function LoginPage() {
             )}
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-300">
+              <label className="text-sm font-medium text-zinc-700">
                 Email Address
               </label>
               <div className="relative">
@@ -170,23 +170,23 @@ export default function LoginPage() {
                   placeholder="you@example.com"
                   disabled={isLoading}
                   autoComplete="email"
-                  className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg py-3 px-4 pl-11 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                  className="w-full bg-white border border-zinc-200 rounded-lg py-3 px-4 pl-11 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-colors"
                 />
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-zinc-500" />
+                  <Mail className="h-5 w-5 text-zinc-400" />
                 </div>
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-zinc-300">
+                <label className="text-sm font-medium text-zinc-700">
                   Password
                 </label>
                 {isLogin && (
                   <a
                     href="#"
-                    className="text-xs text-indigo-400 hover:text-indigo-300 font-medium"
+                    className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
                   >
                     Forgot password?
                   </a>
@@ -203,24 +203,24 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   disabled={isLoading}
                   autoComplete={isLogin ? "current-password" : "new-password"}
-                  className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg py-3 px-4 pl-11 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                  className="w-full bg-white border border-zinc-200 rounded-lg py-3 px-4 pl-11 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-colors"
                 />
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-zinc-500" />
+                  <Lock className="h-5 w-5 text-zinc-400" />
                 </div>
               </div>
             </div>
 
             {error && (
-              <div className="flex items-start gap-3 rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-rose-200">
-                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-300" />
+              <div className="flex items-start gap-3 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-rose-700">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
                 <p className="text-sm font-medium leading-relaxed">{error}</p>
               </div>
             )}
 
             {success && (
-              <div className="flex items-start gap-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-emerald-200">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
+              <div className="flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-700">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
                 <p className="text-sm font-medium leading-relaxed">
                   {success}
                 </p>
@@ -229,7 +229,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-3 font-medium text-white shadow-sm transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-70"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-3 font-medium text-white shadow-sm transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-70"
               disabled={isLoading}
             >
               {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -245,17 +245,17 @@ export default function LoginPage() {
 
           <div className="relative mt-8">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-zinc-800"></div>
+              <div className="w-full border-t border-zinc-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-[#0A0A0A] text-zinc-500">
+              <span className="px-2 bg-zinc-50 text-zinc-500">
                 Or continue with
               </span>
             </div>
           </div>
 
           <button
-            className="mt-8 w-full flex items-center justify-center gap-3 bg-transparent border border-zinc-700 hover:bg-zinc-900 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+            className="mt-8 w-full flex items-center justify-center gap-3 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 font-medium py-3 px-4 rounded-lg transition-colors shadow-sm"
             onClick={() => navigate("/dashboard")}
           >
             <svg

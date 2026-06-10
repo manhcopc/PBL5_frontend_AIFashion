@@ -1,4 +1,4 @@
-import { Bell, CheckCircle, Clock, Loader2, XCircle, Zap } from "lucide-react";
+import { Bell, CheckCircle, Clock, Loader2, XCircle } from "lucide-react";
 import { useUserStore } from "@/store/UserContext";
 import { useJobStore } from "@/store/useJobStore";
 import { useMemo, useState } from "react";
