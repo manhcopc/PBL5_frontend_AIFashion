@@ -22,7 +22,7 @@ export const formatTimestamp = (timestamp: string): string => {
  * Positive amounts (refunds/top-ups) in emerald, negative (usage) in red
  */
 export const getAmountColorClass = (amount: number): string => {
-  return amount > 0 ? 'text-emerald-400' : 'text-red-400';
+  return amount > 0 ? 'text-emerald-600' : 'text-red-600';
 };
 
 /**
@@ -38,11 +38,11 @@ export const formatCreditAmount = (amount: number): string => {
  */
 export const getTypeColor = (type: 'Top-up' | 'Design Generation' | 'Refund'): string => {
   const colors: Record<string, string> = {
-    'Top-up': 'bg-emerald-900/30 text-emerald-300 border border-emerald-700/50',
-    'Design Generation': 'bg-purple-900/30 text-purple-300 border border-purple-700/50',
-    'Refund': 'bg-blue-900/30 text-blue-300 border border-blue-700/50',
+    'Top-up': 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+    'Design Generation': 'bg-indigo-50 text-indigo-700 border border-indigo-200',
+    'Refund': 'bg-blue-50 text-blue-700 border border-blue-200',
   };
-  return colors[type] || 'bg-zinc-800 text-zinc-300';
+  return colors[type] || 'bg-zinc-100 text-zinc-700';
 };
 
 /**
@@ -50,11 +50,11 @@ export const getTypeColor = (type: 'Top-up' | 'Design Generation' | 'Refund'): s
  */
 export const getStatusColor = (status: 'Success' | 'Failed' | 'Pending'): string => {
   const colors: Record<string, string> = {
-    'Success': 'bg-emerald-900/30 text-emerald-300 border border-emerald-700/50',
-    'Failed': 'bg-red-900/30 text-red-300 border border-red-700/50',
-    'Pending': 'bg-amber-900/30 text-amber-300 border border-amber-700/50',
+    'Success': 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+    'Failed': 'bg-red-50 text-red-700 border border-red-200',
+    'Pending': 'bg-amber-50 text-amber-700 border border-amber-200',
   };
-  return colors[status] || 'bg-zinc-800 text-zinc-300';
+  return colors[status] || 'bg-zinc-100 text-zinc-700';
 };
 
 /**
