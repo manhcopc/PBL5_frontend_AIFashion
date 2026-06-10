@@ -6,7 +6,7 @@ import type {
   TopUpRequest,
   PlanChangeRequest,
   CreditLogResponse,
-  CreditLogFilters,
+  // CreditLogFilters,
 } from "@/features/admin/types/admin.types";
 
 export const adminService = {
@@ -70,17 +70,19 @@ export const adminService = {
   },
 
   // Get credit logs with filters, search, and pagination
-  getCreditLogs: async (filters?: CreditLogFilters) => {
+  // getCreditLogs: async (filters?: CreditLogFilters) => {
+  getCreditLogs: async () => {
     const response = await apiClient.get<CreditLogResponse>(
-      "/admin/credit-logs",
-      {
-        params: {
-          page: filters?.page || 1,
-          limit: filters?.limit || 20,
-          ...(filters?.search && { search: filters.search }),
-          ...(filters?.type && { type: filters.type }),
-        },
-      }
+      "/admin/credit-logs"
+      // ,
+      // {
+      //   params: {
+      //     page: filters?.page || 1,
+      //     limit: filters?.limit || 20,
+      //     ...(filters?.search && { search: filters.search }),
+      //     ...(filters?.type && { type: filters.type }),
+      //   },
+      // }
     );
     return response.data;
   },

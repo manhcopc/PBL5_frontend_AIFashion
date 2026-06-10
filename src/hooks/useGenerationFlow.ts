@@ -71,6 +71,7 @@ export function useGenerationFlow(
 
   const isValid =
     selectedTrend !== null &&
+    data.target_style_prompt.trim() !== "" &&
     weather !== "" &&
     season !== "" &&
     audience !== "";

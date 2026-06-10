@@ -1,9 +1,16 @@
-import { BarChart3, Users, CreditCard, RotateCcw, LogOut } from "lucide-react";
+import {
+  BarChart3,
+  Users,
+  CreditCard,
+  RotateCcw,
+  LogOut,
+  Package,
+} from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/state/use-auth-store";
 
 interface AdminSidebarProps {
-  isOpen?: boolean; // Vẫn giữ để điều khiển mobile drawer nếu cần
+  isOpen?: boolean;
   onClose?: () => void;
 }
 
@@ -16,10 +23,10 @@ export const AdminSidebar = ({ isOpen, onClose }: AdminSidebarProps) => {
     { label: "Analytics", icon: BarChart3, href: "/admin" },
     { label: "User Management", icon: Users, href: "/admin/users" },
     { label: "Credit Logs", icon: CreditCard, href: "/admin/credit-logs" },
+    { label: "Subscription Plans", icon: Package, href: "/admin/subscription-plans" },
     { label: "System Settings", icon: RotateCcw, href: "/admin/settings" },
   ];
 
-  // Kiểm tra active dựa trên URL thực tế (nguồn sự thật duy nhất)
   const isActive = (href: string) => {
     if (href === "/admin") return location.pathname === "/admin";
     return location.pathname.startsWith(href);

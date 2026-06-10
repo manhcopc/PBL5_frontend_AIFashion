@@ -1,4 +1,3 @@
-// import { transformToProxyUrl } from "@/utils/util";
 import { ArrowLeft, Download, Star, Info } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,13 +7,13 @@ export function GeneratedResultsModal({
   onClose,
   onReset,
   designs,
-  referenceImages, // 🆕 Thêm prop để nhận ảnh phong cách tham chiếu
+  referenceImages,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onReset: () => void;
   designs: string[];
-  referenceImages: string[]; // Mảng chứa URL ảnh style mẫu
+  referenceImages: string[];
 }) {
   const [ratings, setRatings] = useState<Record<string, number>>({});
   const navigate = useNavigate();
@@ -80,7 +79,6 @@ export function GeneratedResultsModal({
                 >
                   <img
                     src={refUrl}
-                    // src={transformToProxyUrl(refUrl)}
                     alt="Reference"
                     className="w-full aspect-video object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500"
                   />
@@ -121,7 +119,6 @@ export function GeneratedResultsModal({
                     >
                       <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden">
                         <img
-                          // src={transformToProxyUrl(imageUrl)}
                           src={imageUrl}
                           alt={`AI Gen ${index}`}
                           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"

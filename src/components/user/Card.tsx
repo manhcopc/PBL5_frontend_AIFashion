@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import type { Project } from "../../types";
 import { Calendar, X } from "lucide-react";
-// import useProjects from "@/hooks/useProjects";
 
 interface CardProps {
   project: Project;
@@ -21,7 +20,6 @@ interface ProductTypeModalProps {
   onSelect: (type: string) => void;
 }
 
-// ==================== PRODUCT TYPE MODAL ====================
 const ProductTypeModal: React.FC<ProductTypeModalProps> = ({
   isOpen,
   onClose,
@@ -81,10 +79,8 @@ const ProductTypeModal: React.FC<ProductTypeModalProps> = ({
   );
 };
 
-// ==================== PROJECT CARD COMPONENT ====================
 export const Card: React.FC<CardProps> = ({ project, onTap }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const { fetchProjectDetails } = useProjects();
 
   const handleSelectProductType = (type: string) => {
     console.log(`[Card] Project ID: ${project.id} | Selected Type: ${type}`);
@@ -95,7 +91,8 @@ export const Card: React.FC<CardProps> = ({ project, onTap }) => {
   return (
     <>
       <div
-        onClick={() => setIsModalOpen(true)} // Đã sửa logic kích hoạt: bấm mở modal trước, chọn loại xong mới trigger onTap
+        // onClick={() => setIsModalOpen(true)}
+        onClick={() => onTap(project.id, "design")}
         className="bg-white border border-zinc-200 rounded-2xl overflow-hidden hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-100/50 transition-all duration-300 group cursor-pointer flex flex-col justify-between h-full shadow-sm"
       >
         {/* Main Content Info */}

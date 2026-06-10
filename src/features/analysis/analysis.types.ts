@@ -48,6 +48,7 @@ export interface AnalysisRequestDetailResponse
 
 export interface GenerateDesignRequest {
   base_image_url?: string;
+  target_style_prompt: string;
   target_season: string;
   target_audience: string;
   target_weather: string;
