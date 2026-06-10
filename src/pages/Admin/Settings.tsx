@@ -148,18 +148,17 @@ export const Settings = () => {
 
   return (
     <div className="flex-1 flex flex-col overflow-auto">
-      {/* Header */}
       <div className="border-b border-zinc-200 bg-white px-8 py-6">
-        <h1 className="text-3xl font-bold text-zinc-900 mb-2">System Settings</h1>
+        <h1 className="text-3xl font-bold text-zinc-900 mb-2">
+          System Settings
+        </h1>
         <p className="text-zinc-500">
           Configure AI models, pricing, and security settings
         </p>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 overflow-auto p-8 pb-32">
         <div className="max-w-4xl space-y-6">
-          {/* Error Alert */}
           {validationErrors.length > 0 && (
             <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
               <p className="font-medium text-red-800 mb-2">
@@ -175,13 +174,11 @@ export const Settings = () => {
             </div>
           )}
 
-          {/* AI Model Configuration Section */}
           <SettingSection
             title="AI Model Configuration"
             description="Configure your AI model settings and API keys"
             icon={<Zap className="w-5 h-5" />}
           >
-            {/* API Key Input */}
             <div>
               <label className="block text-sm font-medium text-zinc-700 mb-2">
                 API Key
@@ -217,7 +214,6 @@ export const Settings = () => {
               )}
             </div>
 
-            {/* Model Version Dropdown */}
             <div>
               <label className="block text-sm font-medium text-zinc-700 mb-2">
                 Model Version
@@ -234,7 +230,6 @@ export const Settings = () => {
               </select>
             </div>
 
-            {/* Maintenance Mode Toggle */}
             <div className="flex items-center justify-between p-3 bg-zinc-50 rounded-lg border border-zinc-100">
               <div>
                 <p className="font-medium text-zinc-900">Maintenance Mode</p>
@@ -267,13 +262,11 @@ export const Settings = () => {
             </div>
           </SettingSection>
 
-          {/* Pricing & Credits Section */}
           <SettingSection
             title="Pricing & Credits"
             description="Set credit pricing and generation costs"
             icon={<DollarSign className="w-5 h-5" />}
           >
-            {/* Credit Price */}
             <div>
               <label className="block text-sm font-medium text-zinc-700 mb-2">
                 Credit Price (USD)
@@ -300,7 +293,6 @@ export const Settings = () => {
               </p>
             </div>
 
-            {/* Credits Per Generation */}
             <div>
               <label className="block text-sm font-medium text-zinc-700 mb-2">
                 Credits Per Design Generation
@@ -330,13 +322,11 @@ export const Settings = () => {
             </div>
           </SettingSection>
 
-          {/* Security Section */}
           <SettingSection
             title="Security"
             description="Configure security and user onboarding settings"
             icon={<Shield className="w-5 h-5" />}
           >
-            {/* Email Verification Toggle */}
             <div className="flex items-center justify-between p-3 bg-zinc-50 rounded-lg border border-zinc-100">
               <div>
                 <p className="font-medium text-zinc-900">
@@ -372,7 +362,6 @@ export const Settings = () => {
               </label>
             </div>
 
-            {/* New User Bonus Credits */}
             <div>
               <label className="block text-sm font-medium text-zinc-700 mb-2">
                 New User Bonus Credits
@@ -402,7 +391,6 @@ export const Settings = () => {
         </div>
       </div>
 
-      {/* Sticky Bottom Action Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-white/90 border-t border-zinc-200 backdrop-blur-md px-8 py-4 flex items-center justify-between shadow-[0_-8px_24px_rgba(24,24,27,0.06)]">
         <div className="flex items-center gap-2">
           {isDirty && (
@@ -438,7 +426,6 @@ export const Settings = () => {
         </div>
       </div>
 
-      {/* Toast Notification */}
       {toast && <Toast message={toast.message} type={toast.type} />}
     </div>
   );

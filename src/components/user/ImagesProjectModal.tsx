@@ -24,15 +24,12 @@ export const ImagesProjectModal: React.FC<ImagesProjectModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-      {/* Lớp nền mờ (Overlay) */}
       <div
         className="absolute inset-0 bg-black/70 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      {/* Nội dung Modal */}
       <div className="relative w-full max-w-4xl bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
-        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-zinc-800">
           <h2 className="text-lg font-semibold text-white">{title}</h2>
           <button
@@ -43,7 +40,6 @@ export const ImagesProjectModal: React.FC<ImagesProjectModalProps> = ({
           </button>
         </div>
 
-        {/* Danh sách ảnh - Responsive Grid */}
         <div className="p-4 overflow-y-auto custom-scrollbar">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {images.map((img) => (
@@ -57,14 +53,12 @@ export const ImagesProjectModal: React.FC<ImagesProjectModalProps> = ({
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                 />
 
-                {/* Overlay khi hover */}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <button className="p-2 bg-white/10 backdrop-blur-md rounded-full text-white border border-white/20">
                     <Maximize2 className="w-5 h-5" />
                   </button>
                 </div>
 
-                {/* Tên ảnh phía dưới */}
                 <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
                   <p className="text-xs text-white truncate font-medium">
                     {img.name}
@@ -75,7 +69,6 @@ export const ImagesProjectModal: React.FC<ImagesProjectModalProps> = ({
           </div>
         </div>
 
-        {/* Footer */}
         <div className="p-4 border-t border-zinc-800 flex justify-end">
           <button
             onClick={onClose}

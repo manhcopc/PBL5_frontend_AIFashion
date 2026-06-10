@@ -20,12 +20,9 @@ export default function Billing() {
   return (
     // <div className="flex h-screen bg-zinc-50 text-zinc-900 overflow-hidden font-sans">
     <main className="flex-1 overflow-y-auto flex flex-col">
-      {/* Top Header */}
       <Header />
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col px-8 py-6 max-w-7xl mx-auto w-full">
-        {/* Section Title */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-extrabold text-zinc-900 mb-4 tracking-tight">
             Simple, Transparent Pricing
@@ -36,12 +33,6 @@ export default function Billing() {
           </p>
         </div>
 
-        {/* Billing Toggle */}
-        {/* Note: Hãy chắc chắn thiết kế lại component BillingToggle bên trong để hợp với nền sáng */}
-        {/* <BillingToggle isAnnual={isAnnual} onToggle={setIsAnnual} /> */}
-
-        {/* Pricing Cards Grid */}
-        {/* Note: Hãy truyền thêm thuộc tính sáng nền hoặc tinh chỉnh PricingCard sang màu trắng */}
         {error && (
           <div className="mx-auto mb-6 max-w-2xl rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
             {error}
@@ -76,7 +67,6 @@ export default function Billing() {
           })}
         </div>
 
-        {/* FAQ Section */}
         <div className="mt-20 border-t border-zinc-200 pt-16">
           <h3 className="text-2xl font-bold mb-10 text-center text-zinc-900">
             Frequently Asked Questions
@@ -125,7 +115,6 @@ export default function Billing() {
           </div>
         </div>
 
-        {/* Support CTA */}
         <div className="mt-20 text-center flex justify-center">
           <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-3xl p-8 max-w-2xl shadow-sm">
             <h3 className="text-2xl font-bold text-zinc-900 mb-3">

@@ -38,13 +38,9 @@ export default function Workspace() {
 
   return (
     <div className="flex h-screen bg-zinc-50 text-zinc-900 font-sans overflow-hidden">
-      {/* <Sidebar /> */}
-
       <main className="overflow-y-auto w-full relative">
-        {/* Header */}
         <Header />
 
-        {/* Content Area */}
         <div className="p-8 max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
@@ -65,8 +61,6 @@ export default function Workspace() {
             </button>
           </div>
 
-          {/* Grid Projects */}
-          {/* Lưu ý: Đảm bảo component Card của bạn cũng sử dụng nền trắng (bg-white) và shadow nhẹ */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project) => (
               <Card

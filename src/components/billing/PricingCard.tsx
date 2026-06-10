@@ -30,7 +30,6 @@ export function PricingCard({
           : "bg-white border border-zinc-200 hover:border-zinc-300 shadow-sm"
       }`}
     >
-      {/* Popular Badge */}
       {isPopular && (
         <div className="absolute top-4 right-4 z-10">
           <span className="px-3 py-1 bg-indigo-600 text-white text-xs font-bold rounded-full shadow-md">
@@ -39,9 +38,7 @@ export function PricingCard({
         </div>
       )}
 
-      {/* Card Content */}
       <div className="p-8 flex flex-col h-full relative">
-        {/* Header */}
         <div className="mb-6">
           <div className="flex items-start justify-between mb-2">
             <h3 className="text-2xl font-extrabold text-zinc-900">
@@ -60,7 +57,6 @@ export function PricingCard({
           </p>
         </div>
 
-        {/* Pricing */}
         <div className="mb-6">
           {plan.id === "enterprise" ? (
             <div className="space-y-1">
@@ -72,14 +68,11 @@ export function PricingCard({
               <span className="text-5xl font-black text-zinc-900">
                 ${price}
               </span>
-              <span className="text-zinc-400 text-sm font-medium">
-                {/* / {isAnnual ? "year" : "month"} */}/ {"month"}
-              </span>
+              <span className="text-zinc-400 text-sm font-medium"></span>
             </div>
           )}
         </div>
 
-        {/* Credits Badge */}
         <div className="mb-8 inline-flex items-center gap-2 px-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl w-fit">
           <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
           <span className="text-sm font-bold text-zinc-700">
@@ -87,7 +80,6 @@ export function PricingCard({
           </span>
         </div>
 
-        {/* CTA Button */}
         <button
           className={`w-full py-3.5 rounded-xl font-bold text-base transition-all duration-300 mb-8 active:scale-95 shadow-sm ${
             isDisabled
@@ -109,7 +101,6 @@ export function PricingCard({
           )}
         </button>
 
-        {/* Features List */}
         <div className="flex-1 space-y-4">
           <p
             className={`text-xs font-bold uppercase tracking-wider ${
@@ -133,14 +124,3 @@ export function PricingCard({
     </div>
   );
 }
-
-// export interface BillingPlan {
-//   id: string;
-//   name: string;
-//   pricePerMonth: number;
-//   creditsPerMonth: number;
-//   description: string;
-//   isPopular: boolean;
-//   features: string[];
-//   createdAt: Date;
-// }

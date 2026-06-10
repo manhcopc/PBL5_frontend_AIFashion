@@ -87,7 +87,6 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
   return (
     <div className="fixed inset-0 bg-zinc-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white border border-zinc-200 rounded-2xl p-6 max-w-md w-full shadow-xl max-h-[90vh] overflow-y-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-xl font-bold text-zinc-900">
             Chọn dự án & Nhập yêu cầu
@@ -107,7 +106,6 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
           Tải danh sách Projects
         </button>
 
-        {/* Danh sách Projects */}
         {isDisplay && (
           <div className="grid grid-cols-1 gap-3 mb-6">
             {projects.map((project) => {
@@ -149,7 +147,6 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
           </div>
         )}
 
-        {/* Phần Nhập liệu */}
         <div className="flex flex-col gap-2 w-full mb-8">
           <label
             htmlFor="design-search"
@@ -198,7 +195,6 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
           </div>
         )}
 
-        {/* Nút Submit & Cancel */}
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={handleSubmit}
@@ -227,7 +223,6 @@ export const ProjectRequestModal: React.FC<ProjectRequestModalProps> = ({
           </button>
         </div>
 
-        {/* Hiển thị lỗi */}
         {error && (
           <div className="mt-4 rounded-xl border border-rose-100 bg-rose-50 p-3">
             <p className="text-sm font-semibold text-rose-700">{error}</p>
