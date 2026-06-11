@@ -21,6 +21,10 @@ import { useUserStore } from "../../store/UserContext";
 import { useEffect, useState } from "react";
 import { GeneratedResultsModal } from "@/components/user/GeneratedResultsModal";
 import { getJobStatusLabel } from "@/utils/jobStatus";
+import productImage1 from "@/assets/product/hinh1.jpeg";
+import productImage2 from "@/assets/product/hinh2.jpg";
+import productImage3 from "@/assets/product/hinh3.jpeg";
+import productImage4 from "@/assets/product/hinh4.jpeg";
 
 type RouteDesignImage = string | { imageUrl?: string; url?: string };
 
@@ -89,11 +93,12 @@ export default function CreateDesign() {
     isSuccess && designs.length > 0 ? designs : initialImages;
   const modalDesigns =
     isSuccess && designs.length > 0 ? designs : generatedResultImages;
-  const path1 = "/src/assets/product/hinh1.jpeg";
-  const path2 = "/src/assets/product/hinh2.jpg";
-  const path3 = "/src/assets/product/hinh3.jpeg";
-  const path4 = "/src/assets/product/hinh4.jpeg";
-  const mockTrends = [path1, path2, path3, path4];
+  const mockTrends = [
+    productImage1,
+    productImage2,
+    productImage3,
+    productImage4,
+  ];
 
   useEffect(() => {
     if (
